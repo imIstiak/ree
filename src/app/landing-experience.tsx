@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ArrowDownRight, ArrowUpRight, X } from "lucide-react";
 import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
@@ -36,7 +37,7 @@ const scenes: Scene[] = [
     title: <>ঋ - Ree IS <em>COMING SOON</em></>,
     navTitle: "The first arrival",
     subtitle: "An independent clothing label shaped in Bengal.",
-    image: "/scenes/collection-arrival-urban-v4.png",
+    image: "/scenes/collection-arrival-urban-v6.png",
     imageAlt: "A model in an oversized drop-shoulder T-shirt and cap in urban Dhaka",
     hotspots: [
       { label: "First drop", eyebrow: "Collection 01", title: "The beginning of ঋ - Ree", body: "A considered wardrobe of fluid layers, quiet tailoring, and everyday pieces made to stay with you.", x: 8, y: 25 },
@@ -50,7 +51,7 @@ const scenes: Scene[] = [
     title: <>FORM FOLLOWS <em>FEELING</em></>,
     navTitle: "Form follows feeling",
     subtitle: "Clothes designed around the body, never against it.",
-    image: "/scenes/collection-silhouette-urban-v4.png",
+    image: "/scenes/collection-silhouette-urban-v6.png",
     imageAlt: "Two models in oversized drop-shoulder T-shirts and caps walking through urban Dhaka",
     hotspots: [
       { label: "Silhouette", eyebrow: "Cut with ease", title: "Space for the body", body: "Relaxed proportions and precise lines create pieces that feel composed without feeling constrained.", x: 10, y: 32 },
@@ -156,11 +157,13 @@ function HotspotDetails({
       role="region"
       aria-label={hotspot.title}
     >
-      <button className="card-close" onClick={onClose} aria-label="Close details">×</button>
+      <button className="card-close" onClick={onClose} aria-label="Close details">
+        <X size={15} strokeWidth={1.5} aria-hidden="true" />
+      </button>
       <span className="card-eyebrow">{hotspot.eyebrow}</span>
       <h3>{hotspot.title}</h3>
       <p>{hotspot.body}</p>
-      <button className="card-contact" onClick={onContact}>Join the list <span aria-hidden="true">↗</span></button>
+      <button className="card-contact" onClick={onContact}>Join the list <ArrowUpRight size={13} strokeWidth={1.5} aria-hidden="true" /></button>
     </div>
   );
 }
@@ -308,7 +311,7 @@ export function LandingExperience() {
             <p className="intro-subtitle">Not everything old belongs in the past.</p>
             <p className="intro-copy">We’re bringing stories, symbols, and heritage forward, shaping them into something made for now.</p>
             <button className="enter-button" onClick={enter}>
-              <span>Explore</span><span aria-hidden="true">↘</span>
+              <span>Explore</span><span aria-hidden="true"><ArrowDownRight size={14} strokeWidth={1.75} /></span>
             </button>
           </div>
           <p className="intro-edition">DHAKA · BANGLADESH · COLLECTION 01</p>
@@ -328,7 +331,7 @@ export function LandingExperience() {
         <header className="stage-header">
           <Mark compact />
           <span className="stage-location">DHAKA · COLLECTION 01</span>
-          <button className="primary-action" onClick={openContact}>Join the list <span aria-hidden="true">↗</span></button>
+          <button className="primary-action" onClick={openContact}>Join the list <span aria-hidden="true"><ArrowUpRight size={13} strokeWidth={1.75} /></span></button>
         </header>
 
         <div className="scene-track">
@@ -419,18 +422,20 @@ export function LandingExperience() {
         }}
       >
         <div className="contact-dialog__inner">
-          <button className="contact-dialog__close" onClick={closeContact} aria-label="Close contact window" autoFocus>×</button>
+          <button className="contact-dialog__close" onClick={closeContact} aria-label="Close contact window" autoFocus>
+            <X size={17} strokeWidth={1.5} aria-hidden="true" />
+          </button>
           <span className="contact-dialog__eyebrow">CONTACT · ঋ - Ree</span>
           <h2 id="contact-title">Let&apos;s stay in touch.</h2>
           <p id="contact-description">For Collection 01, collaborations, press, or anything else, choose how you&apos;d like to reach us.</p>
           <div className="contact-dialog__actions">
             <a href="mailto:info@ree.bd">
               <span><small>Email</small>info@ree.bd</span>
-              <span aria-hidden="true">↗</span>
+              <ArrowUpRight size={18} strokeWidth={1.25} aria-hidden="true" />
             </a>
             <a href="tel:+8801789891616">
               <span><small>Call</small>+880 17 8989 1616</span>
-              <span aria-hidden="true">↗</span>
+              <ArrowUpRight size={18} strokeWidth={1.25} aria-hidden="true" />
             </a>
           </div>
           <span className="contact-dialog__location">DHAKA · BANGLADESH</span>
