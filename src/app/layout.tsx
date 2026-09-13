@@ -17,9 +17,14 @@ const serif = Spectral({
 });
 
 export const metadata: Metadata = {
-  title: "Ree — Coming Soon",
+  title: "ঋ - Ree | Coming Soon",
   description:
-    "An independent clothing label shaped by movement, natural texture, and the quiet rhythms of Bengal.",
+    "Not everything old belongs in the past. ঋ - Ree brings stories, symbols, and heritage forward into something made for now.",
+  icons: {
+    icon: "/ree-mark.svg",
+    shortcut: "/ree-mark.svg",
+    apple: "/ree-mark.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
