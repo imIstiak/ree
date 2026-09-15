@@ -1,0 +1,256 @@
+{
+  "name": "REÉ — editorial fashion landing page",
+  "version": "1.0.0",
+  "source": {
+    "type": "user-supplied screenshot",
+    "filename": "landing-page-ui.png",
+    "sizePx": {
+      "width": 282,
+      "height": 1600
+    },
+    "contentBoundsPx": {
+      "x": 14,
+      "y": 14,
+      "width": 254,
+      "height": 1572
+    },
+    "limitations": [
+      "Screenshot is a low-resolution desktop layout, not evidence of the original mobile layout.",
+      "Exact font family, small copy, product names, prices and original asset files cannot be recovered with confidence.",
+      "Mobile behavior and interaction states are implementation decisions, not observations of a live site."
+    ]
+  },
+  "aesthetic": [
+    "luxury editorial",
+    "dark fashion campaign",
+    "asymmetric composition",
+    "oversized serif typography",
+    "analog fabric texture",
+    "sharp rectangular geometry"
+  ],
+  "colors": {
+    "canvas": {
+      "value": "#d8d3ad",
+      "role": "outer page frame",
+      "confidence": "high; sampled"
+    },
+    "background": {
+      "value": "#0a0000",
+      "role": "main warm-black surface",
+      "confidence": "high; sampled"
+    },
+    "surface": {
+      "value": "#050505",
+      "role": "neutral-black editorial panels",
+      "confidence": "high; sampled"
+    },
+    "accent": {
+      "value": "#f5ed9e",
+      "role": "pale yellow buttons, labels and divider stripes",
+      "confidence": "approximation"
+    },
+    "text": {
+      "value": "#fffdf0",
+      "role": "headings and primary copy",
+      "confidence": "approximation"
+    },
+    "muted": {
+      "value": "#d8d3ad",
+      "opacity": 0.75,
+      "role": "secondary text"
+    },
+    "border": {
+      "value": "#d8d3ad",
+      "opacity": 0.25,
+      "role": "thin rules"
+    },
+    "stage": {
+      "value": "#230a04",
+      "role": "hero burgundy backdrop"
+    },
+    "spotlight": {
+      "value": "#713124",
+      "role": "warm center glow"
+    },
+    "signal": {
+      "value": "#ed2620",
+      "role": "red direction arrow"
+    }
+  },
+  "typography": {
+    "display": {
+      "family": "Alfa Slab One",
+      "fallback": ["Georgia", "serif"],
+      "weight": 400,
+      "transform": "uppercase",
+      "lineHeight": 1.15,
+      "trackingEm": -0.025,
+      "status": "closest practical match, not an identified original font"
+    },
+    "body": {
+      "family": "IBM Plex Mono",
+      "fallback": ["Courier New", "monospace"],
+      "weight": 400,
+      "lineHeight": 1.65,
+      "status": "visual approximation"
+    },
+    "scale": {
+      "hero": "clamp(1.55rem,3.1cqw,3rem)",
+      "section": "clamp(1.4rem,2.45cqw,2.5rem)",
+      "subheading": "clamp(1rem,1.8cqw,1.65rem)",
+      "body": "12px–15px",
+      "metadata": "10px–11px",
+      "wordmark": "23.8cqw"
+    },
+    "units": "cqw is 1% of the nearest inline-size container width; @container is applied to the page surface."
+  },
+  "layout": {
+    "maxContentWidthPx": 1440,
+    "outerPadding": "12px mobile; 5vw at >=640px",
+    "sectionGutter": "3%",
+    "gridGap": "1.6% desktop; 16px mobile",
+    "primaryDesktopColumns": 4,
+    "mobileColumns": 2,
+    "cornerRadiusPx": 0,
+    "borderWidthPx": 1,
+    "breakpointsPx": {
+      "sm": 640,
+      "md": 768,
+      "lg": 1024
+    },
+    "spacingScalePx": [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]
+  },
+  "sections": [
+    {
+      "id": "hero",
+      "sourceBounds": [14, 14, 254, 150],
+      "layout": "centered stage portrait; two smaller side images; inset top navigation",
+      "desktopAspectRatio": "254 / 150",
+      "mobileMinHeightPx": 660,
+      "title": "Curated collections for every occasion",
+      "background": "burgundy radial gradient with a geometric light cone and a floor texture crop",
+      "headingPosition": "bottom center"
+    },
+    {
+      "id": "categories",
+      "sourceBounds": [14, 174, 254, 186],
+      "layout": "four columns with the third card taller; split heading row; bottom browsing rail",
+      "desktopImageRatios": ["57/48", "57/48", "57/75", "57/48"],
+      "mobile": "two-column grid",
+      "spacing": "8.6% top; 10% bottom"
+    },
+    {
+      "id": "style",
+      "sourceBounds": [14, 360, 254, 198],
+      "title": "Designed for every style",
+      "desktopAspectRatio": "254 / 198",
+      "mobileMinHeightPx": 760,
+      "layout": "central portrait with overlapping mini-card, bag, and product card",
+      "background": "fabric texture and oversized translucent brand wordmark"
+    },
+    {
+      "id": "collection",
+      "sourceBounds": [14, 558, 254, 386],
+      "title": "Exclusive collections made for every moment",
+      "layout": "four-column, three-row grid; intentional empty cells; featured image spans two columns and two rows",
+      "placement": {
+        "tee": "r1c1",
+        "hoodie": "r1c3",
+        "suit": "r1c4",
+        "jacket": "r2c2",
+        "tote": "r3c1",
+        "editorial": "r2-r3/c3-c4"
+      },
+      "mobile": "two-column flow; featured image spans both columns",
+      "productCopy": "sample names and prices"
+    },
+    {
+      "id": "about",
+      "sourceBounds": [14, 958, 254, 205],
+      "title": "The perfect blend of style and comfort",
+      "desktopAspectRatio": "254 / 205",
+      "layout": "portrait and heading left; four icon-led value rows right",
+      "mobile": "heading, portrait, and benefit list stack vertically"
+    },
+    {
+      "id": "journal",
+      "sourceBounds": [14, 1163, 254, 231],
+      "title": "Follow our style journey",
+      "layout": "centered heading and browsing rail above four staggered portrait columns",
+      "offsetsRelativeToColumnWidth": ["0%", "80%", "0%", "55%"],
+      "mobile": "two-column staggered grid"
+    },
+    {
+      "id": "footer",
+      "sourceBounds": [14, 1407, 254, 179],
+      "layout": "centered brand, intro, icon row, campaign crop, link strips, oversized texture-filled wordmark",
+      "campaignAspectRatio": "154 / 42"
+    }
+  ],
+  "components": {
+    "button": {
+      "fill": "accent",
+      "text": "background",
+      "shape": "square",
+      "minHeightPx": 36,
+      "mobileMinHeightPx": 44,
+      "case": "uppercase",
+      "icon": "thin right/up arrow"
+    },
+    "label": {
+      "fill": "accent or text",
+      "text": "background",
+      "horizontalPaddingPx": 6,
+      "verticalPaddingPx": 2,
+      "shape": "square"
+    },
+    "divider": {
+      "pattern": "five horizontal yellow/olive rules separated by dark gaps",
+      "desktopHeightPx": 40,
+      "mobileHeightPx": 24
+    },
+    "card": {
+      "surface": "none",
+      "border": "none",
+      "radius": 0,
+      "caption": "small rectangular label with a secondary price or link",
+      "imageFit": "cover"
+    },
+    "menu": {
+      "element": "native details/summary",
+      "behavior": "keyboard-accessible disclosure; no JavaScript"
+    },
+    "icons": {
+      "type": "inline SVG",
+      "strokeWidth": 1,
+      "corners": "mostly sharp",
+      "fill": "none"
+    }
+  },
+  "interaction": {
+    "javascript": false,
+    "navigation": "in-page anchors",
+    "categoryRail": "first/last item anchor navigation, not a scripted carousel",
+    "collectionTabs": "section/item navigation, not live filtering",
+    "socialIcons": "internal preview links; replace with verified brand profile URLs during integration",
+    "hover": "subtle image scale and button color change",
+    "reducedMotion": "image transitions and transforms disabled",
+    "motionEvidence": "No animation can be verified from a static screenshot."
+  },
+  "assets": {
+    "source": "user-supplied screenshot crops",
+    "manifest": "asset-manifest.json",
+    "count": 26,
+    "fontFiles": "assets/fonts",
+    "replaceBeforeHighResolutionLaunch": true
+  },
+  "implementation": {
+    "markup": "semantic HTML",
+    "styles": "Tailwind CSS 4.3.3 utilities",
+    "runtimeDependencies": [],
+    "cssBuild": "@tailwindcss/cli",
+    "nextjsComponent": "MaisoneLanding.tsx",
+    "nextjsTheme": "nextjs-theme.css",
+    "notes": "Static JSX mirror only; no client hooks, component library, carousel package or external image service."
+  }
+}

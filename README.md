@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ঋ - Ree
 
-## Getting Started
+Website for **ঋ - Ree**, an independent clothing label shaped in Bengal. The site currently ships two experiences:
 
-First, run the development server:
+- **Coming soon** (`/`) — an immersive intro with five full-screen scenes, glass hotspots and parallax.
+- **Landing page** (`/landing`) — an editorial storefront-style page: hero, categories, collections, about, journal and footer.
+
+Built with Next.js 16 (App Router), React 19, TypeScript and Tailwind CSS v4.
+
+## Getting started
+
+Requires Node.js 20+.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server (Turbopack) |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```text
+.
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx          # Root layout, global fonts (Plus Jakarta Sans, Spectral), metadata
+│   │   ├── page.tsx            # "/" — renders <ComingSoon /> (swap to <LandingMain /> to launch)
+│   │   ├── landing/
+│   │   │   └── page.tsx        # "/landing" — preview route for <LandingMain />
+│   │   ├── globals.css         # Tailwind import, coming-soon styles, landing theme tokens (lp-*)
+│   │   ├── icon.svg
+│   │   └── favicon.ico
+│   └── components/
+│       ├── coming-soon.tsx     # Client component: intro gate, scenes, hotspots, parallax
+│       ├── landing-main.tsx    # Server component: editorial landing page
+│       └── theme-controls.tsx  # Client island: floating theme + language buttons (both pages)
+├── public/
+│   ├── ree-mark.svg            # Brand mark / favicon
+│   ├── coming-soon/            # Scene photos for the coming-soon page
+│   └── landing/                # Photos for the landing page
+├── docs/
+│   ├── Design-Brief.md         # Motion and glass design brief behind the coming-soon page
+│   ├── landing-page-ui.png     # Landing page mockup
+│   ├── landing-design-spec.json# Landing page colors, type, layout ratios and grid placement
+│   └── landing-image-credits.md# Photographer credits and sources for all photos
+├── AGENTS.md / CLAUDE.md       # Context for AI coding agents
+├── next.config.ts
+├── postcss.config.mjs
+├── eslint.config.mjs
+└── tsconfig.json
+```
 
-## Learn More
+## How the pages are built
 
-To learn more about Next.js, take a look at the following resources:
+### Coming soon — `src/components/coming-soon.tsx`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- All scene content (titles, hotspot copy and positions, images) lives in the `scenes` array at the top of the file.
+- Styling uses plain global classes in `src/app/globals.css`.
+- Motion follows `docs/Design-Brief.md` and respects `prefers-reduced-motion`.
+- Colors come from CSS variables (`--ivory`, `--stage-dark`, `--glass` and friends), so the light theme can override them. Use those variables rather than literal colors when editing.
+- Shares the floating control dock described below.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Landing page — `src/components/landing-main.tsx`
 
-## Deploy on Vercel
+- Content such as photos, categories, collection items and journal posts is defined as constants at the top of the file.
+- Styled with Tailwind utilities and the `lp-*` design tokens declared at the bottom of `globals.css`, following `docs/landing-design-spec.json`.
+- Keeps client-side JavaScript to a minimum: the menu uses `<details>`, and sliders and tabs are in-page links.
+- Shares the floating control dock described below.
+- Typography: Alfa Slab One (display) and IBM Plex Mono (body), loaded with `next/font`.
+- Sections animate as they scroll into view (headings and cards rise in, images wipe upward, the oversized wordmarks drift). These use CSS scroll-driven animations, so no JavaScript is involved; browsers without support show the finished layout, and the motion is disabled for visitors who prefer reduced motion.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Theme and language controls
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Both pages show a floating dock fixed to the middle of the right edge (`src/components/theme-controls.tsx`):
+
+- **Theme switch** — toggles light and dark. Dark is the default; the visitor's choice is saved in the browser and shared by both pages, and applied before the page paints so there is no flash. Light colors live under `[data-lp-theme="light"]` in `globals.css`.
+- **Language button** — a placeholder that shows `EN`. It has no behaviour yet; locale support is still to be built.
+
+### Switching the home page
+
+`src/app/page.tsx` decides what `/` shows. Replace `<ComingSoon />` with `<LandingMain />` (and update the import) to make the landing page the home page.
+
+## Images and credits
+
+Photos in `public/landing/` and `public/coming-soon/` come from [Unsplash](https://unsplash.com) and are used under the [Unsplash License](https://unsplash.com/license). Photographers and source links are listed in [`docs/landing-image-credits.md`](docs/landing-image-credits.md); please update that file whenever an image is added or replaced.
+
+## Deployment
+
+The app is a standard Next.js project, and both routes prerender as static pages. Deploy it to any platform that supports Next.js (for example [Vercel](https://vercel.com)), or run `npm run build && npm run start` on your own server.

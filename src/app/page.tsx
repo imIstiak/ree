@@ -1,5 +1,10 @@
-import { LandingExperience } from "./landing-experience";
+
+import { ComingSoon } from "../components/coming-soon";
+// import { LandingMain } from "../components/landing-main";
 
 export default function Home() {
-  return <LandingExperience />;
+  return (
+    <ComingSoon />
+    // <LandingMain />
+  );
 }
