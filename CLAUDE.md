@@ -50,6 +50,15 @@ No test suite exists.
 - `ThemeScript rootId={…}` is an inline script rendered at the top of each root that applies the saved theme before first paint (pattern from `node_modules/next/dist/docs/01-app/02-guides/preventing-flash-before-hydration.md`); both roots carry `suppressHydrationWarning` for that reason.
 - Both roots are `group/theme`, so theme-specific tweaks use `group-data-[lp-theme=light]/theme:`; the dock icons swap that way, with no React state.
 
+### `src/components/silk-theme-transition.ts` — the theme-change sweep
+- Toggling the theme sweeps a sheet of silk from the top-right corner to the bottom-left; the new theme is revealed under the cloth's opaque centre. Ivory silk for → light, dark satin for → dark (`uTone`).
+- The cloth is a **WebGL fragment shader, not an image**: a moving height field re-lit every frame, which is what makes it shiny and makes it wave. An earlier version stretched a 640px GIF across the screen and looked matte and choppy; don't go back to an image or video.
+- One clock: the reveal is a WAAPI `clip-path` animation on `::view-transition-new(root)`, and each `requestAnimationFrame` reads that animation's eased progress (`effect.getComputedTiming().progress`) to place the cloth. Don't drive the seam with per-frame CSS custom properties on `<html>` — they are inherited, so every frame restyles the whole document.
+- `.silk-veil` carries `view-transition-name: ree-silk` so it paints above the page snapshots; the rules are next to the dock styles in `globals.css`. All default view-transition animations are switched off there.
+- `FRONT` / `BACK` / `OVERHANG` in the TS file size the cloth and its off-screen parking; `FRONT` and `BACK` are injected into the shader, and `OVERHANG` must cover the hem-wave amplitudes plus the shadow width if those change. The band `solid` in the shader must stay fully opaque around the seam (`a = 0`).
+- One shared canvas/context for the page's lifetime (compiled at idle by `preloadSilkTransition`), capped at 1.6 MP. Fallbacks: no hardware WebGL or reduced motion → instant theme change; no View Transitions API → colours cross-fade while the cloth passes.
+- To look at it without a browser window: Brave is installed, and `--headless=new --remote-debugging-port=…` plus CDP `Page.captureScreenshot` captures mid-transition frames (plain `--screenshot` hangs).
+
 ### Theming rules
 - Landing: `[data-lp-theme="light"]` overrides the `--color-lp-*` tokens. Use tokens, not hex/black:
   - `text-lp-ink` for text on accent (yellow) fills — dark in both themes; `text-lp-bg` only on inverted `bg-lp-text` surfaces.

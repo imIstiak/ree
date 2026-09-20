@@ -388,6 +388,68 @@
     var(--color-lp-accent) 88% 100%);
 }
 
+/* Silk theme transition (src/components/silk-theme-transition.ts). The veil holds
+   a WebGL canvas of waving satin; it joins the view transition by name so it can
+   paint above the page snapshots. Its opaque centre hides the theme seam. */
+.silk-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  pointer-events: none;
+  contain: strict;
+  view-transition-name: ree-silk;
+}
+
+.silk-veil canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The new snapshot must already be in its final colours when it is revealed. */
+html[data-silk-transition="native"] [data-lp-theme],
+html[data-silk-transition="native"] [data-lp-theme] * {
+  transition: none !important;
+}
+
+html[data-silk-transition]::view-transition {
+  pointer-events: none;
+}
+
+/* Nothing here animates by itself: the script runs one clip-path animation on the
+   new root snapshot, and that animation is also what keeps the transition alive. */
+html[data-silk-transition]::view-transition-group(*),
+html[data-silk-transition]::view-transition-old(*),
+html[data-silk-transition]::view-transition-new(*) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Hidden until the script's animation takes over, so the new theme cannot flash. */
+html[data-silk-transition]::view-transition-new(root) {
+  clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+}
+
+html[data-silk-transition]::view-transition-group(ree-silk) {
+  z-index: 1;
+}
+
+html[data-silk-transition]::view-transition-old(ree-silk) {
+  display: none;
+}
+
+/* Browsers without view transitions: the colours cross-fade as the silk passes. */
+html[data-silk-transition="fallback"] [data-lp-theme],
+html[data-silk-transition="fallback"] [data-lp-theme] * {
+  transition: color 2000ms ease, background-color 2000ms ease,
+    border-color 2000ms ease, box-shadow 2000ms ease, fill 2000ms ease,
+    stroke 2000ms ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .silk-veil { display: none; }
+}
+
 /* Floating theme/language dock (src/components/theme-controls.tsx) */
 
 .lp-dock {

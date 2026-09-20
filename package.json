@@ -1,5 +1,7 @@
 {
   "name": "ree",
+  "description": "Ree is a platform for creating and sharing recipes.",
+  "author": "Ahnaf",
   "version": "0.1.0",
   "private": true,
   "scripts": {

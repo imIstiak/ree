@@ -39,7 +39,8 @@ npm run dev      # http://localhost:3000
 │   └── components/
 │       ├── coming-soon.tsx     # Client component: intro gate, scenes, hotspots, parallax
 │       ├── landing-main.tsx    # Server component: editorial landing page
-│       └── theme-controls.tsx  # Client island: floating theme + language buttons (both pages)
+│       ├── theme-controls.tsx  # Client island: floating theme + language buttons (both pages)
+│       └── silk-theme-transition.ts # The silk sweep that plays when the theme changes (WebGL)
 ├── public/
 │   ├── ree-mark.svg            # Brand mark / favicon
 │   ├── coming-soon/            # Scene photos for the coming-soon page
@@ -80,6 +81,7 @@ npm run dev      # http://localhost:3000
 Both pages show a floating dock fixed to the middle of the right edge (`src/components/theme-controls.tsx`):
 
 - **Theme switch** — toggles light and dark. Dark is the default; the visitor's choice is saved in the browser and shared by both pages, and applied before the page paints so there is no flash. Light colors live under `[data-lp-theme="light"]` in `globals.css`.
+- **Silk transition** — changing the theme sweeps a sheet of waving silk from the top-right corner to the bottom-left, and the new theme appears underneath it: ivory silk when switching to light, dark satin when switching to dark. The cloth is drawn live by a small WebGL shader (`src/components/silk-theme-transition.ts`), so there is no image or video to download. Visitors who prefer reduced motion, or whose browser has no hardware WebGL, simply get the theme change.
 - **Language button** — a placeholder that shows `EN`. It has no behaviour yet; locale support is still to be built.
 
 ### Switching the home page

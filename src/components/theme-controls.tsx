@@ -1,6 +1,7 @@
 "use client";
 
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { preloadSilkTransition, startSilkThemeTransition } from "./silk-theme-transition";
 
 // The theme is scoped to a page wrapper rather than <html>, so each experience opts in.
 export const LANDING_ROOT_ID = "ree-landing";
@@ -41,22 +42,46 @@ const icon =
 
 // Floating controls pinned to the middle of the right edge.
 export function ThemeControls({ rootId, inline = false }: { rootId: string; inline?: boolean }) {
+  const stopTransition = useRef<(() => void) | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   // Covers client-side navigations, where the inline script does not run.
   useLayoutEffect(() => {
     const theme = readStoredTheme();
     if (theme) document.getElementById(rootId)?.setAttribute(ATTRIBUTE, theme);
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      preloadSilkTransition();
+    }
+    return () => {
+      stopTransition.current?.();
+      stopTransition.current = null;
+    };
   }, [rootId]);
 
   function toggleTheme() {
+    if (stopTransition.current) return;
     const root = document.getElementById(rootId);
     if (!root) return;
     const next: Theme = root.getAttribute(ATTRIBUTE) === "light" ? "dark" : "light";
-    root.setAttribute(ATTRIBUTE, next);
-    try {
-      localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      // Storage can be unavailable (private mode); the switch still works for this visit.
+    const applyTheme = () => {
+      root.setAttribute(ATTRIBUTE, next);
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        // Storage can be unavailable; the switch still works for this visit.
+      }
+    };
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      applyTheme();
+      return;
     }
+
+    setIsTransitioning(true);
+    stopTransition.current = startSilkThemeTransition(next, applyTheme, () => {
+      stopTransition.current = null;
+      setIsTransitioning(false);
+    });
   }
 
   return (
@@ -65,6 +90,7 @@ export function ThemeControls({ rootId, inline = false }: { rootId: string; inli
         <button
           type="button"
           onClick={toggleTheme}
+          aria-disabled={isTransitioning}
           aria-label="Switch between light and dark theme"
           title="Switch theme"
           className="group/btn grid size-8 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/10 text-lp-accent transition-[transform,background-color,box-shadow] duration-300 ease-out hover:scale-105 hover:bg-white/20 hover:shadow-[0_0_14px_rgb(245_237_158/.35)] active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100 group-data-[lp-theme=light]/theme:border-black/10 group-data-[lp-theme=light]/theme:bg-black/5 group-data-[lp-theme=light]/theme:text-[#2c1a0e] group-data-[lp-theme=light]/theme:hover:bg-black/10"
