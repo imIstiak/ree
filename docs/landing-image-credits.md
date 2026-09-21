@@ -26,7 +26,7 @@ The stock photos listed below in `public/landing/` and `public/coming-soon/` are
 | `style-red-beanie.jpg` | Abolfazl Eslami | https://unsplash.com/photos/9nlheKw4gL0 |
 | `texture-red-gown.jpg` | Mehran Biabani | https://unsplash.com/photos/6kRg7dVz_UM |
 
-The landing hero now uses locally generated campaign images (`campaign-stage.webp`, `campaign-stairs.webp`, and `campaign-lounge.webp`) instead of the stock hero photos listed above. These are recreations based on the user-supplied reference. See [landing-hero-assets.md](landing-hero-assets.md) for generation prompts and provenance.
+The landing hero uses locally generated campaign images (`campaign-stage.webp`, `campaign-stairs-wide.webp` and `campaign-lounge-wide.webp`). The built-in imagegen tool extended the original portrait scenes and balanced all three photographs; lossless landscape masters in `assets/hero/` are compressed by `scripts/build-hero-backdrops.mjs`. These are recreations based on the user-supplied reference. See [landing-hero-assets.md](landing-hero-assets.md) for generation prompts and provenance.
 
 ## Coming soon page
 

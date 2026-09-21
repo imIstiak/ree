@@ -44,6 +44,16 @@ No test suite exists.
 - Design references: `docs/landing-page-ui.png` (screenshot mockup) and `docs/landing-design-spec.json` (colors, typography, section ratios, grid placements).
 - Content (photos, categories, collection items, journal posts) lives in constants at the top of the file; the `Photo` type carries `objectPosition` for crops.
 
+### `src/components/landing-hero.tsx` + `landing-hero.module.css` — landing hero (server component)
+- Written by the user against a 1840 × 1090 reference; styled with a **CSS module**, not Tailwind. Its colours are fixed (it does not follow the theme).
+- The photographs are a **CSS-only slideshow** - no `"use client"`. Every slide (the `slides` array, in the order they take the middle frame) is one full-screen photograph: a `.backdrop` layer shows it as the hero background, and the slide's card holds `.stageWindow`, a hero-sized box with a brightened copy of the same photograph. In the middle slot that copy lines up with the background, so the card reads as a bright cut-out the model steps out of; the thumbs are the same card scaled by `--thumb-scale`. Keep `.scene` / `.sceneImage` identical for both copies or the alignment breaks.
+- Each beat: right card slides into the middle while middle goes left and left fades out; the next slide's backdrop starts changing `backdropDelay` later (the user asked for the slide to lead and the two to run almost together) and by default finishes with the move -> then the card that left fades back in on the right. **Timing is the `timing` object at the top of the TSX** (`beat`, `move`, `backdropDelay`, `backdrop`, `fade`, in ms). `slideshowCss()` writes the `ree-hero-card-N` / `ree-hero-scene-N` keyframes from it into an inline `<style>`; the module only supplies `--hero-beat` / `--hero-loop` plumbing, slot geometry and the opening layout (`.atLeft` / `.atMiddle` / `.atRight` / `.waiting`). Only `transform` and `opacity` animate.
+- Backdrops never cross-fade both ways: the later one in the DOM paints on top, so the generator either fades the incoming one in over the old one or fades the old one out to reveal it.
+- Slot geometry is the unitless `--frame-*` / `--thumb-*` variables on `.hero` (the mobile media query only overrides those); `.focusFrame` reads the same variables.
+- The three campaign images are compressed from lossless `assets/hero/campaign-*-master.webp` landscape masters by `node scripts/build-hero-backdrops.mjs` (sharp). Keep the complete scene, headroom and footwear; do not stretch the original portrait edges. The component statically imports the runtime files for content-hashed image URLs. The inset uses a modest 1.1 brightness lift, and both copies fill their containers without a downward transform.
+- The build drops a name-less `animation:` shorthand in CSS modules - `.slide` and `.backdrop` use longhands for that reason.
+- Headless screenshots: seeking paused animations (`currentTime = ...`) can composite stale layers and show false blends. Capture in real time instead.
+
 ### `src/components/theme-controls.tsx` — theme + language dock (client)
 - Shared by both pages. `ThemeControls rootId={…}` renders a floating dock **fixed to the middle of the right edge** holding the theme button and a language button (`EN`) that is **a placeholder with no locale wiring yet** — see the TODO in the file.
 - The theme is scoped to each page's root element (`#ree-landing`, `#ree-coming-soon`) via `data-lp-theme`, **not** `<html>`. Default is `dark`; the choice persists in `localStorage` under `ree-theme` and is shared by both pages.
@@ -87,7 +97,7 @@ No test suite exists.
 - `public/landing/` (landing page) and `public/coming-soon/` (scenes) are **Unsplash License** photos. When adding or swapping one, record photographer + source URL in `docs/landing-image-credits.md`.
 - Unsplash+ (paid) photos return 403 from `https://unsplash.com/photos/<id>/download?force=true&w=…` — a quick way to confirm a photo is free.
 - `public/` holds only images the site actually references; unused files were removed. Before adding one, check it is used, and delete it again if the reference goes away.
-- `public/landing/campaign-*.webp` are locally generated hero images, not Unsplash; their provenance is in `docs/landing-hero-assets.md`.
+- `public/landing/campaign-*.webp` are locally generated hero images, not Unsplash; their provenance is in `docs/landing-hero-assets.md`. Edit the lossless landscape masters in `assets/hero/` and re-run `node scripts/build-hero-backdrops.mjs`. The original portraits are retained only as references.
 - `public/ree-mark.svg` is the brand mark (also the favicon via `layout.tsx` metadata).
 
 ## Conventions

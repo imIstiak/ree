@@ -39,8 +39,12 @@ npm run dev      # http://localhost:3000
 │   └── components/
 │       ├── coming-soon.tsx     # Client component: intro gate, scenes, hotspots, parallax
 │       ├── landing-main.tsx    # Server component: editorial landing page
+│       ├── landing-hero.tsx    # Landing hero with the CSS-only photo slideshow (+ .module.css)
 │       ├── theme-controls.tsx  # Client island: floating theme + language buttons (both pages)
 │       └── silk-theme-transition.ts # The silk sweep that plays when the theme changes (WebGL)
+├── assets/hero/                # Landscape masters and original portrait references (not served)
+├── scripts/
+│   └── build-hero-backdrops.mjs # Compresses the three landscape masters into public/landing/
 ├── public/
 │   ├── ree-mark.svg            # Brand mark / favicon
 │   ├── coming-soon/            # Scene photos for the coming-soon page
@@ -72,6 +76,7 @@ npm run dev      # http://localhost:3000
 - Content such as photos, categories, collection items and journal posts is defined as constants at the top of the file.
 - Styled with Tailwind utilities and the `lp-*` design tokens declared at the bottom of `globals.css`, following `docs/landing-design-spec.json`.
 - Keeps client-side JavaScript to a minimum: the menu uses `<details>`, and sliders and tabs are in-page links.
+- The hero (`src/components/landing-hero.tsx`, styled by its own CSS module) is a slideshow. Each slide is a full-screen photograph with a bright cut-out of itself in the middle frame; on every beat the right thumbnail slides into the middle and the middle one slides left, the background changes along with them a moment behind, and the one that left fades back in on the right. Change the speed with the `timing` constants at the top of that file. It is a CSS-only loop and stays still for visitors who prefer reduced motion. Details are in `docs/landing-hero-assets.md`.
 - Shares the floating control dock described below.
 - Typography: Alfa Slab One (display) and IBM Plex Mono (body), loaded with `next/font`.
 - Sections animate as they scroll into view (headings and cards rise in, images wipe upward, the oversized wordmarks drift). These use CSS scroll-driven animations, so no JavaScript is involved; browsers without support show the finished layout, and the motion is disabled for visitors who prefer reduced motion.

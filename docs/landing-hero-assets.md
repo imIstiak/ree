@@ -6,9 +6,11 @@ The `/landing` hero follows the user-supplied 1840 × 1090 REÉ reference. The t
 
 Created with the built-in image generation tool, then compressed to WebP for local delivery:
 
-- `public/landing/campaign-stage.webp` — central portrait and burgundy room, 1629 × 965.
-- `public/landing/campaign-stairs.webp` — left editorial image, 580 px wide.
-- `public/landing/campaign-lounge.webp` — right editorial image, 580 px wide.
+- `public/landing/campaign-stage.webp`, `campaign-stairs-wide.webp` and `campaign-lounge-wide.webp` — full-width photographs with balanced warm lighting, continuous room details and complete footwear within the image boundaries.
+- `assets/hero/campaign-{stage,stairs,lounge}-master.webp` — approved lossless landscape masters. Rebuild the runtime files with `node scripts/build-hero-backdrops.mjs`, which compresses these masters without cropping, stretching, blurring or changing their exposure.
+- `assets/hero/campaign-stairs.webp` and `assets/hero/campaign-lounge.webp` — original 580 px portrait references, retained for provenance and future edits. They are not served or used to rebuild the wide images.
+
+The wide stairs and lounge rooms were extended with the built-in imagegen tool; the stage photograph was relit to match. A second framing pass adds headroom and floor margin. The exact edit prompts are in [campaign-image-edit-prompts.md](campaign-image-edit-prompts.md). Static image imports give each revision a content-hashed URL so a browser cannot retain the previous optimized image at the same path.
 
 The original generated PNGs are retained in the tool's generated-images directory. All runtime assets live in `public/landing/`; no external image service or generated-image path is required.
 
@@ -32,6 +34,12 @@ The side-image prompts used `docs/landing-page-ui.png` and the generated stage i
 
 - Desktop proportions use the reference's 1840 × 1090 canvas; mobile receives a separate portrait arrangement with a minimum height of 640 px.
 - Menu and empty-cart preview use native disclosures. Links navigate to the existing page sections.
-- The landing theme control is inside Menu → Appearance. The photograph keeps its campaign colors in both themes.
+- The three photographs form a slideshow, and every slide works the way the reference's stage slide does: one full-screen photograph is the hero's background, and the card in the middle frame is a brightened cut-out of that same photograph, lined up with it so the model appears to step out of the frame. The thumbnails are those cut-outs, scaled down.
+- The scene fills its container without a downward translation or extra zoom. The inset and background use identical geometry, including on mobile. The inset adds only `brightness(1.1) saturate(1.02)` to preserve face and fabric highlights; the frame begins at 19% of the hero height to include the top of the head.
+- Each beat opens with the cards: the right card slides into the middle cut-out while the middle card slides to the left and the left card fades out. The full-screen background starts changing a moment later (`backdropDelay`), so the slide leads and the two run almost together, landing at the same time. Afterwards the card that left fades back in on the right.
+- Timing lives in the `timing` constants at the top of `src/components/landing-hero.tsx` (milliseconds): `beat` 4250, `move` 900, `backdropDelay` 150, `backdrop` 750, `fade` 500. Keep `backdropDelay + backdrop` equal to `move` if the card should land exactly as its background finishes appearing. The component writes the CSS keyframes from them, so the loop is still plain CSS with no client JavaScript. If the steps do not fit inside `beat` they shrink in proportion. The first change happens one beat after load.
+- Slides are the `slides` array in the same file, in the order they take the middle frame. More than three work: extra slides wait out of sight until their turn on the right.
+- Focusing a card with the keyboard pauses the loop. With reduced motion requested there is no loop; the opening layout stays on screen.
+- The theme control is the floating dock on the right edge (shared with the coming-soon page). The photograph keeps its campaign colors in both themes.
 - Hover motion is disabled when reduced motion is requested.
 - The `/` coming-soon route remains the selected home experience.

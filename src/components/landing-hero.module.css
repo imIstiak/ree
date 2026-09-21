@@ -1,6 +1,24 @@
 .hero {
   --hero-cream: #fffdf3;
   --hero-yellow: #f5ed9e;
+  /* Slideshow geometry, as unitless % of the hero box. The frame is the middle slot;
+     the thumbs are the same card scaled down, so they share its proportions. */
+  --frame-x: 41.25;
+  --frame-y: 19;
+  --frame-w: 19;
+  --frame-h: 46.5;
+  --thumb-w: 10.5;
+  --thumb-y: 19;
+  --thumb-left-x: 25.4;
+  --thumb-right-x: 65.6;
+  /* translate() percentages are relative to the card, hence the division by the frame. */
+  --thumb-scale: calc(var(--thumb-w) / var(--frame-w));
+  --thumb-dy: calc((var(--thumb-y) - var(--frame-y)) / var(--frame-h) * 100%);
+  --slot-middle: translate(0%, 0%) scale(1);
+  --slot-left: translate(calc((var(--thumb-left-x) - var(--frame-x)) / var(--frame-w) * 100%), var(--thumb-dy)) scale(var(--thumb-scale));
+  --slot-right: translate(calc((var(--thumb-right-x) - var(--frame-x)) / var(--frame-w) * 100%), var(--thumb-dy)) scale(var(--thumb-scale));
+  /* Where the left card drifts to while it fades out. */
+  --slot-exit: translate(calc((var(--thumb-left-x) - var(--frame-x) - 3) / var(--frame-w) * 100%), var(--thumb-dy)) scale(var(--thumb-scale));
   position: relative;
   isolation: isolate;
   width: 100%;
@@ -11,17 +29,33 @@
   container-type: inline-size;
 }
 
+/* One full-bleed layer per slide. The keyframes that fade them (`ree-hero-scene-N`) are
+   generated in landing-hero.tsx from its `timing` constants, as are the cards'. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  will-change: transform, opacity;
+  /* Longhands on purpose: the build drops a name-less `animation` shorthand. */
+  animation-duration: var(--hero-loop);
+  animation-delay: var(--hero-beat);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.backdropWaiting { opacity: 0; }
+
 .scene {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  z-index: -3;
 }
 
 .sceneImage {
   object-fit: cover;
   object-position: 50% 50%;
-  transform: translateY(5.8%) scale(1.015);
 }
 
 .shade {
@@ -32,17 +66,6 @@
   background: linear-gradient(180deg, rgb(33 6 0 / 12%), transparent 38%, rgb(27 5 0 / 10%)),
     linear-gradient(90deg, rgb(34 6 0 / 24%), transparent 38% 62%, rgb(34 6 0 / 24%));
 }
-
-.exposure {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  isolation: isolate;
-  clip-path: inset(22.3% 39.75% 34.5% 41.25%);
-  pointer-events: none;
-}
-
-.exposure img { filter: brightness(1.5) saturate(1.15); }
 
 .wordmark {
   position: absolute;
@@ -128,25 +151,54 @@
 .cartPanel p { margin: 4px 0 18px; }
 .cartPanel a { display: flex; align-items: center; justify-content: space-between; min-height: 44px; font-size: 12px; }
 
-.sideImage {
+/* Slideshow cards. Every card is laid out on the middle frame and reaches the thumb
+   slots through `transform` alone, so the loop runs on the compositor. The keyframes
+   (`ree-hero-card-N`) come from landing-hero.tsx; `.at*` is the opening layout, which is
+   also what stays on screen when reduced motion is requested. */
+.slide {
   position: absolute;
-  top: 22.3%;
-  width: 10.5%;
-  aspect-ratio: 193 / 254;
+  left: calc(var(--frame-x) * 1%);
+  top: calc(var(--frame-y) * 1%);
+  width: calc(var(--frame-w) * 1%);
+  height: calc(var(--frame-h) * 1%);
   overflow: hidden;
+  isolation: isolate;
+  transform-origin: 0 0;
+  will-change: transform, opacity;
+  /* Longhands on purpose: the build drops a name-less `animation` shorthand. */
+  animation-duration: var(--hero-loop);
+  animation-delay: var(--hero-beat);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
 
-.sideImage img { object-fit: cover; transition: transform 450ms ease; }
-.sideImage:hover img { transform: scale(1.04); }
-.leftImage { left: 25.4%; }
-.rightImage { right: 23.9%; }
+.atLeft { transform: var(--slot-left); }
+.atMiddle { transform: var(--slot-middle); }
+.atRight { transform: var(--slot-right); }
+.waiting { transform: var(--slot-right); opacity: 0; }
+
+/* A hero-sized box inside the card, so its copy of the scene lands on the background. */
+.stageWindow {
+  position: absolute;
+  left: calc(var(--frame-x) / var(--frame-w) * -100%);
+  top: calc(var(--frame-y) / var(--frame-h) * -100%);
+  width: calc(10000% / var(--frame-w));
+  height: calc(10000% / var(--frame-h));
+}
+
+/* The photographs carry their own balanced exposure; the window only lifts it slightly. */
+.stageWindow img { filter: brightness(1.1) saturate(1.02); }
+
+/* Keyboard users can hold the loop still by focusing a card. */
+.hero:has(.slide:focus-visible) :is(.slide, .backdrop) { animation-play-state: paused; }
 
 .focusFrame {
   position: absolute;
-  top: 22.3%;
-  left: 41.25%;
-  width: 19%;
-  height: 43.2%;
+  left: calc(var(--frame-x) * 1%);
+  top: calc(var(--frame-y) * 1%);
+  width: calc(var(--frame-w) * 1%);
+  height: calc(var(--frame-h) * 1%);
   pointer-events: none;
 }
 
@@ -230,19 +282,24 @@
 }
 
 @media (max-width: 767px) {
-  .hero { aspect-ratio: auto; height: min(900px, 100svh); min-height: 640px; }
+  .hero {
+    aspect-ratio: auto;
+    height: min(900px, 100svh);
+    min-height: 640px;
+    --frame-x: 29;
+    --frame-y: 19;
+    --frame-w: 42;
+    --frame-h: 44;
+    --thumb-w: 21;
+    --thumb-y: 21;
+    --thumb-left-x: 4;
+    --thumb-right-x: 75;
+  }
   .navigation { top: 18px; inset-inline: 20px; }
   .navLabel { padding-inline: 8px; font-size: 12px; }
   .brand { top: 8px; font-size: clamp(23px, 5.9vw, 38px); }
   .wordmark { top: 76px; height: 16%; width: 160%; left: -30%; opacity: .46; }
-  .scene { inset: 0 -65%; }
-  .sceneImage { transform: translateY(3%); }
-  .exposure { clip-path: inset(23% 29% 39%); }
   .shade { background: linear-gradient(180deg, rgb(28 5 0 / 15%) 45%, transparent 58%, rgb(22 4 0 / 65%) 100%); }
-  .sideImage { top: 25%; width: 21%; }
-  .leftImage { left: 4%; }
-  .rightImage { right: 4%; }
-  .focusFrame { top: 23%; left: 29%; width: 42%; height: 38%; }
   .focusFrame svg { width: 14px; height: 14px; }
   .markers { top: 57%; inset-inline: 5%; grid-template-columns: auto 1fr auto; gap: 18px; font-size: 11px; }
   .markers > :nth-child(n + 4) { display: none; }
@@ -260,6 +317,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sideImage img, .navLabel::before, .categories a { transition: none; }
-  .sideImage:hover img { transform: none; }
+  .slide, .backdrop { animation: none; }
+  .navLabel::before, .categories a { transition: none; }
 }
