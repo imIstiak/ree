@@ -1,24 +1,13 @@
 import Image from "next/image";
 import { LandingHero } from "./landing-hero";
-import { Alfa_Slab_One, IBM_Plex_Mono } from "next/font/google";
+import { Icon } from "./landing-icons";
+import { StoryTiles } from "./story-tiles";
+import Link from "next/link";
+import { display, mono } from "./landing-fonts";
 import type { CSSProperties, ReactNode } from "react";
 import { LANDING_ROOT_ID, ThemeControls, ThemeScript } from "./theme-controls";
 
 // Visual spec: docs/landing-design-spec.json. Theme tokens live in src/app/globals.css.
-
-const display = Alfa_Slab_One({
-  variable: "--font-alfa-slab",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
-const mono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
-});
 
 type Photo = {
   src: string;
@@ -28,10 +17,11 @@ type Photo = {
 
 // Unsplash License photos; credits in docs/landing-image-credits.md.
 const photos = {
-  pinkHoodie: { src: "/landing/category-pink-hoodie.jpg", alt: "A woman in a pink hoodie and sunglasses under blossoms", position: "50% 12%" },
-  sneakers: { src: "/landing/category-sneakers.jpg", alt: "A pair of pastel running sneakers on a white surface", position: "50% 45%" },
-  orangeHoodie: { src: "/landing/category-orange-hoodie.jpg", alt: "A man in an orange hoodie against a teal wall", position: "55% 30%" },
-  blueBag: { src: "/landing/category-blue-bag.jpg", alt: "A woman in a red dress holding a navy leather handbag", position: "50% 70%" },
+  storyTee: { src: "/landing/story-tee.jpg", alt: "A white T-shirt on a hanger beside straw hats and a woven bag", position: "50% 50%" },
+  storyTeeModel: { src: "/landing/story-tee-model.jpg", alt: "A woman in a plain black T-shirt with her arms crossed against a patterned backdrop", position: "50% 25%" },
+  storyDropShoulder: { src: "/landing/story-drop-shoulder.jpg", alt: "Two coral printed T-shirts hanging on a wooden pegboard", position: "35% 50%" },
+  storyDropShoulderModel: { src: "/landing/story-drop-shoulder-model.jpg", alt: "A man in a black T-shirt and sunglasses beside a sunlit wall", position: "50% 30%" },
+  storyFootwear: { src: "/landing/story-footwear.jpg", alt: "A close-up of a beige sneaker mid-step over fallen leaves", position: "50% 50%" },
   camelCoat: { src: "/landing/style-camel-coat.jpg", alt: "A woman in a camel coat in warm evening light", position: "50% 30%" },
   redBeanie: { src: "/landing/style-red-beanie.jpg", alt: "A woman in a red beanie, tinted glasses and a plaid jacket", position: "50% 25%" },
   pinkFur: { src: "/landing/style-pink-fur.jpg", alt: "A woman in a pale fur coat and gold aviator sunglasses", position: "50% 30%" },
@@ -41,7 +31,7 @@ const photos = {
   suit: { src: "/landing/collection-suit.jpg", alt: "A close-up of a pinstripe suit jacket and a ringed hand", position: "50% 50%" },
   leatherJacket: { src: "/landing/collection-leather-jacket.jpg", alt: "A man in a black leather jacket and sunglasses", position: "50% 35%" },
   tote: { src: "/landing/collection-tote.jpg", alt: "A canvas tote bag hanging beside a wooden door", position: "35% 50%" },
-  bucketHat: { src: "/landing/collection-bucket-hat.jpg", alt: "A low-angle portrait of a woman in a black bucket hat and coat between city buildings", position: "50% 40%" },
+  lifeIsShort: { src: "/products/life-is-short-tee-08.jpg", alt: "The back of the Life is short tee, printed LIFE IS SHORT, in a lounge with arched niches", position: "50% 35%" },
   sunglasses: { src: "/landing/about-sunglasses.jpg", alt: "A woman in round sunglasses and a navy blazer", position: "50% 30%" },
   journalBeanie: { src: "/landing/journal-red-beanie.jpg", alt: "A woman in a red beanie and mirrored sunglasses", position: "50% 30%" },
   journalBeret: { src: "/landing/journal-red-beret.jpg", alt: "A woman in a red beret and white shirt", position: "50% 25%" },
@@ -51,11 +41,36 @@ const photos = {
   fur: { src: "/landing/footer-fur.jpg", alt: "", position: "50% 40%" },
 } satisfies Record<string, Photo>;
 
-const categories = [
-  { id: "category-streetwear", name: "Streetwear", link: "24 items", photo: photos.pinkHoodie, featured: false },
-  { id: "category-sneakers", name: "Sneakers", link: "18 items", photo: photos.sneakers, featured: false },
-  { id: "category-hoodies", name: "Hoodies", link: "12 items", photo: photos.orangeHoodie, featured: true },
-  { id: "category-bags", name: "Bags", link: "14 items", photo: photos.blueBag, featured: false },
+type StoryTile = {
+  id: string;
+  photo: Photo;
+  // short: image with its caption below. tall: worn shot, no caption. hung: short tile aligned to the
+  // bottom of the row with its caption above (the sketch's middle tile).
+  shape: "short" | "tall" | "hung";
+  // Resting tilt in degrees (hover straightens it) and the cloth + stitch colours as full class literals.
+  tilt: number;
+  frame: string;
+  caption?: { label: string; count: string };
+};
+
+// "Find your story": five columns alternating short / tall — product shot, worn, product shot, worn, footwear.
+// Rendered by story-tiles.tsx as tilted cloth patches with Framer Motion hover and scroll-in animation.
+const storyTiles: StoryTile[] = [
+  { id: "story-tee", photo: photos.storyTee, shape: "short", tilt: -2, frame: "bg-lp-patch-mustard outline-lp-ink/45", caption: { label: "T-shirt", count: "24 items" } },
+  { id: "story-tee-model", photo: photos.storyTeeModel, shape: "tall", tilt: 1.4, frame: "bg-lp-patch-indigo outline-lp-canvas/70" },
+  { id: "story-drop-shoulder", photo: photos.storyDropShoulder, shape: "hung", tilt: -1.6, frame: "bg-lp-patch-madder outline-lp-canvas/70", caption: { label: "Drop-shoulder", count: "18 items" } },
+  { id: "story-drop-shoulder-model", photo: photos.storyDropShoulderModel, shape: "tall", tilt: 1.8, frame: "bg-lp-patch-olive outline-lp-canvas/70" },
+  { id: "story-footwear", photo: photos.storyFootwear, shape: "short", tilt: -1.2, frame: "bg-lp-patch-terracotta outline-lp-ink/40", caption: { label: "Footwear", count: "12 items" } },
+];
+
+// The section intro set as a patchwork: each phrase is a cloth patch with an inset running stitch,
+// overlapping its neighbours at slight angles. Colours are theme tokens so both themes work.
+const patchwork = [
+  { text: "We create", className: "bg-lp-accent text-lp-ink -rotate-2" },
+  { text: "timeless clothing", className: "-ml-1.5 bg-lp-card text-lp-text rotate-1" },
+  { text: "that blends", className: "-mt-1 ml-2 bg-lp-spotlight text-lp-text rotate-2" },
+  { text: "heritage craft", className: "-mt-1.5 -ml-1 bg-lp-olive text-lp-ink -rotate-1" },
+  { text: "with everyday comfort.", className: "-mt-1 ml-5 bg-lp-deep text-lp-text rotate-1" },
 ];
 
 const collectionTabs = [
@@ -67,15 +82,31 @@ const collectionTabs = [
   { label: "Formal wear", href: "#item-suit" },
 ];
 
-// Desktop placement: tee r1c1, hoodie r1c3, suit r1c4, jacket r2c2, tote r3c1, editorial r2-r3/c3-c4.
-const collectionItems = [
-  { id: "item-tee", label: "Basic tee", price: "৳ 1,450", photo: photos.tees, place: "lg:col-start-1 lg:row-start-1", featured: false },
-  { id: "item-hoodie", label: "Crop hoodie", price: "৳ 3,200", photo: photos.hoodie, place: "lg:col-start-3 lg:row-start-1", featured: false },
-  { id: "item-suit", label: "Pinstripe suit", price: "৳ 3,850", photo: photos.suit, place: "lg:col-start-4 lg:row-start-1", featured: false },
-  { id: "item-jacket", label: "Leather jacket", price: "৳ 4,600", photo: photos.leatherJacket, place: "lg:col-start-2 lg:row-start-2", featured: false },
-  { id: "item-tote", label: "Canvas tote", price: "৳ 1,950", photo: photos.tote, place: "lg:col-start-1 lg:row-start-3", featured: false },
-  { id: "item-editorial", label: "Winter edit", price: "Shop", photo: photos.bucketHat, place: "col-span-2 lg:col-start-3 lg:row-start-2 lg:row-span-2", featured: true },
+// The collection is a brick wall in running bond. Desktop: six-column base, bricks two columns wide;
+// row 2 shifts by one column and is closed with cloth half-bricks (c1, c4); the featured edit is a
+// two-by-two stone at c5-6 / r2-3; a cloth call-to-action brick completes row 3. Mobile flows this
+// array in order on a four-column base (two bricks, then half + brick + half, ...). `place` holds
+// full class literals because Tailwind only sees complete strings.
+type Brick =
+  | { kind: "product"; id: string; label: string; price: string; photo: Photo; href: string; place: string; featured?: boolean }
+  | { kind: "cloth" | "cta"; id: string; cloth: string; place: string };
+
+const bricks: Brick[] = [
+  { kind: "product", id: "item-tee", label: "Basic tee", price: "৳ 1,450", photo: photos.tees, href: "/products/basic-tee", place: "col-span-2 lg:col-start-1 lg:row-start-1" },
+  { kind: "product", id: "item-hoodie", label: "Crop hoodie", price: "৳ 3,200", photo: photos.hoodie, href: "/products/crop-hoodie", place: "col-span-2 lg:col-start-3 lg:row-start-1" },
+  { kind: "cloth", id: "brick-half-1", cloth: "bg-lp-patch-madder outline-lp-canvas/60", place: "col-span-1 lg:col-start-1 lg:row-start-2" },
+  { kind: "product", id: "item-suit", label: "Pinstripe suit", price: "৳ 3,850", photo: photos.suit, href: "/products/pinstripe-suit", place: "col-span-2 lg:col-start-5 lg:row-start-1" },
+  { kind: "cloth", id: "brick-half-2", cloth: "bg-lp-patch-indigo outline-lp-canvas/60", place: "col-span-1 lg:col-start-4 lg:row-start-2" },
+  { kind: "product", id: "item-jacket", label: "Leather jacket", price: "৳ 4,600", photo: photos.leatherJacket, href: "/products/leather-jacket", place: "col-span-2 lg:col-start-2 lg:row-start-2" },
+  { kind: "product", id: "item-tote", label: "Canvas tote", price: "৳ 1,950", photo: photos.tote, href: "/products/canvas-tote", place: "col-span-2 lg:col-start-1 lg:row-start-3" },
+  { kind: "product", id: "item-editorial", label: "Life is short", price: "Story", photo: photos.lifeIsShort, href: "/products/life-is-short-tee", place: "col-span-4 lg:col-span-2 lg:col-start-5 lg:row-span-2 lg:row-start-2", featured: true },
+  { kind: "cloth", id: "brick-half-3", cloth: "bg-lp-patch-olive outline-lp-canvas/60", place: "col-span-1 lg:hidden" },
+  { kind: "cta", id: "brick-cta", cloth: "bg-lp-patch-mustard outline-lp-ink/40", place: "col-span-2 lg:col-start-3 lg:row-start-3" },
+  { kind: "cloth", id: "brick-half-4", cloth: "bg-lp-patch-terracotta outline-lp-ink/40", place: "col-span-1 lg:hidden" },
 ];
+
+// Cloth bricks: a patch colour with grain and an inset running stitch (the stitch colour rides in `cloth`).
+const clothBrick = "outline-1 outline-dashed -outline-offset-4 before:pointer-events-none before:absolute before:inset-0 before:lp-noise before:opacity-25 before:mix-blend-overlay before:content-['']";
 
 const values = [
   { icon: "comfort", title: "Everyday comfort", body: "Soft, breathable fabrics cut for heat, rain, and the long Dhaka day." },
@@ -111,36 +142,6 @@ const socials = [
   { icon: "linkedin", label: "LinkedIn" },
   { icon: "x", label: "X" },
 ] as const;
-
-const iconPaths = {
-  arrowRight: "M4 12h16M14 6l6 6-6 6",
-  arrowUpRight: "M7 17 17 7M8 7h9v9",
-  arrowDownRight: "M7 7l10 10M17 8v9H8",
-  arrowDownLeft: "M17 7 7 17M16 17H7V8",
-  arrowUpLeft: "M17 17 7 7M7 16V7h9",
-  chevronLeft: "M15 5l-7 7 7 7",
-  chevronRight: "M9 5l7 7-7 7",
-  plus: "M12 5v14M5 12h14",
-  bag: "M5 8h14l-1 13H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2",
-  comfort: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm-4 13c3-1 5-4 5-8m-2 11c3-2 5-5 5-9",
-  quality: "M3 18h18M4 18 3 7l5 4 4-6 4 6 5-4-1 11M8 14l2-2 2 2 2-2 2 2",
-  delivery: "M3 12l6-6 6 6-6 6-6-6Zm6 0 6-6 6 6-6 6",
-  timeless: "M12 3v8M7.5 5.5a8 8 0 1 0 9 0",
-  instagram: "M4 4h16v16H4zM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM16.5 7.5h.01",
-  facebook: "M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8Z",
-  linkedin: "M4 9h4v11H4zM6 4v2M10 9h4v2c1-1.5 2-2 3.5-2 2.5 0 3.5 1.8 3.5 4.5V20h-4v-6c0-1.2-.5-2-1.5-2S14 12.8 14 14v6h-4z",
-  x: "M4 4l16 16M20 4 4 20",
-};
-
-type IconName = keyof typeof iconPaths;
-
-function Icon({ name, className = "size-3.5" }: { name: IconName; className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} strokeLinejoin="miter" className={className} aria-hidden="true">
-      <path d={iconPaths[name]} />
-    </svg>
-  );
-}
 
 function Photo({ photo, sizes, priority, className = "" }: { photo: Photo; sizes: string; priority?: boolean; className?: string }) {
   return (
@@ -233,9 +234,24 @@ function Markers({ className }: { className: string }) {
 
 function SectionTitle({ id, children }: { id: string; children: ReactNode }) {
   return (
-    <h2 id={id} className="font-lp-display text-[clamp(1.4rem,2.45cqw,2.5rem)] leading-[1.15] tracking-[-.025em] text-lp-text uppercase">
+    <h2 id={id} className="lp-newsprint font-lp-display text-[clamp(1.4rem,2.45cqw,2.5rem)] leading-[1.15] tracking-[-.025em] text-lp-text uppercase">
       {children}
     </h2>
+  );
+}
+
+function Patchwork() {
+  return (
+    <p className="flex max-w-72 flex-wrap items-start text-[11px] leading-snug sm:max-w-80 sm:text-xs">
+      {patchwork.map((patch) => (
+        <span
+          key={patch.text}
+          className={`relative px-3 py-2 whitespace-nowrap outline-1 outline-dashed -outline-offset-4 outline-current/45 shadow-md shadow-black/30 group-data-[lp-theme=light]/theme:shadow-black/10 before:pointer-events-none before:absolute before:inset-0 before:lp-noise before:opacity-20 before:mix-blend-overlay before:content-[''] ${patch.className}`}
+        >
+          {patch.text}{" "}
+        </span>
+      ))}
+    </p>
   );
 }
 
@@ -255,34 +271,31 @@ export function LandingMain() {
       <main className="@container w-full overflow-hidden bg-lp-bg [&_:is(a,summary):focus-visible]:outline [&_:is(a,summary):focus-visible]:outline-offset-2 [&_:is(a,summary):focus-visible]:outline-lp-accent">
         <LandingHero />
 
-        {/* Categories */}
+        {/* Find your story */}
         <section id="categories" aria-labelledby="categories-title" className="scroll-mt-4 bg-lp-surface pt-[8.6%]">
-          <div className="lp-reveal flex flex-col justify-between gap-4 px-[3%] pb-[3%] sm:flex-row sm:items-end">
-            <SectionTitle id="categories-title">Browse<br />by category</SectionTitle>
-            <p className={`${bodyText} max-w-72`}>We create timeless clothing that blends heritage craft with everyday comfort.</p>
+          <div className="lp-reveal flex flex-col justify-between gap-6 px-[3%] pb-[3%] sm:flex-row sm:items-end">
+            <SectionTitle id="categories-title">Find<br />your story</SectionTitle>
+            <Patchwork />
           </div>
 
-          <ul className="grid grid-cols-2 items-start gap-4 border-t border-lp-border px-[3%] py-[2%] lg:grid-cols-4 lg:gap-x-[1.6%]">
-            {categories.map((category, index) => (
-              <li key={category.id} id={category.id} style={{ "--lp-stagger": index } as CSSProperties} className="lp-reveal lp-unveil group scroll-mt-4">
-                <a href="#collection" className="block">
-                  <div className={`relative overflow-hidden ${category.featured ? "aspect-[57/75]" : "aspect-[57/48]"}`}>
-                    <Photo photo={category.photo} sizes="(min-width: 1024px) 320px, 50vw" className={hoverImage} />
-                  </div>
-                  <div className="mt-2 flex items-center justify-between gap-2">
-                    <Label>{category.name}</Label>
-                    {category.featured ? <Icon name="arrowRight" /> : <Label tone="outline">{category.link}</Label>}
-                  </div>
-                  {category.featured && (
-                    <h3 className="mt-2 font-lp-display text-[clamp(1rem,1.8cqw,1.65rem)] leading-[1.15] uppercase">{category.name}</h3>
-                  )}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <StoryTiles
+            tiles={storyTiles.map((tile) => ({
+              id: tile.id,
+              shape: tile.shape,
+              tilt: tile.tilt,
+              frame: tile.frame,
+              caption: tile.caption && (
+                <div className="flex items-center justify-between gap-2">
+                  <Label>{tile.caption.label}</Label>
+                  <Label tone="outline">{tile.caption.count}</Label>
+                </div>
+              ),
+              image: <Photo photo={tile.photo} sizes="(min-width: 1024px) 20vw, 50vw" />,
+            }))}
+          />
 
           <div className="pb-[10%]">
-            <Rail href="#collection" first={`#${categories[0].id}`} last={`#${categories[categories.length - 1].id}`} label="category">
+            <Rail href="#collection" first={`#${storyTiles[0].id}`} last={`#${storyTiles[storyTiles.length - 1].id}`} label="category">
               Browse all
             </Rail>
           </div>
@@ -355,7 +368,6 @@ export function LandingMain() {
               <SectionTitle id="collection-title">Exclusive collections made<br className="hidden sm:block" /> for every moment</SectionTitle>
               <p className={`${bodyText} mt-3 max-w-md`}>Browse our curated collections of premium pieces designed for everyday style, comfort, and heritage.</p>
             </div>
-            <Button href="#journal">Browse more</Button>
           </div>
 
           <nav aria-label="Collection" className="mt-[4%] overflow-x-auto border-b border-lp-border px-[3%] [scrollbar-width:none]">
@@ -374,18 +386,40 @@ export function LandingMain() {
             </ul>
           </nav>
 
-          <ul className="mt-[2.5%] grid grid-cols-2 gap-4 px-[3%] lg:grid-cols-4 lg:gap-x-[1.6%] lg:gap-y-6">
-            {collectionItems.map((item, index) => (
-              <li key={item.id} id={item.id} style={{ "--lp-stagger": index % 3 } as CSSProperties} className={`lp-reveal lp-unveil group flex scroll-mt-4 flex-col ${item.place}`}>
-                <div className={`relative overflow-hidden bg-lp-surface ${item.featured ? "aspect-[4/5] lg:aspect-auto lg:flex-1" : "aspect-[57/81]"}`}>
-                  <Photo photo={item.photo} sizes={item.featured ? "(min-width: 1024px) 640px, 100vw" : "(min-width: 1024px) 320px, 50vw"} className={hoverImage} />
-                </div>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                  <Label>{item.label}</Label>
-                  <Label tone="text">{item.price}</Label>
-                </div>
-              </li>
-            ))}
+          <ul className="mt-[2.5%] grid grid-cols-4 gap-2 px-[3%] sm:gap-3 lg:grid-cols-6">
+            {bricks.map((brick, index) =>
+              brick.kind === "product" ? (
+                <li
+                  key={brick.id}
+                  id={brick.id}
+                  style={{ "--lp-stagger": index % 3 } as CSSProperties}
+                  className={`lp-reveal lp-unveil group relative scroll-mt-4 overflow-hidden bg-lp-surface ${brick.featured ? "aspect-[2/1] lg:aspect-auto" : "aspect-[5/4]"} ${brick.place}`}
+                >
+                  <Photo photo={brick.photo} sizes={brick.featured ? "(min-width: 1024px) 33vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className={hoverImage} />
+                  <div className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-2">
+                    <Label>{brick.label}</Label>
+                    <Label tone="text">{brick.price}</Label>
+                  </div>
+                  <Link href={brick.href} aria-label={`${brick.label}, ${brick.price}`} className="absolute inset-0 z-10" />
+                </li>
+              ) : brick.kind === "cta" ? (
+                <li key={brick.id} className={`lp-reveal relative flex aspect-[5/4] flex-col justify-between p-3 text-lp-ink sm:p-4 ${clothBrick} ${brick.cloth} ${brick.place}`}>
+                  <p className="relative text-[11px] leading-snug uppercase">
+                    New pieces
+                    <br />
+                    every month
+                  </p>
+                  <a
+                    href="#journal"
+                    className="relative inline-flex min-h-9 items-center justify-between gap-4 bg-lp-text px-3 text-[11px] font-medium tracking-wide text-lp-bg uppercase transition-colors hover:bg-lp-accent hover:text-lp-ink motion-reduce:transition-none"
+                  >
+                    Browse more <Icon name="arrowRight" />
+                  </a>
+                </li>
+              ) : (
+                <li key={brick.id} aria-hidden="true" className={`lp-fade relative ${clothBrick} ${brick.cloth} ${brick.place}`} />
+              ),
+            )}
           </ul>
         </section>
 

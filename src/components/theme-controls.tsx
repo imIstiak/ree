@@ -6,6 +6,7 @@ import { preloadSilkTransition, startSilkThemeTransition } from "./silk-theme-tr
 // The theme is scoped to a page wrapper rather than <html>, so each experience opts in.
 export const LANDING_ROOT_ID = "ree-landing";
 export const COMING_SOON_ROOT_ID = "ree-coming-soon";
+export const PRODUCT_ROOT_ID = "ree-product";
 const STORAGE_KEY = "ree-theme";
 const ATTRIBUTE = "data-lp-theme";
 

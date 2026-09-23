@@ -134,8 +134,9 @@
     {
       "id": "categories",
       "sourceBounds": [14, 174, 254, 186],
-      "layout": "four columns with the third card taller; split heading row; bottom browsing rail",
-      "desktopImageRatios": ["57/48", "57/48", "57/75", "57/48"],
+      "title": "Find your story",
+      "layout": "five columns alternating short / tall (product, worn, product, worn, footwear); the middle short tile hangs from the bottom of the row with its label above; intro copy set as stitched patchwork; split heading row; bottom browsing rail",
+      "desktopImageRatios": ["57/48", "57/75", "57/48", "57/75", "57/48"],
       "mobile": "two-column grid",
       "spacing": "8.6% top; 10% bottom"
     },
@@ -152,16 +153,18 @@
       "id": "collection",
       "sourceBounds": [14, 558, 254, 386],
       "title": "Exclusive collections made for every moment",
-      "layout": "four-column, three-row grid; intentional empty cells; featured image spans two columns and two rows",
+      "layout": "brick wall in running bond: six-column base, bricks two columns wide with 5:4 photos and labels overlaid; row 2 shifts by one column and is closed by cloth half-bricks; the Life is short story tee is a two-by-two stone on the right, linking to its story page; a cloth call-to-action brick completes row 3",
       "placement": {
-        "tee": "r1c1",
-        "hoodie": "r1c3",
-        "suit": "r1c4",
-        "jacket": "r2c2",
-        "tote": "r3c1",
-        "editorial": "r2-r3/c3-c4"
+        "tee": "r1c1-2",
+        "hoodie": "r1c3-4",
+        "suit": "r1c5-6",
+        "half-brick": "r2c1 and r2c4",
+        "jacket": "r2c2-3",
+        "editorial": "r2-r3/c5-c6",
+        "tote": "r3c1-2",
+        "cta": "r3c3-4"
       },
-      "mobile": "two-column flow; featured image spans both columns",
+      "mobile": "four-column base flowing in DOM order: two bricks, then half + brick + half; featured edit full width at 2:1; the call-to-action brick centred between half-bricks",
       "productCopy": "sample names and prices"
     },
     {

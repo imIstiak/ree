@@ -16,6 +16,7 @@ No test suite exists.
 
 - Next.js 16.3 (App Router, Turbopack), React 19.2, TypeScript strict
 - Tailwind CSS v4 via `@tailwindcss/postcss` (no `tailwind.config`; theme lives in CSS `@theme`)
+- `motion` 13 (Framer Motion's current package; import from `motion/react`) — used by `story-tiles.tsx` and the product pages; the landing page itself stays a server component
 - `lucide-react` 1.x — **has no brand icons** (Instagram, Facebook, etc.); draw those as inline SVG
 - Fonts through `next/font/google` only
 
@@ -25,6 +26,7 @@ No test suite exists.
 | --- | --- | --- |
 | `/` | `src/app/page.tsx` | `ComingSoon` (the user toggles between `ComingSoon` and `LandingMain` here by commenting lines — leave that choice alone unless asked) |
 | `/landing` | `src/app/landing/page.tsx` | `LandingMain`, kept as a preview route |
+| `/products/[slug]` | `src/app/products/[slug]/page.tsx` | One of two product-page templates, picked by `product.kind` (see **Product pages**); every slug in `src/data/products.ts` is prerendered |
 
 ## The two page experiences
 
@@ -37,15 +39,18 @@ No test suite exists.
 
 ### `src/components/landing-main.tsx` — editorial landing page (server component)
 - Sections: hero → categories → "designed for every style" → collection grid → about → journal → footer.
-- **Server component, minimal client JS by design**: menu is `<details>/<summary>`, rails and tabs are in-page anchor links. The only client island is the theme switch. Don't add hooks or `"use client"` to this file without being asked.
-- Styled with **Tailwind utilities** using `lp-*` tokens (`bg-lp-accent`, `text-lp-muted`, `font-lp-display`…) and utilities `lp-noise`, `lp-texture-text`, `lp-divider`, all defined at the bottom of `globals.css`.
+- The categories section (`#categories`, titled "Find your story") follows the user's hand-drawn sketch: five tiles alternating short / tall (T-shirt product, worn, drop-shoulder product, worn, footwear); the middle short tile hangs from the bottom of the row with its label above (`shape: "hung"` in `storyTiles`). Its intro copy is set as a patchwork of stitched cloth patches (`patchwork` + `Patchwork`), not a plain paragraph. The tiles themselves are rendered by `src/components/story-tiles.tsx` (client, Framer Motion): each image sits in a coloured cloth frame (`--color-lp-patch-*` tokens, `frame` class literals in `storyTiles`) with a running stitch, a resting `tilt`, a lift-and-straighten hover, and a staggered rise-in via `whileInView`; `MotionConfig reducedMotion="user"` covers reduced motion. They deliberately don't use the CSS `lp-reveal` / `lp-unveil` classes (transform conflict).
+- The collection section is a brick wall in running bond (`bricks` array: products, cloth half-bricks and a cloth call-to-action brick, in mobile DOM order with explicit `lg:` placement). Bricks are 5:4 with the label and price overlaid; the featured edit is a two-by-two stone. See the `collection` entry in `docs/landing-design-spec.json` for the cell map.
+- **Server component, minimal client JS by design**: menu is `<details>/<summary>`, rails and tabs are in-page anchor links. Client islands: the theme switch and `story-tiles.tsx` (the Find-your-story tiles, added at the user's request). Don't add hooks or `"use client"` to this file without being asked.
+- Styled with **Tailwind utilities** using `lp-*` tokens (`bg-lp-accent`, `text-lp-muted`, `font-lp-display`…) and utilities `lp-noise`, `lp-texture-text`, `lp-newsprint` (section headings: a grain + dot-screen `mask-image` so the page colour speckles through the ink; a mask, not a fill, so it follows the theme), `lp-divider`, all defined at the bottom of `globals.css`.
 - Uses `@container` + `cqw` units so type and the "REE" wordmarks scale with page width; layout is full-bleed (no outer padding / max-width — the user asked for that).
-- Fonts: Alfa Slab One + IBM Plex Mono, declared in the component and exposed through `@theme inline` (`--font-alfa-slab`, `--font-plex-mono`).
+- Fonts: Alfa Slab One + IBM Plex Mono, declared once in `src/components/landing-fonts.ts` (shared with the product pages) and exposed through `@theme inline` (`--font-alfa-slab`, `--font-plex-mono`; `--font-lp-serif` maps the root layout's Spectral for pull quotes).
 - Design references: `docs/landing-page-ui.png` (screenshot mockup) and `docs/landing-design-spec.json` (colors, typography, section ratios, grid placements).
 - Content (photos, categories, collection items, journal posts) lives in constants at the top of the file; the `Photo` type carries `objectPosition` for crops.
 
 ### `src/components/landing-hero.tsx` + `landing-hero.module.css` — landing hero (server component)
 - Written by the user against a 1840 × 1090 reference; styled with a **CSS module**, not Tailwind. Its colours are fixed (it does not follow the theme).
+- Header controls: menu and cart are small tilted yellow tiles (`--hero-tile` / `--hero-tile-ink`, the bag tile from the style section) carrying icons from `src/components/landing-icons.tsx` (hamburger ↔ close via `.menu[open]`, bag with a `.navCount` badge). They straighten on hover / open.
 - The photographs are a **CSS-only slideshow** - no `"use client"`. Every slide (the `slides` array, in the order they take the middle frame) is one full-screen photograph: a `.backdrop` layer shows it as the hero background, and the slide's card holds `.stageWindow`, a hero-sized box with a brightened copy of the same photograph. In the middle slot that copy lines up with the background, so the card reads as a bright cut-out the model steps out of; the thumbs are the same card scaled by `--thumb-scale`. Keep `.scene` / `.sceneImage` identical for both copies or the alignment breaks.
 - Each beat: right card slides into the middle while middle goes left and left fades out; the next slide's backdrop starts changing `backdropDelay` later (the user asked for the slide to lead and the two to run almost together) and by default finishes with the move -> then the card that left fades back in on the right. **Timing is the `timing` object at the top of the TSX** (`beat`, `move`, `backdropDelay`, `backdrop`, `fade`, in ms). `slideshowCss()` writes the `ree-hero-card-N` / `ree-hero-scene-N` keyframes from it into an inline `<style>`; the module only supplies `--hero-beat` / `--hero-loop` plumbing, slot geometry and the opening layout (`.atLeft` / `.atMiddle` / `.atRight` / `.waiting`). Only `transform` and `opacity` animate.
 - Backdrops never cross-fade both ways: the later one in the DOM paints on top, so the generator either fades the incoming one in over the old one or fades the old one out to reveal it.
@@ -69,6 +74,14 @@ No test suite exists.
 - One shared canvas/context for the page's lifetime (compiled at idle by `preloadSilkTransition`), capped at 1.6 MP. Fallbacks: no hardware WebGL or reduced motion → instant theme change; no View Transitions API → colours cross-fade while the cloth passes.
 - To look at it without a browser window: Brave is installed, and `--headless=new --remote-debugging-port=…` plus CDP `Page.captureScreenshot` captures mid-transition frames (plain `--screenshot` hangs).
 
+### Product pages — `src/app/products/[slug]` + `src/components/product-*.tsx`
+- **Two templates, one route.** `src/data/products.ts` is the catalogue (no backend); `kind: "classic"` renders `product-classic.tsx` (details, price, size, add to cart, gallery, after `docs/product-details.webp`), `kind: "story"` renders `product-story.tsx` (header film, prologue and facts strip, six illustrated chapters with specifics and a maker's voice, a field-to-street journey rail, an epilogue with sizes and the bag, quotes; after the flow of `docs/flower-ui.webp`). **The story page shows no price anywhere** (the user asked for the story instead): `PurchasePanel showPrice={false}` and `RelatedProducts showPrice={false}`; the bag panel still shows prices. Both are **client components by design** (Framer Motion via `motion/react`, size/gallery state); the route file stays a server component with `generateStaticParams` and `dynamicParams = false`.
+- **Shell:** `product-shell.tsx` is the page root: the scroll container (body scrolling is locked globally), the shop fonts, the theme scope (`PRODUCT_ROOT_ID`, shares the saved theme) and the dock. Its `ref` is what `useScroll({ container })` reads. The inner wrapper uses `overflow-x-clip`, not `overflow-hidden`, so sticky columns work.
+- **Chrome:** `shop-header.tsx` (menu + bag tiles like the hero header, go back, wishlist; the bag and wishlist panels read `shop-store.ts`, a localStorage store under `ree-shop` exposed as `useShop()`), `purchase-panel.tsx` (size pills, size chart, add to cart, wishlist) and `shop-ui.tsx` (hook-free bits: `Tag`, `Price`, `ProductCard`, `RelatedProducts`, `ShopFooter`, the `cloth` patch classes).
+- **Illustrations:** `story-illustrations.tsx` holds the chapter drawings as path data on a 240-unit grid (icon-set style, 1.25 stroke); each path draws itself with `pathLength` on `whileInView`. Add a drawing there and name it in `IllustrationName` (in the data file).
+- **The film:** `public/products/life-is-short-film.mp4` + poster are real footage (a Pexels clip of Dhaka at night, slowed and looped with ffmpeg; provenance and the exact command in `docs/product-image-credits.md`). It is a placeholder for the brand's own film: replace the file at the same path. The `<video>` sets `muted` through a ref because React does not write the attribute, and reduced motion swaps it for the poster. The user asked for real footage here, not a slideshow of stills.
+- **Photos:** `public/products/` holds the brand's own campaign photographs (provenance in `docs/product-image-credits.md`), not Unsplash. The landing's collection bricks link to these pages; the wall's feature stone is the story tee.
+
 ### Theming rules
 - Landing: `[data-lp-theme="light"]` overrides the `--color-lp-*` tokens. Use tokens, not hex/black:
   - `text-lp-ink` for text on accent (yellow) fills — dark in both themes; `text-lp-bg` only on inverted `bg-lp-text` surfaces.
@@ -89,7 +102,7 @@ No test suite exists.
 - CSS Modules reject bare attribute selectors (`[data-x]`); scope under a class.
 - The Tailwind dev process caches class candidates. If a build error references a class/asset no file contains anymore (e.g. `./assets/wordmark-texture.webp`), restart the dev server and delete `.next/dev`; `next build` will confirm the source is clean.
 - `next/image` in Next 16 only allows `quality` values listed in `images.qualities` (default `[75]`); `next.config.ts` is empty.
-- Tailwind only sees complete class strings — keep conditional classes as full literals (see `collectionItems[].place`, `journalPosts[].offset`).
+- Tailwind only sees complete class strings — keep conditional classes as full literals (see `bricks[].place`, `journalPosts[].offset`).
 - `tsconfig` path alias `@/*` maps to the repo root, not `src/`; existing code uses relative imports.
 
 ## Images
@@ -99,9 +112,11 @@ No test suite exists.
 - `public/` holds only images the site actually references; unused files were removed. Before adding one, check it is used, and delete it again if the reference goes away.
 - `public/landing/campaign-*.webp` are locally generated hero images, not Unsplash; their provenance is in `docs/landing-hero-assets.md`. Edit the lossless landscape masters in `assets/hero/` and re-run `node scripts/build-hero-backdrops.mjs`. The original portraits are retained only as references.
 - `public/ree-mark.svg` is the brand mark (also the favicon via `layout.tsx` metadata).
+- `public/products/` holds the brand's own photographs and the generated story film; provenance in `docs/product-image-credits.md`.
 
 ## Conventions
 
 - Match surrounding style: data arrays at the top of a component, small local helper components, descriptive `alt` text, `aria-hidden` on decorative layers.
+- Line icons live in `src/components/landing-icons.tsx` (`iconPaths` + `Icon`: 24-unit grid, 1px stroke, mitre joins), shared by the landing page, the hero header and the product pages. Add new icons there in the same style.
 - Respect `prefers-reduced-motion` for any new animation.
 - Currency is shown as `৳`; the brand is written `ঋ - Ree` in copy and `ঋ-Ree` in wordmarks.

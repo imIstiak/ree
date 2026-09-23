@@ -332,6 +332,12 @@
   --color-lp-card: #2a1a14;
   --color-lp-deep: #1d0806;
   --color-lp-deep-top: #3a0f0b;
+  /* Cloth colours for the story-tile patches (kantha palette); the same in both themes. */
+  --color-lp-patch-mustard: #d4a52a;
+  --color-lp-patch-madder: #b4402c;
+  --color-lp-patch-indigo: #2f4d78;
+  --color-lp-patch-olive: #6d7a3c;
+  --color-lp-patch-terracotta: #c8744a;
 }
 
 /* Light theme for the landing page; toggled by LandingThemeToggle on the page wrapper. */
@@ -353,6 +359,7 @@
 @theme inline {
   --font-lp-display: var(--font-alfa-slab), Georgia, serif;
   --font-lp-mono: var(--font-plex-mono), "Courier New", monospace;
+  --font-lp-serif: var(--font-serif), Georgia, serif;
 }
 
 @utility lp-noise {
@@ -377,6 +384,18 @@
   background-image:
     url("data:image/svg+xml,%3Csvg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
     linear-gradient(115deg, #59544c, #2f2a24 45%, #6b655b 60%, #3a352e);
+}
+
+/* Newsprint headings: the glyphs are masked by paper grain and a faint dot screen, so the page
+   colour speckles through like uneven ink. A mask (not a background fill) keeps the text colour
+   theme-driven, so it reads as black ink on paper in light mode and reversed-out type in dark. */
+@utility lp-newsprint {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 .2 .7 .92 1 1 1 1 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"), radial-gradient(circle, #000 0 40%, rgb(0 0 0 / 82%) 100%);
+  -webkit-mask-size: 160px 160px, 3px 3px;
+  -webkit-mask-composite: source-in;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 .2 .7 .92 1 1 1 1 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"), radial-gradient(circle, #000 0 40%, rgb(0 0 0 / 82%) 100%);
+  mask-size: 160px 160px, 3px 3px;
+  mask-composite: intersect;
 }
 
 @utility lp-divider {

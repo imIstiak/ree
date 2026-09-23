@@ -1,6 +1,9 @@
 .hero {
   --hero-cream: #fffdf3;
   --hero-yellow: #f5ed9e;
+  /* The header's menu and cart tiles: the yellow bag tile from the style section. */
+  --hero-tile: #e6d21f;
+  --hero-tile-ink: #3a3000;
   /* Slideshow geometry, as unitless % of the hero box. The frame is the middle slot;
      the thumbs are the same card scaled down, so they share its proportions. */
   --frame-x: 41.25;
@@ -93,33 +96,51 @@
 
 .menu, .cart { position: relative; }
 
+/* Menu and cart are small tilted tiles carrying a line icon; hover and open straighten them. */
 .navLabel {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
+  --tilt: 0deg;
+  display: grid;
+  place-items: center;
   position: relative;
+  width: clamp(44px, 2.72cqw, 56px);
+  aspect-ratio: 1;
   list-style: none;
   cursor: pointer;
-  padding-inline: .72cqw;
-  font-size: clamp(12px, 1.13cqw, 23px);
-  font-weight: 500;
-  line-height: 1.2;
-  color: #241b09;
+  color: var(--hero-tile-ink);
+  background: var(--hero-tile);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 28%);
+  transform: rotate(var(--tilt));
+  transition: background-color 180ms ease, transform 220ms ease;
 }
 
-.navLabel::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 50% 0 auto;
-  height: 1.24em;
-  transform: translateY(-50%);
-  background: var(--hero-yellow);
-  transition: background-color 180ms ease;
-}
-
+.menu .navLabel { --tilt: -4deg; }
+.cart .navLabel { --tilt: 4deg; }
 .navLabel::-webkit-details-marker { display: none; }
-.navLabel:hover::before { background: var(--hero-cream); }
+.navLabel:hover, .menu[open] .navLabel, .cart[open] .navLabel { background: var(--hero-cream); transform: none; }
+
+.navIcon { grid-area: 1 / 1; width: 50%; height: 50%; }
+.navIconOpen { display: none; }
+.menu[open] .navIconClosed { display: none; }
+.menu[open] .navIconOpen { display: block; }
+
+.navCount {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--hero-cream);
+  background: #240c06;
+  border: 1px solid rgb(245 237 158 / 30%);
+}
+
+.panelIcon { width: 14px; height: 14px; }
 
 .brand {
   position: absolute;
@@ -296,7 +317,6 @@
     --thumb-right-x: 75;
   }
   .navigation { top: 18px; inset-inline: 20px; }
-  .navLabel { padding-inline: 8px; font-size: 12px; }
   .brand { top: 8px; font-size: clamp(23px, 5.9vw, 38px); }
   .wordmark { top: 76px; height: 16%; width: 160%; left: -30%; opacity: .46; }
   .shade { background: linear-gradient(180deg, rgb(28 5 0 / 15%) 45%, transparent 58%, rgb(22 4 0 / 65%) 100%); }
@@ -318,5 +338,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .slide, .backdrop { animation: none; }
-  .navLabel::before, .categories a { transition: none; }
+  .navLabel, .categories a { transition: none; }
 }

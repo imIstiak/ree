@@ -4,6 +4,7 @@ import campaignStage from "../../public/landing/campaign-stage.webp";
 import campaignLounge from "../../public/landing/campaign-lounge-wide.webp";
 import campaignStairs from "../../public/landing/campaign-stairs-wide.webp";
 import styles from "./landing-hero.module.css";
+import { Icon } from "./landing-icons";
 
 const menuLinks = [
   { label: "Categories", href: "#categories" },
@@ -180,7 +181,10 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
 
       <nav className={styles.navigation} aria-label="Primary">
         <details className={styles.menu}>
-          <summary className={styles.navLabel}>Menu</summary>
+          <summary className={styles.navLabel} aria-label="Menu">
+            <Icon name="menu" className={`${styles.navIcon} ${styles.navIconClosed}`} />
+            <Icon name="x" className={`${styles.navIcon} ${styles.navIconOpen}`} />
+          </summary>
           <div className={styles.menuPanel}>
             <ul>
               {menuLinks.map((link) => (
@@ -199,10 +203,13 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
         <a className={styles.brand} href="#top" aria-label="REÉ home">REÉ</a>
 
         <details className={styles.cart}>
-          <summary className={styles.navLabel}>Cart (0)</summary>
+          <summary className={styles.navLabel} aria-label="Cart, 0 items">
+            <Icon name="bag" className={styles.navIcon} />
+            <span className={styles.navCount} aria-hidden="true">0</span>
+          </summary>
           <div className={styles.cartPanel}>
             <p>Your bag is empty.</p>
-            <a href="#collection">Explore the collection <span aria-hidden="true">↗</span></a>
+            <a href="#collection">Explore the collection <Icon name="arrowUpRight" className={styles.panelIcon} /></a>
           </div>
         </details>
       </nav>
