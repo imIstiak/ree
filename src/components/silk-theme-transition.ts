@@ -39,7 +39,7 @@ uniform float uSlope; // seam slope in CSS px space (y down)
 uniform float uSeam;  // seam intercept, CSS px
 uniform float uLen;   // reference length, CSS px
 uniform float uTime;  // seconds
-uniform float uTone;  // 0 = ivory silk, 1 = dark silk
+uniform float uTone;  // 0 = silk in the logo's base colour (to light), 1 = deep emerald satin (to dark)
 
 const float FRONT = ${FRONT.toFixed(3)};
 const float BACK = ${BACK.toFixed(3)};
@@ -128,9 +128,13 @@ void main() {
   float rim = pow(1.0 - n.z, 1.5);
   float valley = smoothstep(-1.7, 0.9, h);
 
-  vec3 base = mix(vec3(0.90, 0.82, 0.68), vec3(0.23, 0.085, 0.075), uTone);
-  vec3 deep = mix(vec3(0.36, 0.26, 0.18), vec3(0.022, 0.010, 0.014), uTone);
-  vec3 spec = mix(vec3(1.0, 0.97, 0.91), vec3(1.0, 0.83, 0.60), uTone);
+  // The logo's colours (public/ree-logo.svg): the lit cloth is its base, #ffe7cc, going to the
+  // light theme and a deep take on its emerald, #00664f, going to dark. deep is the colour in
+  // the folds and spec the highlight.
+  // The light base is pushed past #ffe7cc because shoulder() rolls the brightest red off.
+  vec3 base = mix(vec3(1.08, 0.94, 0.82), vec3(0.0, 0.36, 0.27), uTone);
+  vec3 deep = mix(vec3(0.74, 0.60, 0.48), vec3(0.0, 0.035, 0.028), uTone);
+  vec3 spec = mix(vec3(1.0, 0.98, 0.94), vec3(0.80, 1.0, 0.90), uTone);
   vec3 col = mix(deep, base, diff * mix(0.58, 1.0, valley));
   col += spec * (0.10 * sheen + 0.56 * glint + 0.20 * streak * diff);
   col += spec * rim * mix(0.08, 0.13, uTone);
@@ -143,11 +147,12 @@ void main() {
   col += (hash(gl_FragCoord.xy) - 0.5) * 0.012;
 
   // Opaque over the theme seam (a = 0), sheer toward both hems. Tilted cloth packs
-  // more thread per pixel, so folds read denser than flat areas. The dark silk stays
-  // denser overall: sheer black over a light page only looks grey.
+  // more thread per pixel, so folds read denser than flat areas. Both silks stay fairly
+  // dense: sheer emerald over a light page only looks grey, and sheer cream over the dark
+  // page turns tan and stops reading as the logo's base colour.
   float solid = 1.0 - smoothstep(0.07, 0.23, abs(a));
   float cover = smoothstep(0.0, aa, edge);
-  float alpha = clamp(mix(mix(0.56, 0.88, uTone), 1.0, solid) + 0.55 * rim + 0.3 * hem, 0.0, 1.0) * cover;
+  float alpha = clamp(mix(mix(0.82, 0.88, uTone), 1.0, solid) + 0.55 * rim + 0.3 * hem, 0.0, 1.0) * cover;
   // Soft shadow the cloth throws on the page just outside its hems.
   float shadow = 0.24 * smoothstep(0.05, 0.0, -edge) * (1.0 - cover);
   gl_FragColor = vec4(clamp(col, 0.0, 1.0) * alpha, alpha + shadow);

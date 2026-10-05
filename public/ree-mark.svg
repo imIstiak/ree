@@ -1,7 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 325 326" role="img" aria-labelledby="title">
-  <title id="title">ঋ - Ree</title>
-  <path fill="#E8B86A" d="M27 81 79 28v53H27Z"/>
-  <path fill="#C96F4A" d="M0 158 158 0v158H0Z"/>
-  <path fill="#537862" d="M166 167h159L166 326V167Z"/>
-  <path fill="#A9BE87" d="M246 246h51l-51 51v-51Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="title">
+  <title id="title">REE</title>
+      <rect width="200" height="200" rx="6" fill="#ffe7cc"/>
+      <g fill="#00664f">
+        <path d="M53 30c0 12-6 18-18 18 12 0 18 6 18 18 0-12 6-18 18-18-12 0-18-6-18-18Z"/>
+        <path d="M97 36C81 62 62 81 40 96c-4 2-4 6 0 8 23 15 42 36 57 60 10-21 10-39 2-57-13-26-13-47-2-71Z"/>
+        <path d="M103 36c16 26 35 45 57 60 4 2 4 6 0 8-23 15-42 36-57 60 12-23 12-41 3-61-13-26-14-45-3-67Z"/>
+      </g>
 </svg>

@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { MotionConfig, motion, useReducedMotion, useScroll, useSpring, useTransform, type Variants } from "motion/react";
-import { useRef, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import type { Product, ProductImage, StoryChapter } from "../data/products";
 import { Icon } from "./landing-icons";
 import { ProductShell } from "./product-shell";
 import { PurchasePanel } from "./purchase-panel";
-import { ShopHeader } from "./shop-header";
-import { RelatedProducts, ShopFooter, cloth, kicker } from "./shop-ui";
+import { RelatedProducts, ShopFooter, cloth, kicker, pageHeader } from "./shop-ui";
+import { SiteHeader } from "./site-header";
 import { Illustration } from "./story-illustrations";
 
 // The premium, story-led product page: a header film, a prologue, six illustrated chapters that
@@ -54,7 +54,9 @@ export function ProductStory({ product, related }: { product: Product; related: 
         {/* Header: the film plays behind the title; the copy drifts and fades as it scrolls away. */}
         <section ref={heroRef} className="relative isolate flex h-svh min-h-[640px] flex-col overflow-hidden">
           <motion.div style={{ scale: reduce ? 1 : filmScale }} className="absolute inset-0 -z-20" aria-hidden="true">
-            {reduce ? (
+            {film.youtube ? (
+              <FilmEmbed id={film.youtube} still={reduce} />
+            ) : reduce ? (
               <Image src={film.poster} alt="" fill priority sizes="100vw" className="object-cover" />
             ) : (
               <video
@@ -82,7 +84,7 @@ export function ProductStory({ product, related }: { product: Product; related: 
             aria-hidden="true"
           />
           <div className="absolute inset-0 -z-10 lp-noise opacity-20 mix-blend-overlay" aria-hidden="true" />
-          <ShopHeader />
+          <SiteHeader base="/landing" overMedia className={pageHeader} />
           <motion.div style={{ y: heroY, opacity: heroFade }} className="mt-auto grid gap-6 px-[3%] pb-[9%] lg:grid-cols-[1.4fr_1fr] lg:items-end">
             <div>
               <p className={kicker}>Story No. 01 · {product.category}</p>
@@ -131,7 +133,7 @@ export function ProductStory({ product, related }: { product: Product; related: 
           <Chapter key={chapter.title} chapter={chapter} index={index} photo={product.images[chapter.photo] ?? product.images[0]} />
         ))}
 
-        <PhotoStrip container={scrollRef} photos={[product.images[6], product.images[8], product.images[1]]} />
+        <PhotoStrip container={scrollRef} photos={[product.images[6], product.images[8], product.images[1]]} palette={3} />
         <Journey steps={story.journey} />
 
         {/* Epilogue: sizes and the bag over the back-print photograph, with no price. */}
@@ -208,12 +210,13 @@ function Chapter({ chapter, index, photo }: { chapter: StoryChapter; index: numb
       </span>
       <motion.div variants={group} initial="hidden" whileInView="visible" viewport={inView} className="relative grid items-center gap-12 lg:grid-cols-12 lg:gap-6">
         <motion.div variants={rise} className={`relative lg:col-span-5 ${flip ? "lg:order-2 lg:col-start-8" : ""}`}>
-          <div className={`relative bg-lp-card p-6 text-lp-text outline-lp-border sm:p-10 ${cloth} ${flip ? "rotate-1" : "-rotate-1"}`}>
+          {/* The logo's emerald with the drawing in the logo's base colour; fixed, so it reads the same in both themes. */}
+          <div className={`relative bg-lp-brand p-6 text-lp-brand-base outline-lp-brand-base/40 sm:p-10 ${cloth} ${flip ? "rotate-1" : "-rotate-1"}`}>
             <Illustration name={chapter.illustration} className="relative mx-auto w-full max-w-sm" />
           </div>
           <motion.div
             variants={rise}
-            className={`absolute -bottom-8 w-[34%] border-[6px] border-lp-card bg-lp-card shadow-xl shadow-black/40 group-data-[lp-theme=light]/theme:shadow-black/15 ${flip ? "-left-3 -rotate-3" : "-right-3 rotate-3"}`}
+            className={`absolute -bottom-8 w-[34%] border-[6px] border-lp-brand-base bg-lp-brand-base shadow-xl shadow-black/40 group-data-[lp-theme=light]/theme:shadow-black/15 ${flip ? "-left-3 -rotate-3" : "-right-3 rotate-3"}`}
           >
             <div className="relative aspect-[3/4] overflow-hidden">
               <Image src={photo.src} alt={photo.alt} fill sizes="(min-width: 1024px) 14vw, 30vw" className="object-cover" style={{ objectPosition: photo.position }} />
@@ -257,6 +260,57 @@ function Chapter({ chapter, index, photo }: { chapter: StoryChapter; index: numb
   );
 }
 
+// A YouTube film as the header background, played by YouTube's own embedded player (the video is
+// not copied or re-hosted): muted, looping, no controls, sized like `object-fit: cover` and a third
+// larger than the frame so the player's title bar and logo fall outside it. The video's thumbnail
+// shows until the player reports that it is playing, and is all that shows under reduced motion.
+function FilmEmbed({ id, still }: { id: string; still: boolean }) {
+  const frame = useRef<HTMLIFrameElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  // The player only talks to its host page once it has been greeted, so keep saying hello until
+  // it answers; state 1 in its messages means "playing".
+  useEffect(() => {
+    if (still) return;
+    const greet = () => frame.current?.contentWindow?.postMessage(JSON.stringify({ event: "listening", id: 1, channel: "widget" }), "*");
+    const greeting = window.setInterval(greet, 400);
+    const stop = window.setTimeout(() => window.clearInterval(greeting), 20000);
+    const onMessage = (event: MessageEvent) => {
+      if (event.source !== frame.current?.contentWindow || typeof event.data !== "string") return;
+      window.clearInterval(greeting);
+      try {
+        const data = JSON.parse(event.data) as { event?: string; info?: { playerState?: number } | number | null };
+        const state = typeof data.info === "number" ? data.info : data.info?.playerState;
+        if (state === 1) setPlaying(true);
+      } catch {
+        // Not one of the player's JSON messages.
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => {
+      window.clearInterval(greeting);
+      window.clearTimeout(stop);
+      window.removeEventListener("message", onMessage);
+    };
+  }, [still]);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-black bg-cover bg-center [container-type:size]" style={{ backgroundImage: `url(https://i.ytimg.com/vi/${id}/maxresdefault.jpg)` }}>
+      {!still && (
+        <iframe
+          ref={frame}
+          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&disablekb=1&fs=0&iv_load_policy=3&playsinline=1&rel=0&enablejsapi=1`}
+          title="Background film"
+          tabIndex={-1}
+          allow="autoplay; encrypted-media"
+          referrerPolicy="strict-origin-when-cross-origin"
+          className={`pointer-events-none absolute top-1/2 left-1/2 h-[max(133cqh,74.8cqw)] w-[max(133cqw,236.5cqh)] -translate-x-1/2 -translate-y-1/2 border-0 transition-opacity duration-700 ${playing ? "opacity-100" : "opacity-0"}`}
+        />
+      )}
+    </div>
+  );
+}
+
 // The making, from field to street, on a running-stitch rail that stitches itself in.
 function Journey({ steps }: { steps: string[] }) {
   return (
@@ -288,16 +342,33 @@ function Journey({ steps }: { steps: string[] }) {
 }
 
 // Three photographs that drift at different speeds while they cross the viewport.
-function PhotoStrip({ container, photos }: { container: Container; photos: ProductImage[] }) {
+// Cloth frames for the photo strips: a patch colour and the colour its running stitch is sewn in.
+const stripCloth = [
+  "bg-lp-patch-mustard text-lp-ink",
+  "bg-lp-patch-indigo text-lp-canvas",
+  "bg-lp-patch-madder text-lp-canvas",
+  "bg-lp-patch-olive text-lp-canvas",
+  "bg-lp-patch-terracotta text-lp-ink",
+];
+
+// Three photographs drifting at different speeds, each a cloth patch with a stitched edge. They sit
+// square on purpose (the user asked for no tilt here); `palette` picks where in `stripCloth` to start.
+function PhotoStrip({ container, photos, palette = 0 }: { container: Container; photos: ProductImage[]; palette?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ container, target: ref, offset: ["start end", "end start"] });
   const fast = useTransform(scrollYProgress, [0, 1], [70, -70]);
   const slow = useTransform(scrollYProgress, [0, 1], [30, -30]);
   return (
-    <div ref={ref} className="grid grid-cols-3 items-start gap-3 px-[3%] py-[4%]">
+    <div ref={ref} className="grid grid-cols-3 items-start gap-3 px-[3%] py-[4%] sm:gap-4">
       {photos.map((photo, i) => (
-        <motion.div key={photo.src} style={{ y: i === 1 ? slow : fast }} className={`relative aspect-[3/4] overflow-hidden bg-lp-surface ${i === 1 ? "mt-[12%]" : ""}`}>
-          <Image src={photo.src} alt={photo.alt} fill sizes="33vw" className="object-cover" style={{ objectPosition: photo.position }} />
+        <motion.div
+          key={photo.src}
+          style={{ y: i === 1 ? slow : fast }}
+          className={`lp-patch p-2 shadow-lg shadow-black/40 group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-3 sm:[--lp-stitch-inset:6px] ${stripCloth[(palette + i) % stripCloth.length]} ${i === 1 ? "mt-[12%]" : ""}`}
+        >
+          <div className="relative aspect-[3/4] overflow-hidden bg-lp-surface">
+            <Image src={photo.src} alt={photo.alt} fill sizes="33vw" className="object-cover" style={{ objectPosition: photo.position }} />
+          </div>
         </motion.div>
       ))}
     </div>

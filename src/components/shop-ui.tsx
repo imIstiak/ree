@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { BrandLogo } from "./brand-logo";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { formatPrice, type Product } from "../data/products";
@@ -20,6 +21,10 @@ export const cloth =
   "outline-1 outline-dashed -outline-offset-4 before:pointer-events-none before:absolute before:inset-0 before:lp-noise before:opacity-20 before:mix-blend-overlay before:content-['']";
 
 export const kicker = "text-[11px] tracking-[.14em] text-lp-muted uppercase";
+
+// Where the shared site header sits on a product page: the landing hero's insets, in flow, tall
+// enough to clear the centred logo.
+export const pageHeader = "relative z-20 mx-[2.72%] mt-[1.57cqw] min-h-24 max-md:mx-5 max-md:mt-[18px]";
 
 export function Price({ product, className = "" }: { product: Product; className?: string }) {
   return (
@@ -88,7 +93,10 @@ export function ShopFooter() {
   return (
     <footer className="border-t border-lp-border px-[3%] py-8 text-[11px] tracking-[.1em] text-lp-muted uppercase">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <span>ঋ - Ree · Not everything old belongs in the past</span>
+        <div className="flex items-center gap-4">
+          <Link href="/landing" aria-label="REE home"><BrandLogo className="w-12" decorative /></Link>
+          <span>Not everything old belongs in the past</span>
+        </div>
         <nav aria-label="Shop" className="flex gap-5">
           <Link href="/landing" className="hover:text-lp-text">Home</Link>
           <Link href="/landing#collection" className="hover:text-lp-text">Collections</Link>

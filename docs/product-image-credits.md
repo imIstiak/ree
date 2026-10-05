@@ -21,6 +21,14 @@ jacket, canvas tote) reuse their Unsplash photographs from `public/landing/`.
 
 ## The header film
 
+The story page currently plays **"Clothing commercial video | Jacferdi | Fujifilm X-T3" by kiransahu films**
+(https://www.youtube.com/watch?v=flFETfq__p4), chosen by the brand owner, through YouTube's embedded player
+(`film.youtube` in `src/data/products.ts`). It is embedded, not downloaded or re-hosted: the footage belongs to its
+makers and shows another label's clothes, so it is a placeholder for the brand's own film, and the live site needs
+either that film or the owner's permission. Removing `film.youtube` falls back to the self-hosted clip below.
+
+### Self-hosted fallback
+
 `life-is-short-film.mp4` (H.264, 1280 × 720, 25 fps, 14 s, about 2 MB) and its poster `life-is-short-film.jpg`
 are real footage: **"Dhaka at night" by Ferdous Hasan on Pexels** (https://www.pexels.com/video/dhaka-at-night-26147899/),
 used under the [Pexels License](https://www.pexels.com/license/) (free for commercial use, no attribution required).

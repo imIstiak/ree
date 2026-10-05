@@ -1,0 +1,190 @@
+/* The site's one header (site-header.tsx): menu tile, brand, bag tile. Its colours are fixed; it
+   does not follow the theme, apart from the logo. The caller positions `.bar` (the landing hero
+   absolutely, the product pages in flow), so this module sets no `position` on it; whatever the
+   caller uses must make it a containing block for the centred brand. */
+.bar {
+  --header-cream: #fffdf3;
+  /* The menu and bag tiles: the yellow bag tile from the landing page's style section. */
+  --header-tile: #e6d21f;
+  --header-tile-ink: #3a3000;
+  /* Patchwork: cloth grain laid over a patch's fill, and the ink its running stitch is sewn in. */
+  --header-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 .32'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --header-patch-ink: #2a1408;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.menu, .cart { position: relative; }
+
+/* Menu and cart are small tilted tiles carrying a line icon; hover and open straighten them. */
+.navLabel {
+  --tilt: 0deg;
+  display: grid;
+  place-items: center;
+  position: relative;
+  width: clamp(44px, 2.72cqw, 56px);
+  aspect-ratio: 1;
+  list-style: none;
+  cursor: pointer;
+  color: var(--header-tile-ink);
+  background: var(--header-tile) var(--header-grain) 0 0 / 120px 120px;
+  background-blend-mode: overlay;
+  outline: 1px dashed color-mix(in oklab, currentColor 60%, transparent);
+  outline-offset: -5px;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 28%);
+  transform: rotate(var(--tilt));
+  transition: background-color 180ms ease, transform 220ms ease;
+}
+
+.menu .navLabel { --tilt: -4deg; }
+.cart .navLabel { --tilt: 4deg; }
+.navLabel::-webkit-details-marker { display: none; }
+.navLabel:hover, .menu[open] .navLabel, .cart[open] .navLabel { background-color: var(--header-cream); transform: none; }
+
+.navIcon { grid-area: 1 / 1; width: 50%; height: 50%; }
+.navIconOpen { display: none; }
+.menu[open] .navIconClosed { display: none; }
+.menu[open] .navIconOpen { display: block; }
+
+.navCount {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--header-cream);
+  background: #240c06;
+  border: 1px solid rgb(245 237 158 / 30%);
+}
+
+.panelIcon { width: 14px; height: 14px; }
+
+.brand {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(44px, 4cqw, 64px);
+}
+
+/* The logo follows the theme (see .ree-logo in globals.css) unless it sits over a photograph or film. */
+.brand svg { width: 100%; }
+.overMedia .brand svg { color: #ffe7cc; }
+
+/* The panels are light patchwork: a canvas backing with a running stitch inside its edge, resting
+   at a slight tilt, and every link a lighter cloth patch sewn onto it. Each one comes out of its
+   own side of the window as it opens (the menu from beyond the left edge, the bag from beyond
+   the right; `--panel-from` / `--panel-lean`), leaning as it travels. They leave the same way,
+   played backwards: hover-details.tsx sets `data-closing` when the tile is pressed or the mouse
+   has been away for 0.6 s, and shuts the <details> once the exit animations below have finished. */
+.menuPanel, .cartPanel {
+  position: absolute;
+  top: calc(100% + 12px);
+  width: 260px;
+  padding: 16px;
+  color: var(--header-patch-ink);
+  background: #e9dfc4 var(--header-grain) 0 0 / 120px 120px;
+  background-blend-mode: overlay;
+  outline: 1px dashed rgb(42 20 8 / 55%);
+  outline-offset: -6px;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 35%);
+  font-size: 13px;
+  transform: rotate(var(--panel-tilt));
+}
+
+.menuPanel { --panel-tilt: -1.5deg; --panel-from: -130%; --panel-lean: -9deg; left: 0; transform-origin: top left; }
+.menuPanel ul { display: grid; gap: 7px; }
+.menuPanel a, .cartPanel a {
+  background: var(--patch, var(--header-cream)) var(--header-grain) 0 0 / 120px 120px;
+  background-blend-mode: overlay;
+  outline: 1px dashed rgb(42 20 8 / 45%);
+  outline-offset: -4px;
+  box-shadow: 0 2px 6px rgb(42 20 8 / 20%);
+  transform: rotate(var(--tilt, 0deg));
+  transition: background-color 180ms ease, transform 220ms ease;
+}
+.menuPanel a { display: block; padding: 13px 16px; }
+.menuPanel li:nth-child(5n + 1) { --i: 0; --patch: #fffdf3; --tilt: -1.2deg; }
+.menuPanel li:nth-child(5n + 2) { --i: 1; --patch: #f5ed9e; --tilt: .9deg; }
+.menuPanel li:nth-child(5n + 3) { --i: 2; --patch: #f1d9bd; --tilt: -.7deg; }
+.menuPanel li:nth-child(5n + 4) { --i: 3; --patch: #dfe3bd; --tilt: 1.3deg; }
+.menuPanel li:nth-child(5n + 5) { --i: 4; --patch: #f6e0d6; --tilt: -1deg; }
+.menuPanel a:hover, .cartPanel a:hover { background-color: var(--header-tile); transform: translateX(-4px) rotate(0deg); }
+.menuSettings { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 8px 0; border-top: 1px dashed rgb(42 20 8 / 45%); }
+.cartPanel { --panel-tilt: 1.5deg; --panel-from: 130%; --panel-lean: 9deg; right: 0; width: 288px; transform-origin: top right; }
+.empty { margin: 6px 4px 16px; }
+.panelLink { --patch: #f5ed9e; --tilt: -1deg; display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding-inline: 16px; font-size: 12px; }
+
+/* The bag's lines and the saved pieces: one patch per piece, the remove button a small patch beside it. */
+.lines { display: grid; gap: 7px; }
+.lines li { display: flex; align-items: stretch; gap: 7px; }
+.lines li:nth-child(odd) { --tilt: -.8deg; }
+.lines li:nth-child(even) { --tilt: .8deg; --patch: #f5ed9e; }
+.line { flex: 1; display: grid; gap: 2px; min-width: 0; padding: 10px 14px; font-size: 12px; }
+.line small { font-size: 11px; opacity: .7; }
+.remove {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  color: inherit;
+  cursor: pointer;
+  background: #f6e0d6 var(--header-grain) 0 0 / 120px 120px;
+  background-blend-mode: overlay;
+  border: 0;
+  outline: 1px dashed rgb(42 20 8 / 45%);
+  outline-offset: -4px;
+  box-shadow: 0 2px 6px rgb(42 20 8 / 20%);
+  transition: background-color 180ms ease;
+}
+.remove:hover { background-color: var(--header-tile); }
+.total { display: flex; justify-content: space-between; margin: 14px 4px 0; padding-top: 12px; border-top: 1px dashed rgb(42 20 8 / 45%); }
+.note { margin: 6px 4px 2px; font-size: 11px; opacity: .7; }
+.saved { margin: 16px 4px 8px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .menu[open] .menuPanel, .cart[open] .cartPanel { animation: panelIn 560ms cubic-bezier(.2, .8, .2, 1) both; }
+  .menu[open] .menuPanel li { animation: patchIn 440ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(160ms + var(--i, 0) * 50ms); }
+  /* The way out is the way in reversed: the same keyframes backwards, the easing mirrored, the
+     links leaving last-first, and the menu panel waiting 240 ms so the whole thing takes the same
+     800 ms (160 + 4 x 50 + 440) as the entrance. Keep these in step with the three lines above. */
+  .menu[data-closing] .menuPanel, .cart[data-closing] .cartPanel { animation: panelOut 560ms cubic-bezier(.8, 0, .8, .2) both; }
+  .menu[data-closing] .menuPanel { animation-delay: 240ms; }
+  .menu[data-closing] .menuPanel li { animation: patchOut 440ms cubic-bezier(.8, 0, .8, .2) both; animation-delay: calc((4 - var(--i, 0)) * 50ms); }
+}
+
+/* The hero clips at the window's edge, so the panel starts out of sight beyond it. */
+@keyframes panelIn {
+  from { transform: translateX(var(--panel-from)) rotate(var(--panel-lean)); }
+  to { transform: translateX(0) rotate(var(--panel-tilt)); }
+}
+
+@keyframes panelOut {
+  from { transform: translateX(0) rotate(var(--panel-tilt)); }
+  to { transform: translateX(var(--panel-from)) rotate(var(--panel-lean)); }
+}
+
+@keyframes patchIn {
+  from { opacity: 0; transform: translateX(-40px) rotate(-5deg); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes patchOut {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateX(-40px) rotate(-5deg); }
+}
+
+@media (max-width: 767px) {
+  .brand { width: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navLabel, .menuPanel a, .cartPanel a, .remove { transition: none; }
+}

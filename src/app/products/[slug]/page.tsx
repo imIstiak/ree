@@ -30,3 +30,4 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   const related = relatedTo(product);
   return product.kind === "story" ? <ProductStory product={product} related={related} /> : <ProductClassic product={product} related={related} />;
 }
+// REÉ

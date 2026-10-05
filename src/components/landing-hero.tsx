@@ -4,15 +4,7 @@ import campaignStage from "../../public/landing/campaign-stage.webp";
 import campaignLounge from "../../public/landing/campaign-lounge-wide.webp";
 import campaignStairs from "../../public/landing/campaign-stairs-wide.webp";
 import styles from "./landing-hero.module.css";
-import { Icon } from "./landing-icons";
-
-const menuLinks = [
-  { label: "Categories", href: "#categories" },
-  { label: "Style", href: "#style" },
-  { label: "Collection", href: "#collection" },
-  { label: "About", href: "#about" },
-  { label: "Journal", href: "#journal" },
-];
+import { SiteHeader } from "./site-header";
 
 // ── Slideshow timing, in milliseconds ────────────────────────────────────────────
 // Edit these to retime the hero; nothing else needs to change. Each beat opens with the
@@ -167,7 +159,7 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
       ))}
       <div className={styles.shade} aria-hidden="true" />
 
-      <svg className={styles.wordmark} viewBox="0 0 1840 260" preserveAspectRatio="none" aria-hidden="true">
+      <svg className={styles.wordmark} viewBox="0 0 200 54" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <filter id="hero-wordmark-grain" x="0" y="0" width="100%" height="100%">
             <feTurbulence type="fractalNoise" baseFrequency=".06 .19" numOctaves="3" stitchTiles="stitch" />
@@ -175,44 +167,11 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
             <feComposite in2="SourceGraphic" operator="in" />
           </filter>
         </defs>
-        <text x="-50" y="243" textLength="1940" lengthAdjust="spacingAndGlyphs">REÉ</text>
-        <text x="-50" y="243" textLength="1940" lengthAdjust="spacingAndGlyphs" filter="url(#hero-wordmark-grain)" opacity=".2">REÉ</text>
+        <use href="/ree-logo.svg#ree-wordmark" />
+        <use href="/ree-logo.svg#ree-wordmark" filter="url(#hero-wordmark-grain)" opacity=".2" />
       </svg>
 
-      <nav className={styles.navigation} aria-label="Primary">
-        <details className={styles.menu}>
-          <summary className={styles.navLabel} aria-label="Menu">
-            <Icon name="menu" className={`${styles.navIcon} ${styles.navIconClosed}`} />
-            <Icon name="x" className={`${styles.navIcon} ${styles.navIconOpen}`} />
-          </summary>
-          <div className={styles.menuPanel}>
-            <ul>
-              {menuLinks.map((link) => (
-                <li key={link.href}><a href={link.href}>{link.label}</a></li>
-              ))}
-            </ul>
-            {themeControls && (
-              <div className={styles.menuSettings}>
-                <span>Appearance</span>
-                {themeControls}
-              </div>
-            )}
-          </div>
-        </details>
-
-        <a className={styles.brand} href="#top" aria-label="REÉ home">REÉ</a>
-
-        <details className={styles.cart}>
-          <summary className={styles.navLabel} aria-label="Cart, 0 items">
-            <Icon name="bag" className={styles.navIcon} />
-            <span className={styles.navCount} aria-hidden="true">0</span>
-          </summary>
-          <div className={styles.cartPanel}>
-            <p>Your bag is empty.</p>
-            <a href="#collection">Explore the collection <Icon name="arrowUpRight" className={styles.panelIcon} /></a>
-          </div>
-        </details>
-      </nav>
+      <SiteHeader className={styles.navigation} overMedia settings={themeControls} />
 
       {slides.map((slide, index) => {
         const role = roleAt(index, 0, slides.length);

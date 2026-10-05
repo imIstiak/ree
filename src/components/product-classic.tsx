@@ -8,8 +8,8 @@ import type { Product } from "../data/products";
 import { Icon } from "./landing-icons";
 import { ProductShell } from "./product-shell";
 import { PurchasePanel } from "./purchase-panel";
-import { ShopHeader } from "./shop-header";
-import { Price, RelatedProducts, ShopFooter, kicker } from "./shop-ui";
+import { Price, RelatedProducts, ShopFooter, kicker, pageHeader } from "./shop-ui";
+import { SiteHeader } from "./site-header";
 
 // The conventional product page, after the reference layout: details on the left, the photograph
 // in the middle, size and add-to-cart on the right, all between faint column rules. On phones it
@@ -23,7 +23,7 @@ export function ProductClassic({ product, related }: { product: Product; related
   return (
     <MotionConfig reducedMotion="user">
       <ProductShell>
-        <ShopHeader />
+        <SiteHeader base="/landing" className={pageHeader} />
         <main className="px-[3%] pt-2 pb-[4%]">
           <div className="relative grid gap-8 lg:grid-cols-[1fr_1.2fr_1fr] lg:gap-0">
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden grid-cols-[1fr_1.2fr_1fr] lg:grid">

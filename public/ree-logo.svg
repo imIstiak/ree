@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 270" color="#00664f" role="img" aria-labelledby="title">
+  <title id="title">REE</title>
+  <g id="ree-logo">
+    <g id="ree-mark">
+      <rect width="200" height="200" rx="6" fill="#ffe7cc"/>
+      <g fill="#00664f">
+        <path d="M53 30c0 12-6 18-18 18 12 0 18 6 18 18 0-12 6-18 18-18-12 0-18-6-18-18Z"/>
+        <path d="M97 36C81 62 62 81 40 96c-4 2-4 6 0 8 23 15 42 36 57 60 10-21 10-39 2-57-13-26-13-47-2-71Z"/>
+        <path d="M103 36c16 26 35 45 57 60 4 2 4 6 0 8-23 15-42 36-57 60 12-23 12-41 3-61-13-26-14-45-3-67Z"/>
+      </g>
+    </g>
+    <g transform="translate(0 216)">
+      <g id="ree-wordmark" fill="currentColor">
+        <path fill-rule="evenodd" d="M0 0h25c14 0 20 5 20 13 0 7-6 11-15 12 10 1 13 6 13 15v8c0 3 2 4 6 2l1 1c-3 2-5 2-8 2-8 0-11-4-11-12v-7c0-6-3-8-10-8h-3v25h7v1H0v-1h7V1H0V0Zm18 1v24h5c8 0 10-4 10-12S30 1 23 1h-5Z"/>
+        <path d="M82 0h40v15h-1C118 5 114 1 105 1h-5v24h2c7 0 10-3 11-10h1v21h-1c-1-7-4-10-11-10h-2v25h5c10 0 15-5 18-17h1v18H82v-1h7V1h-7V0Z"/>
+        <path d="M158 0h40v15h-1c-3-10-7-14-16-14h-5v24h2c7 0 10-3 11-10h1v21h-1c-1-7-4-10-11-10h-2v25h5c10 0 15-5 18-17h1v18h-42v-1h7V1h-7V0Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

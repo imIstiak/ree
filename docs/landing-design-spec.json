@@ -181,6 +181,7 @@
       "title": "Follow our style journey",
       "layout": "centered heading and browsing rail above four staggered portrait columns",
       "offsetsRelativeToColumnWidth": ["0%", "80%", "0%", "55%"],
+      "cards": "tilted cloth patches (mustard, indigo, madder, olive frames with a running stitch); the date is a small patch sewn over the top-left corner; hover straightens and lifts",
       "mobile": "two-column staggered grid"
     },
     {
@@ -195,17 +196,19 @@
       "fill": "accent",
       "text": "background",
       "shape": "square",
-      "minHeightPx": 36,
+      "minHeightPx": 40,
       "mobileMinHeightPx": 44,
       "case": "uppercase",
-      "icon": "thin right/up arrow"
+      "icon": "thin right/up arrow",
+      "patch": "cloth grain, running stitch 3px inside the edge, 1deg resting tilt that straightens on hover"
     },
     "label": {
       "fill": "accent or text",
       "text": "background",
-      "horizontalPaddingPx": 6,
-      "verticalPaddingPx": 2,
-      "shape": "square"
+      "horizontalPaddingPx": 10,
+      "verticalPaddingPx": 6,
+      "shape": "square",
+      "patch": "cloth grain, running stitch 2px inside the edge"
     },
     "divider": {
       "pattern": "five horizontal yellow/olive rules separated by dark gaps",

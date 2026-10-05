@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { BrandLogo } from "./brand-logo";
 import { COMING_SOON_ROOT_ID, ThemeControls, ThemeScript } from "./theme-controls";
 import { ArrowDownRight, ArrowUpRight, X } from "lucide-react";
 import {
@@ -102,22 +104,6 @@ const scenes: Scene[] = [
     ],
   },
 ];
-
-function Mark({ compact = false }: { compact?: boolean }) {
-  return (
-    <span className={compact ? "brand-mark brand-mark--compact" : "brand-mark"} aria-label="ঋ - Ree">
-      <Image
-        className="brand-logo"
-        src="/ree-mark.svg"
-        alt=""
-        width={compact ? 30 : 38}
-        height={compact ? 30 : 38}
-        priority
-      />
-      {!compact && <span className="brand-word">ঋ - Ree</span>}
-    </span>
-  );
-}
 
 function PlusIcon() {
   return <span className="hotspot-icon" aria-hidden="true"><span /></span>;
@@ -303,7 +289,7 @@ export function ComingSoon() {
       <ThemeControls rootId={COMING_SOON_ROOT_ID} />
       {introState !== "gone" && (
         <section className={`intro-gate ${introState === "leaving" ? "intro-gate--leaving" : ""}`} aria-label="Welcome to ঋ - Ree">
-          <div className="intro-top"><Mark /></div>
+          <div className="intro-top"><BrandLogo className="intro-logo" /></div>
           <div className="intro-center">
             <div className="intro-thumbnails" aria-hidden="true">
               {scenes.map((scene, index) => (
@@ -316,7 +302,7 @@ export function ComingSoon() {
               </svg>
             </div>
             <h1 className="intro-title">
-              <span className="intro-title__brand">ঋ - Ree</span>
+              <BrandLogo variant="wordmark" className="intro-title__brand" />
               <span className="intro-title__status">COMING SOON</span>
             </h1>
             <p className="intro-subtitle">Not everything old belongs in the past.</p>
@@ -340,7 +326,7 @@ export function ComingSoon() {
         style={{ "--scene-index": activeScene } as CSSProperties}
       >
         <header className="stage-header">
-          <Mark compact />
+          <Link href="/" aria-label="REE home"><BrandLogo className="stage-logo" decorative /></Link>
           <span className="stage-location">DHAKA · COLLECTION 01</span>
           <button className="primary-action" onClick={openContact}>Join the list <span aria-hidden="true"><ArrowUpRight size={13} strokeWidth={1.75} /></span></button>
         </header>

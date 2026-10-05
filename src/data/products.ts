@@ -42,7 +42,9 @@ export type Product = {
     facts: { value: string; label: string }[];
     journey: string[];
     epilogue: string;
-    film: { src: string; poster: string; caption: string };
+    // The header film. `youtube` (a video id) plays through YouTube's own embedded player and wins
+    // when set; `src` + `poster` are the self-hosted film the page falls back to without it.
+    film: { youtube?: string; src: string; poster: string; caption: string };
     chapters: StoryChapter[];
     quotes: { text: string; who: string }[];
   };
@@ -85,7 +87,7 @@ export const products: Product[] = [
     story: {
       headline: "Life is short.",
       intro: "The story of one tee, told in six chapters: three words, a bale of cotton, a dropped shoulder, a hand-pulled print, forty minutes of hands, and a long day.",
-      film: { src: "/products/life-is-short-film.mp4", poster: "/products/life-is-short-film.jpg", caption: "Dhaka at night · 14 s loop" },
+      film: { youtube: "rkpzYNB6xks", src: "/products/life-is-short-film.mp4", poster: "/products/life-is-short-film.jpg", caption: "Film by kiransahu films · YouTube" },
       prologue:
         "We started ঋ - Ree with one sentence: not everything old belongs in the past. This tee is that sentence made wearable. Heavy cotton the way tees used to be, a print pulled by hand the way posters used to be, and three words for a city that never sits still.",
       facts: [

@@ -1,9 +1,6 @@
 .hero {
   --hero-cream: #fffdf3;
   --hero-yellow: #f5ed9e;
-  /* The header's menu and cart tiles: the yellow bag tile from the style section. */
-  --hero-tile: #e6d21f;
-  --hero-tile-ink: #3a3000;
   /* Slideshow geometry, as unitless % of the hero box. The frame is the middle slot;
      the thumbs are the same card scaled down, so they share its proportions. */
   --frame-x: 41.25;
@@ -77,100 +74,18 @@
   width: 100%;
   height: 23.9%;
   overflow: hidden;
-  fill: #493127;
+  color: #493127;
   opacity: .32;
-  font-family: var(--font-alfa-slab), Georgia, serif;
-  font-size: 360px;
   pointer-events: none;
 }
 
+/* Where the shared header (site-header.tsx) sits in the hero; its own module lays it out. */
 .navigation {
   position: absolute;
   z-index: 10;
   top: 2.65%;
   inset-inline: 2.72%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
 }
-
-.menu, .cart { position: relative; }
-
-/* Menu and cart are small tilted tiles carrying a line icon; hover and open straighten them. */
-.navLabel {
-  --tilt: 0deg;
-  display: grid;
-  place-items: center;
-  position: relative;
-  width: clamp(44px, 2.72cqw, 56px);
-  aspect-ratio: 1;
-  list-style: none;
-  cursor: pointer;
-  color: var(--hero-tile-ink);
-  background: var(--hero-tile);
-  box-shadow: 0 10px 24px rgb(0 0 0 / 28%);
-  transform: rotate(var(--tilt));
-  transition: background-color 180ms ease, transform 220ms ease;
-}
-
-.menu .navLabel { --tilt: -4deg; }
-.cart .navLabel { --tilt: 4deg; }
-.navLabel::-webkit-details-marker { display: none; }
-.navLabel:hover, .menu[open] .navLabel, .cart[open] .navLabel { background: var(--hero-cream); transform: none; }
-
-.navIcon { grid-area: 1 / 1; width: 50%; height: 50%; }
-.navIconOpen { display: none; }
-.menu[open] .navIconClosed { display: none; }
-.menu[open] .navIconOpen { display: block; }
-
-.navCount {
-  position: absolute;
-  top: -7px;
-  right: -7px;
-  display: grid;
-  place-items: center;
-  min-width: 18px;
-  height: 18px;
-  padding-inline: 5px;
-  font-size: 10px;
-  font-weight: 500;
-  line-height: 1;
-  color: var(--hero-cream);
-  background: #240c06;
-  border: 1px solid rgb(245 237 158 / 30%);
-}
-
-.panelIcon { width: 14px; height: 14px; }
-
-.brand {
-  position: absolute;
-  top: .1cqw;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-alfa-slab), Georgia, serif;
-  font-size: clamp(24px, 2.34cqw, 58px);
-  line-height: 1.15;
-  letter-spacing: -.025em;
-}
-
-.menuPanel, .cartPanel {
-  position: absolute;
-  top: 100%;
-  width: 260px;
-  padding: 16px;
-  border: 1px solid rgb(245 237 158 / 30%);
-  background: #240c06;
-  box-shadow: 0 16px 40px rgb(0 0 0 / 28%);
-  font-size: 13px;
-}
-
-.menuPanel { left: 0; }
-.menuPanel a { display: block; padding: 12px 8px; }
-.menuPanel a:hover, .cartPanel a:hover { color: var(--hero-yellow); }
-.menuSettings { display: flex; justify-content: space-between; align-items: center; padding: 12px 8px 0; border-top: 1px solid rgb(245 237 158 / 25%); }
-.cartPanel { right: 0; }
-.cartPanel p { margin: 4px 0 18px; }
-.cartPanel a { display: flex; align-items: center; justify-content: space-between; min-height: 44px; font-size: 12px; }
 
 /* Slideshow cards. Every card is laid out on the middle frame and reaches the thumb
    slots through `transform` alone, so the loop runs on the compositor. The keyframes
@@ -269,6 +184,8 @@
   font-weight: 500;
   line-height: 1.25;
   text-transform: uppercase;
+  outline: 1px dashed rgb(36 27 9 / 50%);
+  outline-offset: -3px;
   transition: background-color 180ms ease;
 }
 
@@ -299,7 +216,6 @@
 
 @media (min-width: 768px) and (max-width: 1199px) {
   .navigation { top: 1.9%; }
-  .brand { top: 7px; }
 }
 
 @media (max-width: 767px) {
@@ -317,7 +233,6 @@
     --thumb-right-x: 75;
   }
   .navigation { top: 18px; inset-inline: 20px; }
-  .brand { top: 8px; font-size: clamp(23px, 5.9vw, 38px); }
   .wordmark { top: 76px; height: 16%; width: 160%; left: -30%; opacity: .46; }
   .shade { background: linear-gradient(180deg, rgb(28 5 0 / 15%) 45%, transparent 58%, rgb(22 4 0 / 65%) 100%); }
   .focusFrame svg { width: 14px; height: 14px; }
@@ -332,11 +247,10 @@
 
 @media (max-width: 374px) {
   .navigation { inset-inline: 14px; }
-  .brand { font-size: 21px; }
   .title { font-size: 6.15vw; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .slide, .backdrop { animation: none; }
-  .navLabel, .categories a { transition: none; }
+  .categories a { transition: none; }
 }

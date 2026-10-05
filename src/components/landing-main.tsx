@@ -1,6 +1,7 @@
 import Image from "next/image";
+import { BrandLogo } from "./brand-logo";
 import { LandingHero } from "./landing-hero";
-import { Icon } from "./landing-icons";
+import { BrandIcon, Icon } from "./landing-icons";
 import { StoryTiles } from "./story-tiles";
 import Link from "next/link";
 import { display, mono } from "./landing-fonts";
@@ -88,18 +89,18 @@ const collectionTabs = [
 // array in order on a four-column base (two bricks, then half + brick + half, ...). `place` holds
 // full class literals because Tailwind only sees complete strings.
 type Brick =
-  | { kind: "product"; id: string; label: string; price: string; photo: Photo; href: string; place: string; featured?: boolean }
+  | { kind: "product"; id: string; label: string; price: string; photo: Photo; href: string; cloth: string; place: string; featured?: boolean }
   | { kind: "cloth" | "cta"; id: string; cloth: string; place: string };
 
 const bricks: Brick[] = [
-  { kind: "product", id: "item-tee", label: "Basic tee", price: "৳ 1,450", photo: photos.tees, href: "/products/basic-tee", place: "col-span-2 lg:col-start-1 lg:row-start-1" },
-  { kind: "product", id: "item-hoodie", label: "Crop hoodie", price: "৳ 3,200", photo: photos.hoodie, href: "/products/crop-hoodie", place: "col-span-2 lg:col-start-3 lg:row-start-1" },
+  { kind: "product", id: "item-tee", label: "Basic tee", price: "৳ 1,450", photo: photos.tees, href: "/products/basic-tee", cloth: "bg-lp-patch-indigo text-lp-canvas", place: "col-span-2 lg:col-start-1 lg:row-start-1" },
+  { kind: "product", id: "item-hoodie", label: "Crop hoodie", price: "৳ 3,200", photo: photos.hoodie, href: "/products/crop-hoodie", cloth: "bg-lp-patch-terracotta text-lp-ink", place: "col-span-2 lg:col-start-3 lg:row-start-1" },
   { kind: "cloth", id: "brick-half-1", cloth: "bg-lp-patch-madder outline-lp-canvas/60", place: "col-span-1 lg:col-start-1 lg:row-start-2" },
-  { kind: "product", id: "item-suit", label: "Pinstripe suit", price: "৳ 3,850", photo: photos.suit, href: "/products/pinstripe-suit", place: "col-span-2 lg:col-start-5 lg:row-start-1" },
+  { kind: "product", id: "item-suit", label: "Pinstripe suit", price: "৳ 3,850", photo: photos.suit, href: "/products/pinstripe-suit", cloth: "bg-lp-patch-olive text-lp-canvas", place: "col-span-2 lg:col-start-5 lg:row-start-1" },
   { kind: "cloth", id: "brick-half-2", cloth: "bg-lp-patch-indigo outline-lp-canvas/60", place: "col-span-1 lg:col-start-4 lg:row-start-2" },
-  { kind: "product", id: "item-jacket", label: "Leather jacket", price: "৳ 4,600", photo: photos.leatherJacket, href: "/products/leather-jacket", place: "col-span-2 lg:col-start-2 lg:row-start-2" },
-  { kind: "product", id: "item-tote", label: "Canvas tote", price: "৳ 1,950", photo: photos.tote, href: "/products/canvas-tote", place: "col-span-2 lg:col-start-1 lg:row-start-3" },
-  { kind: "product", id: "item-editorial", label: "Life is short", price: "Story", photo: photos.lifeIsShort, href: "/products/life-is-short-tee", place: "col-span-4 lg:col-span-2 lg:col-start-5 lg:row-span-2 lg:row-start-2", featured: true },
+  { kind: "product", id: "item-jacket", label: "Leather jacket", price: "৳ 4,600", photo: photos.leatherJacket, href: "/products/leather-jacket", cloth: "bg-lp-patch-mustard text-lp-ink", place: "col-span-2 lg:col-start-2 lg:row-start-2" },
+  { kind: "product", id: "item-tote", label: "Canvas tote", price: "৳ 1,950", photo: photos.tote, href: "/products/canvas-tote", cloth: "bg-lp-patch-madder text-lp-canvas", place: "col-span-2 lg:col-start-1 lg:row-start-3" },
+  { kind: "product", id: "item-editorial", label: "Life is short", price: "Story", photo: photos.lifeIsShort, href: "/products/life-is-short-tee", cloth: "bg-lp-card text-lp-text", place: "col-span-4 lg:col-span-2 lg:col-start-5 lg:row-span-2 lg:row-start-2", featured: true },
   { kind: "cloth", id: "brick-half-3", cloth: "bg-lp-patch-olive outline-lp-canvas/60", place: "col-span-1 lg:hidden" },
   { kind: "cta", id: "brick-cta", cloth: "bg-lp-patch-mustard outline-lp-ink/40", place: "col-span-2 lg:col-start-3 lg:row-start-3" },
   { kind: "cloth", id: "brick-half-4", cloth: "bg-lp-patch-terracotta outline-lp-ink/40", place: "col-span-1 lg:hidden" },
@@ -116,11 +117,13 @@ const values = [
 ] as const;
 
 // Stagger relative to column width: 0 / 80% / 0 / 55% on desktop, two staggered columns on mobile.
+// Each post is a cloth patch: `cloth` is the frame colour, its stitch (text) colour and resting tilt,
+// `tag` the tilt of the date patch sewn over its corner. Full class literals, as Tailwind needs.
 const journalPosts = [
-  { date: "12 Sep 2026", photo: photos.journalBeanie, offset: "" },
-  { date: "08 Sep 2026", photo: photos.journalBeret, offset: "mt-[40%] lg:mt-[80%]" },
-  { date: "02 Sep 2026", photo: photos.journalLeather, offset: "-mt-[40%] lg:mt-0" },
-  { date: "27 Aug 2026", photo: photos.journalSuit, offset: "lg:mt-[55%]" },
+  { date: "12 Sep 2026", photo: photos.journalBeanie, offset: "", cloth: "bg-lp-patch-mustard text-lp-ink -rotate-2", tag: "rotate-3" },
+  { date: "08 Sep 2026", photo: photos.journalBeret, offset: "mt-[40%] lg:mt-[80%]", cloth: "bg-lp-patch-indigo text-lp-canvas rotate-[1.5deg]", tag: "-rotate-2" },
+  { date: "02 Sep 2026", photo: photos.journalLeather, offset: "-mt-[40%] lg:mt-0", cloth: "bg-lp-patch-madder text-lp-canvas -rotate-1", tag: "rotate-2" },
+  { date: "27 Aug 2026", photo: photos.journalSuit, offset: "lg:mt-[55%]", cloth: "bg-lp-patch-olive text-lp-canvas rotate-2", tag: "-rotate-3" },
 ];
 
 const styleWords = ["Streetwear", "Linen sets", "Overshirts", "Handloom", "Outerwear", "Knitwear", "Formal wear"];
@@ -136,11 +139,14 @@ const footerLinks = [
 
 const legalLinks = ["Privacy policy", "Terms & conditions", "Cookie policy"];
 
+// Each social patch wears a light tint of its network's colour with the real mark in the brand
+// colour, and turns the full brand colour on hover. Brand colours are fixed: they do not follow
+// the theme. Full class literals, as Tailwind needs.
 const socials = [
-  { icon: "instagram", label: "Instagram" },
-  { icon: "facebook", label: "Facebook" },
-  { icon: "linkedin", label: "LinkedIn" },
-  { icon: "x", label: "X" },
+  { icon: "instagram", label: "Instagram", cloth: "bg-[#f9d0de] text-[#c2256c] hover:bg-[#d62976] hover:text-white" },
+  { icon: "facebook", label: "Facebook", cloth: "bg-[#cfe1fd] text-[#1668e0] hover:bg-[#1877f2] hover:text-white" },
+  { icon: "linkedin", label: "LinkedIn", cloth: "bg-[#c6e6ec] text-[#0a66c2] hover:bg-[#0a66c2] hover:text-white" },
+  { icon: "x", label: "X", cloth: "bg-[#dadad7] text-[#0f0f0f] hover:bg-[#0f0f0f] hover:text-white" },
 ] as const;
 
 function Photo({ photo, sizes, priority, className = "" }: { photo: Photo; sizes: string; priority?: boolean; className?: string }) {
@@ -162,13 +168,20 @@ const hoverImage = "transition-transform duration-700 ease-out group-hover:scale
 
 const bodyText = "text-xs leading-[1.65] text-lp-muted sm:text-[13px]";
 
+// Every card, button and link is a cloth patch (`lp-patch`: grain + a running stitch in the text
+// colour). Clickable patches rest at a slight tilt and straighten on hover; cards also lift.
+const patchShadow = "shadow-md shadow-black/35 group-data-[lp-theme=light]/theme:shadow-black/12";
+const patchMotion = "transition-[color,background-color,rotate,translate,box-shadow] duration-300 ease-out hover:rotate-0 motion-reduce:transition-none";
+const smallPatch = `lp-patch [--lp-stitch-inset:3px] ${patchShadow} ${patchMotion}`;
+const cardPatch = `lp-patch ${patchShadow} ${patchMotion} hover:-translate-y-1.5 hover:shadow-xl`;
+
 function Label({ children, tone = "accent" }: { children: ReactNode; tone?: "accent" | "text" | "outline" }) {
   const tones = {
     accent: "bg-lp-accent text-lp-ink",
     text: "bg-lp-text text-lp-bg",
-    outline: "border border-lp-border text-lp-muted",
+    outline: "bg-lp-card text-lp-muted",
   };
-  return <span className={`inline-flex items-center px-1.5 py-0.5 text-[10px] leading-tight whitespace-nowrap uppercase ${tones[tone]}`}>{children}</span>;
+  return <span className={`lp-patch inline-flex items-center px-2 py-1 text-[10px] leading-tight whitespace-nowrap uppercase [--lp-stitch-inset:2px] sm:px-2.5 sm:py-1.5 ${tones[tone]}`}>{children}</span>;
 }
 
 function Button({ href, children, tone = "accent" }: { href: string; children: ReactNode; tone?: "accent" | "text" }) {
@@ -179,7 +192,7 @@ function Button({ href, children, tone = "accent" }: { href: string; children: R
   return (
     <a
       href={href}
-      className={`inline-flex min-h-11 min-w-40 items-center justify-between gap-6 px-3.5 text-[11px] font-medium tracking-wide uppercase transition-colors motion-reduce:transition-none sm:min-h-9 ${tones[tone]}`}
+      className={`${smallPatch} inline-flex min-h-11 min-w-40 -rotate-1 items-center justify-between gap-6 px-4 text-[11px] font-medium tracking-wide uppercase sm:min-h-10 ${tones[tone]}`}
     >
       {children}
       <Icon name="arrowRight" />
@@ -191,11 +204,11 @@ function Rail({ href, first, last, label, children }: { href: string; first: str
   return (
     <div className="flex items-center justify-between gap-4 border-y border-lp-border px-[3%] py-3">
       <Button href={href}>{children}</Button>
-      <div className="flex gap-1.5">
-        <a href={first} aria-label={`First ${label}`} className="grid size-11 place-items-center border border-lp-border text-lp-text transition-colors hover:border-lp-accent sm:size-8">
+      <div className="flex gap-2">
+        <a href={first} aria-label={`First ${label}`} className={`${smallPatch} grid size-11 rotate-2 place-items-center bg-lp-card text-lp-text hover:bg-lp-text hover:text-lp-bg sm:size-10`}>
           <Icon name="chevronLeft" />
         </a>
-        <a href={last} aria-label={`Last ${label}`} className="grid size-11 place-items-center bg-lp-accent text-lp-ink transition-colors hover:bg-lp-text hover:text-lp-bg sm:size-8">
+        <a href={last} aria-label={`Last ${label}`} className={`${smallPatch} grid size-11 -rotate-2 place-items-center bg-lp-accent text-lp-ink hover:bg-lp-text hover:text-lp-bg sm:size-10`}>
           <Icon name="chevronRight" />
         </a>
       </div>
@@ -209,11 +222,9 @@ function Divider() {
 
 function Wordmark({ className }: { className: string }) {
   return (
-    <p className={`flex justify-between font-lp-display leading-[.8] uppercase select-none ${className}`} aria-hidden="true">
-      <span>R</span>
-      <span>E</span>
-      <span>E</span>
-    </p>
+    <div className={`select-none ${className}`}>
+      <BrandLogo variant="wordmark" className="w-full" decorative />
+    </div>
   );
 }
 
@@ -315,7 +326,7 @@ export function LandingMain() {
           </div>
 
           <Markers className="top-[54%]" />
-          <Wordmark className="lp-drift absolute inset-x-[3%] bottom-[18%] -z-10 lp-texture-text text-[23.8cqw] opacity-60 lg:top-[60%] lg:bottom-auto" />
+          <Wordmark className="lp-drift absolute inset-x-[3%] bottom-[18%] -z-10 opacity-60 lg:top-[60%] lg:bottom-auto" />
 
           <ul className="lp-drift-x absolute inset-x-0 bottom-[8%] flex justify-between gap-6 overflow-hidden border-y border-lp-border px-[3%] py-2 text-[10px] whitespace-nowrap text-lp-muted uppercase lg:top-[82%] lg:bottom-auto" aria-label="Styles">
             {styleWords.map((word, index) => (
@@ -323,40 +334,40 @@ export function LandingMain() {
             ))}
           </ul>
 
-          <figure className="lp-fade lp-unveil group absolute top-[24%] left-1/2 z-10 w-[62%] -translate-x-1/2 overflow-hidden bg-[#7a3a20] shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/15 lg:top-[30%] lg:w-[31%]">
-            <div className="relative aspect-[3/4] lg:aspect-[315/450]">
+          <figure className="lp-fade lp-unveil lp-patch group absolute top-[24%] left-1/2 z-10 w-[62%] -translate-x-1/2 bg-lp-patch-terracotta p-2 text-lp-ink shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-2.5 sm:[--lp-stitch-inset:5px] lg:top-[30%] lg:w-[31%]">
+            <div className="relative aspect-[3/4] overflow-hidden bg-[#7a3a20] lg:aspect-[315/450]">
               <Photo photo={photos.camelCoat} sizes="(min-width: 1024px) 420px, 62vw" className={hoverImage} />
             </div>
-            <a href="#collection" className="absolute inset-x-[8%] bottom-[5%] flex min-h-9 items-center justify-between bg-lp-text px-3 text-[10px] text-lp-bg uppercase transition-colors hover:bg-lp-accent hover:text-lp-ink">
+            <a href="#collection" className={`${smallPatch} absolute inset-x-[10%] bottom-[7%] flex min-h-10 -rotate-1 items-center justify-between bg-lp-text px-3.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}>
               Shop this look <Icon name="arrowRight" />
             </a>
           </figure>
 
-          <article className="lp-reveal-left absolute top-[62%] left-[3%] z-20 flex w-44 gap-2 bg-lp-card p-2 text-lp-text shadow-xl shadow-black/50 group-data-[lp-theme=light]/theme:shadow-black/15 lg:top-[33%] lg:left-[22%] lg:w-[18%]">
+          <article className={`lp-reveal-left ${cardPatch} absolute top-[62%] left-[3%] z-20 flex w-48 -rotate-2 gap-2.5 bg-lp-card p-3 text-lp-text lg:top-[33%] lg:left-[21%] lg:w-[19%]`}>
             <div className="relative aspect-[4/5] w-16 flex-none overflow-hidden">
               <Photo photo={photos.redBeanie} sizes="64px" />
             </div>
             <div className="text-[10px]">
               <h3 className="font-lp-display text-[11px] uppercase">Red beanie</h3>
               <p className="mt-0.5 text-lp-muted">৳ 1,850</p>
-              <a href="#item-tee" aria-label="Shop Red beanie" className="mt-2 grid size-4 place-items-center bg-lp-accent text-lp-ink">
-                <Icon name="plus" className="size-2.5" />
+              <a href="#item-tee" aria-label="Shop Red beanie" className="lp-patch mt-2 grid size-7 place-items-center bg-lp-accent text-lp-ink transition-colors [--lp-stitch-inset:2px] hover:bg-lp-text hover:text-lp-bg motion-reduce:transition-none">
+                <Icon name="plus" className="size-3" />
               </a>
             </div>
           </article>
 
-          <div className="absolute top-[20%] right-[6%] z-20 grid aspect-square w-16 rotate-6 place-items-center bg-[#e6d21f] text-[#3a3000] shadow-xl shadow-black/50 group-data-[lp-theme=light]/theme:shadow-black/15 lg:top-[29%] lg:right-auto lg:left-[61%] lg:w-[9.4%]" aria-hidden="true">
+          <div className="lp-patch absolute top-[20%] right-[6%] z-20 grid aspect-square w-16 rotate-6 place-items-center bg-[#e6d21f] text-[#3a3000] shadow-xl shadow-black/50 group-data-[lp-theme=light]/theme:shadow-black/15 lg:top-[29%] lg:right-auto lg:left-[61%] lg:w-[9.4%]" aria-hidden="true">
             <Icon name="bag" className="size-1/2" />
           </div>
 
-          <article className="lp-reveal-right absolute top-[56%] right-[3%] z-20 w-24 bg-lp-text p-1.5 text-lp-bg shadow-xl shadow-black/50 group-data-[lp-theme=light]/theme:shadow-black/15 lg:top-[62%] lg:right-auto lg:left-[55.5%] lg:w-[9%]">
+          <article className={`lp-reveal-right ${cardPatch} absolute top-[56%] right-[3%] z-20 w-28 rotate-2 bg-lp-text p-2.5 text-lp-bg lg:top-[62%] lg:right-auto lg:left-[55.5%] lg:w-[10%]`}>
             <div className="relative aspect-[4/5] overflow-hidden">
               <Photo photo={photos.pinkFur} sizes="120px" />
             </div>
             <h3 className="mt-2 font-lp-display text-[11px] uppercase">Fur coat</h3>
             <p className="text-[10px] opacity-70">৳ 1,450</p>
-            <a href="#item-tee" aria-label="Shop Fur coat" className="mt-1.5 grid size-4 place-items-center bg-lp-bg text-lp-text">
-              <Icon name="plus" className="size-2.5" />
+            <a href="#item-tee" aria-label="Shop Fur coat" className="lp-patch mt-1.5 grid size-7 place-items-center bg-lp-bg text-lp-text transition-colors [--lp-stitch-inset:2px] hover:bg-lp-accent hover:text-lp-ink motion-reduce:transition-none">
+              <Icon name="plus" className="size-3" />
             </a>
           </article>
         </section>
@@ -371,13 +382,13 @@ export function LandingMain() {
           </div>
 
           <nav aria-label="Collection" className="mt-[4%] overflow-x-auto border-b border-lp-border px-[3%] [scrollbar-width:none]">
-            <ul className="flex min-w-max justify-between gap-8">
+            <ul className="flex min-w-max justify-between gap-3 py-4">
               {collectionTabs.map((tab, index) => (
                 <li key={tab.label}>
                   <a
                     href={tab.href}
                     aria-current={index === 2 ? "true" : undefined}
-                    className="relative block py-4 text-[11px] text-lp-muted uppercase transition-colors hover:text-lp-text aria-[current]:text-lp-text aria-[current]:after:absolute aria-[current]:after:inset-x-[-20%] aria-[current]:after:-bottom-px aria-[current]:after:h-0.5 aria-[current]:after:bg-lp-text"
+                    className={`${smallPatch} grid min-h-11 place-items-center bg-lp-card px-5 text-[11px] text-lp-muted uppercase hover:bg-lp-text hover:text-lp-bg aria-[current]:bg-lp-accent aria-[current]:text-lp-ink sm:min-h-10 ${index % 2 ? "rotate-1" : "-rotate-1"}`}
                   >
                     {tab.label}
                   </a>
@@ -393,10 +404,13 @@ export function LandingMain() {
                   key={brick.id}
                   id={brick.id}
                   style={{ "--lp-stagger": index % 3 } as CSSProperties}
-                  className={`lp-reveal lp-unveil group relative scroll-mt-4 overflow-hidden bg-lp-surface ${brick.featured ? "aspect-[2/1] lg:aspect-auto" : "aspect-[5/4]"} ${brick.place}`}
+                  className={`lp-reveal lp-unveil lp-patch group relative scroll-mt-4 [--lp-stitch-inset:3px] sm:[--lp-stitch-inset:4px] ${brick.featured ? "aspect-[2/1] lg:aspect-auto" : "aspect-[5/4]"} ${brick.cloth} ${brick.place}`}
                 >
-                  <Photo photo={brick.photo} sizes={brick.featured ? "(min-width: 1024px) 33vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className={hoverImage} />
-                  <div className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-2">
+                  {/* The photograph sits inside the cloth frame, clear of the stitch. */}
+                  <div className="absolute inset-1.5 overflow-hidden bg-lp-surface sm:inset-2">
+                    <Photo photo={brick.photo} sizes={brick.featured ? "(min-width: 1024px) 33vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className={hoverImage} />
+                  </div>
+                  <div className="absolute inset-x-2.5 bottom-2.5 flex items-end justify-between gap-1 sm:inset-x-4 sm:bottom-4 sm:gap-2">
                     <Label>{brick.label}</Label>
                     <Label tone="text">{brick.price}</Label>
                   </div>
@@ -411,7 +425,7 @@ export function LandingMain() {
                   </p>
                   <a
                     href="#journal"
-                    className="relative inline-flex min-h-9 items-center justify-between gap-4 bg-lp-text px-3 text-[11px] font-medium tracking-wide text-lp-bg uppercase transition-colors hover:bg-lp-accent hover:text-lp-ink motion-reduce:transition-none"
+                    className={`${smallPatch} relative inline-flex min-h-10 -rotate-1 items-center justify-between gap-4 bg-lp-text px-3.5 text-[11px] font-medium tracking-wide text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}
                   >
                     Browse more <Icon name="arrowRight" />
                   </a>
@@ -475,13 +489,18 @@ export function LandingMain() {
             Follow us
           </Rail>
 
-          <ul className="grid grid-cols-2 items-start gap-4 px-[3%] pt-[3%] pb-[10%] lg:grid-cols-4 lg:gap-x-[1.6%]">
+          <ul className="grid grid-cols-2 items-start gap-5 px-[3%] pt-[4%] pb-[10%] lg:grid-cols-4 lg:gap-x-[1.6%]">
             {journalPosts.map((post, index) => (
               <li key={post.date} id={`journal-post-${index}`} style={{ "--lp-stagger": index } as CSSProperties}
-                className={`lp-reveal lp-unveil group grid scroll-mt-4 justify-items-start gap-2 ${post.offset}`}>
-                <Label tone="text">{post.date}</Label>
-                <div className="relative aspect-[3/4] w-full overflow-hidden">
-                  <Photo photo={post.photo} sizes="(min-width: 1024px) 320px, 50vw" className={hoverImage} />
+                className={`lp-reveal lp-unveil scroll-mt-4 ${post.offset}`}>
+                {/* The tilt lives on the patch, not the li, so it does not fight the reveal's transform. */}
+                <div className={`${cardPatch} group relative p-2.5 [--lp-stitch-inset:5px] sm:p-3.5 sm:[--lp-stitch-inset:7px] ${post.cloth}`}>
+                  <span className={`absolute -top-3 -left-1 z-10 sm:-left-2 ${patchShadow} ${post.tag}`}>
+                    <Label tone="text">{post.date}</Label>
+                  </span>
+                  <div className="relative aspect-[3/4] overflow-hidden">
+                    <Photo photo={post.photo} sizes="(min-width: 1024px) 320px, 50vw" className={hoverImage} />
+                  </div>
                 </div>
               </li>
             ))}
@@ -498,7 +517,7 @@ export function LandingMain() {
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_35%,color-mix(in_oklab,var(--color-lp-bg)_90%,transparent)_20%,color-mix(in_oklab,var(--color-lp-bg)_40%,transparent)_70%)]" aria-hidden="true" />
 
           <div className="lp-reveal grid justify-items-center gap-3 px-[3%]">
-            <p className="font-lp-display text-[clamp(1.6rem,3.4cqw,3rem)] leading-none uppercase">ঋ-Ree</p>
+            <Link href="/landing" aria-label="REE home"><BrandLogo className="w-20 sm:w-24" decorative /></Link>
             <p className={`${bodyText} max-w-sm`}>ঋ - Ree brings stories, symbols, and heritage forward into clothing made for now.</p>
             <ul className="mt-1 flex gap-2">
               {socials.map((social, index) => (
@@ -507,9 +526,9 @@ export function LandingMain() {
                   <a
                     href="#footer"
                     aria-label={social.label}
-                    className={`grid size-11 place-items-center transition-colors hover:bg-lp-accent hover:text-lp-ink sm:size-6 ${index === 0 ? "bg-lp-accent text-lp-ink" : "text-lp-text"}`}
+                    className={`${smallPatch} grid size-11 place-items-center sm:size-10 ${social.cloth} ${index % 2 ? "rotate-3" : "-rotate-3"}`}
                   >
-                    <Icon name={social.icon} className="size-3" />
+                    <BrandIcon name={social.icon} className="size-[18px] sm:size-4" />
                   </a>
                 </li>
               ))}
@@ -520,26 +539,27 @@ export function LandingMain() {
             <Photo photo={photos.redLips} sizes="(min-width: 640px) 61vw, 94vw" />
           </div>
 
-          <ul className="mx-[3%] mt-5 mb-7 flex flex-wrap justify-center gap-2">
-            {legalLinks.map((link) => (
+          <ul className="mx-[3%] mt-6 mb-8 flex flex-wrap justify-center gap-3">
+            {legalLinks.map((link, index) => (
               <li key={link}>
-                <a href="#footer" className="block min-w-36 bg-lp-text px-3 py-0.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink">{link}</a>
+                <a href="#footer" className={`${smallPatch} block min-w-40 bg-lp-text px-4 py-2.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink ${index % 2 ? "rotate-1" : "-rotate-1"}`}>{link}</a>
               </li>
             ))}
           </ul>
 
           <nav aria-label="Footer" className="overflow-x-auto bg-lp-accent text-lp-ink">
-            <ul className="flex min-w-max justify-between gap-8 px-[8%] py-3.5 text-[11px] uppercase">
-              {footerLinks.map((link) => (
+            <ul className="flex min-w-max justify-between gap-3 px-[8%] py-3 text-[11px] uppercase">
+              {footerLinks.map((link, index) => (
                 <li key={link.label}>
-                  <a href={link.href} className="hover:opacity-60">{link.label}</a>
+                  {/* Dark patches on the yellow band: ink and accent read the same in both themes. */}
+                  <a href={link.href} className={`${smallPatch} block bg-lp-ink px-4 py-2.5 text-lp-accent hover:bg-lp-card hover:text-lp-text ${index % 2 ? "-rotate-1" : "rotate-1"}`}>{link.label}</a>
                 </li>
               ))}
             </ul>
           </nav>
 
           <div className="bg-linear-to-b from-lp-deep-top to-lp-deep px-[3%] pt-4 pb-2">
-            <Wordmark className="lp-texture-text text-[23.8cqw]" />
+            <Wordmark className="w-full" />
           </div>
 
           <p className="border-t border-lp-border bg-lp-deep px-[3%] py-2.5 text-[10px] text-lp-muted">© 2026 ঋ - Ree. All rights reserved.</p>
