@@ -150,6 +150,14 @@
       "background": "fabric texture and oversized translucent brand wordmark"
     },
     {
+      "id": "featured",
+      "title": "Naqshi Kantha ঋ-Vive",
+      "layout": "the first piece told as a story, after hero-like references (one large object, big title, small floating fact cards): left column with kicker patches, a larger title cut, serif tagline, lede, two patch buttons and the story in three stitches down a dashed rail; right stage with the tee cut out of its photograph swaying on the page, a drawn quilt swatch that sews itself in, four callout labels on dashed leaders and three fact cards; markers and a motif ticker underneath. Desktop is a 35% / 1fr grid so the text column sets the height; phones stack intro, tee, details, stitches, cards, ticker",
+      "background": "rows of running stitch (kantha quilting) in the text colour at 7%, an olive glow behind the tee, grain, and a faint VIVE in the display face",
+      "motion": "stitches and leaders draw with scroll-driven animations (lp-sew); the tee floats on a 7 s loop (lp-float); cards and copy use lp-reveal",
+      "copy": "sample; the photographs are hotlinked placeholders from other labels' stores (docs/product-image-credits.md)"
+    },
+    {
       "id": "collection",
       "sourceBounds": [14, 558, 254, 386],
       "title": "Exclusive collections made for every moment",

@@ -23,7 +23,11 @@ export const iconPaths = {
   minus: "M5 12h14",
   arrowLeft: "M20 12H4m6-6-6 6 6 6",
   arrowDown: "M12 4v16m6-6-6 6-6-6",
+  download: "M12 3.5v12m5-5-5 5-5-5M4.5 15.5v4h15v-4",
   play: "M8 5v14l11-7-11-7Z",
+  pin: "M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11Zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z",
+  needle: "M3 21 15.5 8.5m1.4-1.4 2.1 2.1m-2.1-2.1a1.5 1.5 0 1 1 2.1 2.1 1.5 1.5 0 0 1-2.1-2.1Z",
+  tag: "M3 12V4h8l10 10-8 8-10-10Zm4-4h.01",
 };
 
 export type IconName = keyof typeof iconPaths;

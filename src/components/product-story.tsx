@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { MotionConfig, motion, useReducedMotion, useScroll, useSpring, useTransform, type Variants } from "motion/react";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
 import type { Product, ProductImage, StoryChapter } from "../data/products";
+import { HoverDetails } from "./hover-details";
 import { Icon } from "./landing-icons";
 import { ProductShell } from "./product-shell";
 import { PurchasePanel } from "./purchase-panel";
@@ -44,7 +45,7 @@ export function ProductStory({ product, related }: { product: Product; related: 
   const story = product.story;
   if (!story) return null;
   const { film, chapters, quotes } = story;
-  const buyPhoto = product.images[7] ?? product.images[0];
+  const buyPhoto = product.images[1] ?? product.images[0];
 
   return (
     <MotionConfig reducedMotion="user">
@@ -133,7 +134,7 @@ export function ProductStory({ product, related }: { product: Product; related: 
           <Chapter key={chapter.title} chapter={chapter} index={index} photo={product.images[chapter.photo] ?? product.images[0]} />
         ))}
 
-        <PhotoStrip container={scrollRef} photos={[product.images[6], product.images[8], product.images[1]]} palette={3} />
+        <PhotoStrip container={scrollRef} photos={[product.images[3], product.images[2], product.images[1]]} palette={3} />
         <Journey steps={story.journey} />
 
         {/* Epilogue: sizes and the bag over the back-print photograph, with no price. */}
@@ -375,18 +376,21 @@ function PhotoStrip({ container, photos, palette = 0 }: { container: Container; 
   );
 }
 
+// Its lines are sewn in like the header menu's links and leave the same way (.ree-pop-row in globals.css).
 function Accordion({ title, items, open }: { title: string; items: string[]; open?: boolean }) {
   return (
-    <details className="group mt-6 border-t border-lp-border pt-4" open={open}>
+    <HoverDetails className="group mt-6 border-t border-lp-border pt-4" closeOnLeave={false} open={open}>
       <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] tracking-[.12em] uppercase [&::-webkit-details-marker]:hidden">
         {title}
         <Icon name="plus" className="size-3 transition-transform group-open:rotate-45 motion-reduce:transition-none" />
       </summary>
-      <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-lp-muted">
-        {items.map((item) => (
-          <li key={item}>{item}</li>
+      <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-lp-muted" style={{ "--last": items.length - 1 } as CSSProperties}>
+        {items.map((item, i) => (
+          <li key={item} className="ree-pop-row origin-left" style={{ "--i": i } as CSSProperties}>
+            {item}
+          </li>
         ))}
       </ul>
-    </details>
+    </HoverDetails>
   );
 }

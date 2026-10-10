@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import campaignStage from "../../public/landing/campaign-stage.webp";
 import campaignLounge from "../../public/landing/campaign-lounge-wide.webp";
@@ -29,19 +30,19 @@ const slides = [
   {
     src: campaignStage,
     alt: "A model in a tailored herringbone suit and leather gloves, seated in a burgundy lounge chair under a warm spotlight.",
-    href: "#categories",
+    href: "/collections",
     label: "Shop the curated collections",
   },
   {
     src: campaignLounge,
     alt: "A model in a textured trench coat and burgundy boots on a green velvet bench.",
-    href: "#style",
+    href: "/shop",
     label: "Discover the new season edit",
   },
   {
     src: campaignStairs,
     alt: "A model in a beige suit walking down sunlit terracotta stairs.",
-    href: "#collection",
+    href: "/collections/formal-wear",
     label: "Explore tailored essentials",
   },
 ];
@@ -177,7 +178,7 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
         const role = roleAt(index, 0, slides.length);
         const slot = role === 0 ? styles.atMiddle : role === slides.length - 1 ? styles.atLeft : role === 1 ? styles.atRight : styles.waiting;
         return (
-          <a
+          <Link
             key={slide.src.src}
             href={slide.href}
             className={`${styles.slide} ${slot}`}
@@ -191,7 +192,7 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
                 <Image src={slide.src} alt="" fill sizes={SCENE_SIZES} loading="eager" className={styles.sceneImage} />
               </div>
             </div>
-          </a>
+          </Link>
         );
       })}
 
@@ -208,9 +209,9 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
 
       <div className={styles.caption}>
         <nav className={styles.categories} aria-label="Shop collections">
-          <a href="#collection">Men</a>
-          <a href="#categories">Women</a>
-          <a href="#category-hoodies">Kids</a>
+          <Link href="/men">Men</Link>
+          <Link href="/women">Women</Link>
+          <Link href="/kids">Kids</Link>
         </nav>
         <h1 id="hero-title" className={styles.title}>
           <span>Curated collections for</span>

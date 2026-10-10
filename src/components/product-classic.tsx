@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import type { Product } from "../data/products";
+import { HoverDetails } from "./hover-details";
 import { Icon } from "./landing-icons";
 import { ProductShell } from "./product-shell";
 import { PurchasePanel } from "./purchase-panel";
@@ -12,13 +12,16 @@ import { Price, RelatedProducts, ShopFooter, kicker, pageHeader } from "./shop-u
 import { SiteHeader } from "./site-header";
 
 // The conventional product page, after the reference layout: details on the left, the photograph
-// in the middle, size and add-to-cart on the right, all between faint column rules. On phones it
-// stacks photograph, details, purchase.
+// in the middle, size and add-to-cart on the right, all between faint column rules. The photographs
+// not in the main frame sit at the top of the right column (the user asked for them there instead of
+// a strip under the photograph); picking one swaps it into the frame. On phones it stacks
+// photograph, details, the other photographs, purchase.
 export function ProductClassic({ product, related }: { product: Product; related: Product[] }) {
   const [active, setActive] = useState(0);
   const photo = product.images[active];
   const many = product.images.length > 1;
   const step = (delta: number) => setActive((i) => (i + delta + product.images.length) % product.images.length);
+  const others = product.images.map((image, index) => ({ image, index })).filter(({ index }) => index !== active);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -50,29 +53,20 @@ export function ProductClassic({ product, related }: { product: Product; related
                   </li>
                 ))}
               </ul>
-              <details className="group mt-6 border-t border-lp-border pt-4">
+              {/* The care lines are sewn in like the header menu's links and leave the same way (.ree-pop-row). */}
+              <HoverDetails className="group mt-6 border-t border-lp-border pt-4" closeOnLeave={false}>
                 <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] tracking-[.12em] uppercase [&::-webkit-details-marker]:hidden">
                   Care
                   <Icon name="plus" className="size-3 transition-transform group-open:rotate-45 motion-reduce:transition-none" />
                 </summary>
-                <ul className="mt-3 space-y-1 text-[12px] text-lp-muted">
-                  {product.care.map((line) => (
-                    <li key={line}>{line}</li>
+                <ul className="mt-3 space-y-1 text-[12px] text-lp-muted" style={{ "--last": product.care.length - 1 } as CSSProperties}>
+                  {product.care.map((line, i) => (
+                    <li key={line} className="ree-pop-row origin-left" style={{ "--i": i } as CSSProperties}>
+                      {line}
+                    </li>
                   ))}
                 </ul>
-              </details>
-
-              {product.kind === "classic" && (
-                <Link href="/products/life-is-short-tee" className="group/film relative mt-10 block aspect-[16/10] w-48 overflow-hidden bg-lp-surface">
-                  <Image src="/products/life-is-short-film.jpg" alt="" fill sizes="192px" className="object-cover transition-transform duration-700 group-hover/film:scale-105 motion-reduce:transition-none" />
-                  <span className="absolute inset-0 grid place-items-center">
-                    <span className="grid size-9 place-items-center rounded-full bg-lp-text/85 text-lp-bg">
-                      <Icon name="play" className="size-3.5" />
-                    </span>
-                  </span>
-                  <span className="absolute inset-x-2 bottom-2 text-[10px] tracking-[.12em] text-white/90 uppercase">Film · Life is short</span>
-                </Link>
-              )}
+              </HoverDetails>
             </motion.div>
 
             <div className="order-1 lg:order-2 lg:px-[5%]">
@@ -96,26 +90,23 @@ export function ProductClassic({ product, related }: { product: Product; related
                   {active + 1} / {product.images.length}
                 </span>
               </div>
-              {many && (
-                <ul className="mt-3 flex gap-2" aria-label="Photographs">
-                  {product.images.map((image, i) => (
-                    <li key={image.src}>
-                      <button
-                        type="button"
-                        onClick={() => setActive(i)}
-                        aria-label={`Photograph ${i + 1}`}
-                        aria-pressed={i === active}
-                        className={`relative block aspect-[3/4] w-14 cursor-pointer overflow-hidden transition-opacity motion-reduce:transition-none ${i === active ? "opacity-100 outline-2 -outline-offset-2 outline-lp-accent" : "opacity-60 hover:opacity-100"}`}
-                      >
-                        <Image src={image.src} alt="" fill sizes="56px" className="object-cover" style={{ objectPosition: image.position }} />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
 
-            <div className="order-3 lg:px-[8%] lg:pt-[52%]">
+            <div className={`order-3 lg:px-[8%] ${others.length > 0 ? "lg:pt-[18%]" : "lg:pt-[52%]"}`}>
+              {others.length > 0 && (
+                <div className="mb-10">
+                  <p className={kicker}>More views</p>
+                  <ul className="mt-3 grid grid-cols-2 gap-3" aria-label="More photographs">
+                    {others.map(({ image, index }) => (
+                      <motion.li key={image.src} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, ease: "easeOut" }}>
+                        <button type="button" onClick={() => setActive(index)} aria-label={`Show photograph ${index + 1}`} className="group/view relative block aspect-[3/4] w-full cursor-pointer overflow-hidden bg-lp-surface">
+                          <Image src={image.src} alt="" fill sizes="(min-width: 1024px) 12vw, 45vw" className="object-cover transition-transform duration-700 group-hover/view:scale-105 motion-reduce:transition-none" style={{ objectPosition: image.position }} />
+                        </button>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <div className="lg:sticky lg:top-6">
                 <PurchasePanel product={product} />
               </div>

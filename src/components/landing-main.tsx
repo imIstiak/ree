@@ -1,12 +1,16 @@
 import Image from "next/image";
 import { BrandLogo } from "./brand-logo";
 import { LandingHero } from "./landing-hero";
-import { BrandIcon, Icon } from "./landing-icons";
+import { BrandIcon, Icon, type IconName } from "./landing-icons";
 import { StoryTiles } from "./story-tiles";
+import { Leaders, QuiltSwatch } from "./vive-art";
 import Link from "next/link";
 import { display, mono } from "./landing-fonts";
 import type { CSSProperties, ReactNode } from "react";
 import { LANDING_ROOT_ID, ThemeControls, ThemeScript } from "./theme-controls";
+import { campaignPhotos } from "../data/campaign-images";
+import { values } from "../data/brand";
+import { journalPosts as posts } from "../data/journal";
 
 // Visual spec: docs/landing-design-spec.json. Theme tokens live in src/app/globals.css.
 
@@ -16,28 +20,26 @@ type Photo = {
   position?: string;
 };
 
-// Unsplash License photos; credits in docs/landing-image-credits.md.
+// Model photographs hotlinked from the reference stores are shared with the product pages
+// (src/data/campaign-images.ts). Remaining editorial textures and hero photography are credited
+// in docs/landing-image-credits.md.
 const photos = {
-  storyTee: { src: "/landing/story-tee.jpg", alt: "A white T-shirt on a hanger beside straw hats and a woven bag", position: "50% 50%" },
-  storyTeeModel: { src: "/landing/story-tee-model.jpg", alt: "A woman in a plain black T-shirt with her arms crossed against a patterned backdrop", position: "50% 25%" },
-  storyDropShoulder: { src: "/landing/story-drop-shoulder.jpg", alt: "Two coral printed T-shirts hanging on a wooden pegboard", position: "35% 50%" },
-  storyDropShoulderModel: { src: "/landing/story-drop-shoulder-model.jpg", alt: "A man in a black T-shirt and sunglasses beside a sunlit wall", position: "50% 30%" },
-  storyFootwear: { src: "/landing/story-footwear.jpg", alt: "A close-up of a beige sneaker mid-step over fallen leaves", position: "50% 50%" },
+  storyTee: campaignPhotos.riverTee,
+  storyTeeModel: campaignPhotos.teeFront,
+  storyDropShoulder: campaignPhotos.deltaTee,
+  storyDropShoulderModel: campaignPhotos.basicTee,
+  storyFootwear: campaignPhotos.footwear,
   camelCoat: { src: "/landing/style-camel-coat.jpg", alt: "A woman in a camel coat in warm evening light", position: "50% 30%" },
   redBeanie: { src: "/landing/style-red-beanie.jpg", alt: "A woman in a red beanie, tinted glasses and a plaid jacket", position: "50% 25%" },
   pinkFur: { src: "/landing/style-pink-fur.jpg", alt: "A woman in a pale fur coat and gold aviator sunglasses", position: "50% 30%" },
   redGown: { src: "/landing/texture-red-gown.jpg", alt: "", position: "50% 70%" },
-  tees: { src: "/landing/collection-tees.jpg", alt: "Black crew-neck T-shirts on hangers", position: "50% 40%" },
-  hoodie: { src: "/landing/collection-hoodie.jpg", alt: "A woman in a peach hoodie and glasses", position: "50% 40%" },
-  suit: { src: "/landing/collection-suit.jpg", alt: "A close-up of a pinstripe suit jacket and a ringed hand", position: "50% 50%" },
-  leatherJacket: { src: "/landing/collection-leather-jacket.jpg", alt: "A man in a black leather jacket and sunglasses", position: "50% 35%" },
-  tote: { src: "/landing/collection-tote.jpg", alt: "A canvas tote bag hanging beside a wooden door", position: "35% 50%" },
-  lifeIsShort: { src: "/products/life-is-short-tee-08.jpg", alt: "The back of the Life is short tee, printed LIFE IS SHORT, in a lounge with arched niches", position: "50% 35%" },
-  sunglasses: { src: "/landing/about-sunglasses.jpg", alt: "A woman in round sunglasses and a navy blazer", position: "50% 30%" },
-  journalBeanie: { src: "/landing/journal-red-beanie.jpg", alt: "A woman in a red beanie and mirrored sunglasses", position: "50% 30%" },
-  journalBeret: { src: "/landing/journal-red-beret.jpg", alt: "A woman in a red beret and white shirt", position: "50% 25%" },
-  journalLeather: { src: "/landing/journal-leather.jpg", alt: "A young man in a black leather jacket", position: "50% 30%" },
-  journalSuit: { src: "/landing/journal-suit.jpg", alt: "A black-and-white portrait of a woman in a suit on a stool", position: "50% 40%" },
+  tees: campaignPhotos.basicTee,
+  hoodie: campaignPhotos.hoodie,
+  suit: campaignPhotos.suit,
+  leatherJacket: campaignPhotos.leatherJacket,
+  tote: campaignPhotos.toteWide,
+  lifeIsShort: campaignPhotos.teeBack,
+  sunglasses: campaignPhotos.deltaTee,
   redLips: { src: "/landing/footer-red-lips.jpg", alt: "A close-up portrait of a woman with red lipstick", position: "50% 47%" },
   fur: { src: "/landing/footer-fur.jpg", alt: "", position: "50% 40%" },
 } satisfies Record<string, Photo>;
@@ -54,7 +56,7 @@ type StoryTile = {
   caption?: { label: string; count: string };
 };
 
-// "Find your story": five columns alternating short / tall — product shot, worn, product shot, worn, footwear.
+// "Find your story": five model portraits alternating short / tall, ending with footwear.
 // Rendered by story-tiles.tsx as tilted cloth patches with Framer Motion hover and scroll-in animation.
 const storyTiles: StoryTile[] = [
   { id: "story-tee", photo: photos.storyTee, shape: "short", tilt: -2, frame: "bg-lp-patch-mustard outline-lp-ink/45", caption: { label: "T-shirt", count: "24 items" } },
@@ -74,13 +76,14 @@ const patchwork = [
   { text: "with everyday comfort.", className: "-mt-1 ml-5 bg-lp-deep text-lp-text rotate-1" },
 ];
 
+// Every tab opens its collection's page; Street style, home of the story tee, wears the accent patch.
 const collectionTabs = [
-  { label: "Casual wear", href: "#item-tee" },
-  { label: "Loungewear", href: "#item-hoodie" },
-  { label: "Street style", href: "#item-editorial" },
-  { label: "Outerwear", href: "#item-jacket" },
-  { label: "Handloom", href: "#item-tote" },
-  { label: "Formal wear", href: "#item-suit" },
+  { label: "Casual wear", href: "/collections/casual-wear" },
+  { label: "Loungewear", href: "/collections/loungewear" },
+  { label: "Street style", href: "/collections/street-style" },
+  { label: "Outerwear", href: "/collections/outerwear" },
+  { label: "Handloom", href: "/collections/handloom" },
+  { label: "Formal wear", href: "/collections/formal-wear" },
 ];
 
 // The collection is a brick wall in running bond. Desktop: six-column base, bricks two columns wide;
@@ -109,35 +112,98 @@ const bricks: Brick[] = [
 // Cloth bricks: a patch colour with grain and an inset running stitch (the stitch colour rides in `cloth`).
 const clothBrick = "outline-1 outline-dashed -outline-offset-4 before:pointer-events-none before:absolute before:inset-0 before:lp-noise before:opacity-25 before:mix-blend-overlay before:content-['']";
 
-const values = [
-  { icon: "comfort", title: "Everyday comfort", body: "Soft, breathable fabrics cut for heat, rain, and the long Dhaka day." },
-  { icon: "quality", title: "Premium quality", body: "Handloom cotton and considered finishing, made to outlast the season." },
-  { icon: "delivery", title: "Fast delivery", body: "Quick, reliable delivery across Bangladesh, packed without excess." },
-  { icon: "timeless", title: "Timeless design", body: "Quiet silhouettes rooted in heritage that never fall out of step." },
-] as const;
 
 // Stagger relative to column width: 0 / 80% / 0 / 55% on desktop, two staggered columns on mobile.
 // Each post is a cloth patch: `cloth` is the frame colour, its stitch (text) colour and resting tilt,
 // `tag` the tilt of the date patch sewn over its corner. Full class literals, as Tailwind needs.
+// The posts themselves (date, photograph, title) live in src/data/journal.ts; each patch links to its
+// entry on the /journal page.
 const journalPosts = [
-  { date: "12 Sep 2026", photo: photos.journalBeanie, offset: "", cloth: "bg-lp-patch-mustard text-lp-ink -rotate-2", tag: "rotate-3" },
-  { date: "08 Sep 2026", photo: photos.journalBeret, offset: "mt-[40%] lg:mt-[80%]", cloth: "bg-lp-patch-indigo text-lp-canvas rotate-[1.5deg]", tag: "-rotate-2" },
-  { date: "02 Sep 2026", photo: photos.journalLeather, offset: "-mt-[40%] lg:mt-0", cloth: "bg-lp-patch-madder text-lp-canvas -rotate-1", tag: "rotate-2" },
-  { date: "27 Aug 2026", photo: photos.journalSuit, offset: "lg:mt-[55%]", cloth: "bg-lp-patch-olive text-lp-canvas rotate-2", tag: "-rotate-3" },
+  { ...posts[0], offset: "", cloth: "bg-lp-patch-mustard text-lp-ink -rotate-2", tag: "rotate-3" },
+  { ...posts[1], offset: "mt-[40%] lg:mt-[80%]", cloth: "bg-lp-patch-indigo text-lp-canvas rotate-[1.5deg]", tag: "-rotate-2" },
+  { ...posts[2], offset: "-mt-[40%] lg:mt-0", cloth: "bg-lp-patch-madder text-lp-canvas -rotate-1", tag: "rotate-2" },
+  { ...posts[3], offset: "lg:mt-[55%]", cloth: "bg-lp-patch-olive text-lp-canvas rotate-2", tag: "-rotate-3" },
 ];
 
 const styleWords = ["Streetwear", "Linen sets", "Overshirts", "Handloom", "Outerwear", "Knitwear", "Formal wear"];
 
+// The first piece, ঋ-Vive, told as a story (the user asked for the first product featured this way,
+// after the hero-like "EcoTech" / "Nakasei" references: one large object, a big title, small floating
+// cards with the facts). Sample copy like the rest of the page: the words live here, the drawn swatch
+// and the leaders in vive-art.tsx. The photographs are hotlinked from the reference stores the user
+// sent (hosts allowed in next.config.ts, sources and the rights note in docs/product-image-credits.md);
+// they are placeholders for the brand's own pictures of ঋ-Vive. Each callout label sits at `at`
+// (percent of the framed photograph's box, from the corner it names) and its leader is a path on
+// the photograph's pixel grid, from the detail (`dot`) out to the label; the patch callout is
+// captioned under the drawn swatch of the quilt.
+const viveTee = {
+  src: "https://ymvykcvbtnxwszfliaov.supabase.co/storage/v1/object/public/product-images/olive-urdu-tee/3.jpg",
+  width: 1200,
+  height: 1600,
+  alt: "A washed olive drop-shoulder tee with printed cloth patches sewn on the chest, the side and the hem, hanging on a wooden hanger against a white wall",
+};
+type Callout = { id: string; title: string; detail: string; at: CSSProperties; leader: { d: string; dot: [number, number] }; swatch?: boolean };
+type FactCard = { icon: IconName; label: string; value: string; photo: Photo; cloth: string; place: string };
+
+const featuredStory: { tagline: string; lede: string; chapters: { title: string; body: string }[]; callouts: Callout[]; cards: FactCard[]; motifs: string[] } = {
+  tagline: "A grandmother's quilt, sewn onto a tee you will wear for years.",
+  lede: "Every nakshi kantha begins as worn-out saris, layered and quilted with a running stitch until the cloth is new again. ঋ-Vive takes one quilt's motif, cuts it as a patch, and sews it by hand onto a heavy olive tee.",
+  chapters: [
+    { title: "The quilt", body: "Old saris folded five deep and quilted with thread pulled from their own borders. Nothing is thrown away; it becomes the next thing." },
+    { title: "The stitch", body: "One running stitch, ten thousand times over. The women of Jashore draw the lotus, the fish and the sun from memory, so no two patches match." },
+    { title: "The tee", body: "280-gram cotton, garment-dyed olive, dropped two fingers at the shoulder. The patch is whipped on by hand and the quilt's border is block-printed down one sleeve." },
+  ],
+  callouts: [
+    { id: "patch", title: "Kantha patch", detail: "Cut from one quilt, whipped on by hand", at: { left: "-6%", top: "22%" }, leader: { d: "M430 665 180 160", dot: [430, 665] }, swatch: true },
+    { id: "collar", title: "Running-stitch collar", detail: "Sewn through the rib by hand", at: { left: "60%", top: "14%" }, leader: { d: "M562 404 716 272", dot: [562, 404] } },
+    { id: "sleeve", title: "Block-printed border", detail: "The quilt's edge, down one sleeve", at: { left: "84%", top: "52%" }, leader: { d: "M972 918 1004 876", dot: [972, 918] } },
+    { id: "cloth", title: "Garment-dyed olive", detail: "280 g combed cotton, twin-needle hem", at: { right: "52%", top: "88%" }, leader: { d: "M640 1330 580 1446", dot: [640, 1330] } },
+  ],
+  // Each card carries a photograph from one of the reference stores. Cloth and desktop placement are
+  // full class literals, as Tailwind needs.
+  cards: [
+    {
+      icon: "pin",
+      label: "Stitched in",
+      value: "Jashore, Bengal",
+      photo: { src: "https://cdn.shopify.com/s/files/1/0880/2448/2082/files/A3.jpg", alt: "A woven label sewn onto a sky-blue tee, printed with the names of rivers", position: "50% 50%" },
+      cloth: "bg-lp-card text-lp-text",
+      place: "lg:top-[4%] lg:right-0 -rotate-2",
+    },
+    {
+      icon: "needle",
+      label: "Hand-stitching",
+      value: "14 h per patch",
+      photo: { src: "https://cdn.shopify.com/s/files/1/0940/5576/0157/files/DSC09831.jpg", alt: "A white patch with Urdu calligraphy hand-stitched onto the back of a black tee", position: "50% 45%" },
+      cloth: "bg-lp-patch-mustard text-lp-ink",
+      place: "lg:top-[72%] lg:right-[1%] rotate-2",
+    },
+    {
+      icon: "tag",
+      label: "Edition",
+      value: "001 · 100 pieces",
+      photo: { src: "https://vylaxclothing.com/wp/wp-content/uploads/2026/09/WhatsApp-Image-2026-09-08-at-6.37.53-PM.jpeg", alt: "A red oversized tee with Urdu script and a cloth band on the sleeve", position: "50% 30%" },
+      cloth: "bg-lp-text text-lp-bg",
+      place: "lg:top-[95%] lg:left-[6%] -rotate-1",
+    },
+  ],
+  motifs: ["Old saris", "Running stitch", "Lotus", "Fish", "Sun", "Jashore", "Garment-dyed", "280 g", "Drop 001"],
+};
+
 const footerLinks = [
   { label: "Home", href: "#top" },
-  { label: "About us", href: "#about" },
-  { label: "Collections", href: "#collection" },
-  { label: "Shop", href: "#categories" },
-  { label: "Journal", href: "#journal" },
-  { label: "Contact us", href: "#footer" },
+  { label: "About us", href: "/about" },
+  { label: "Collections", href: "/collections" },
+  { label: "Shop", href: "/shop" },
+  { label: "Journal", href: "/journal" },
+  { label: "Contact us", href: "/contact" },
 ];
 
-const legalLinks = ["Privacy policy", "Terms & conditions", "Cookie policy"];
+const legalLinks = [
+  { label: "Privacy policy", href: "/legal/privacy" },
+  { label: "Terms & conditions", href: "/legal/terms" },
+  { label: "Cookie policy", href: "/legal/cookies" },
+];
 
 // Each social patch wears a light tint of its network's colour with the real mark in the brand
 // colour, and turns the full brand colour on hover. Brand colours are fixed: they do not follow
@@ -190,13 +256,13 @@ function Button({ href, children, tone = "accent" }: { href: string; children: R
     text: "bg-lp-text text-lp-bg hover:bg-lp-accent hover:text-lp-ink",
   };
   return (
-    <a
+    <Link
       href={href}
       className={`${smallPatch} inline-flex min-h-11 min-w-40 -rotate-1 items-center justify-between gap-6 px-4 text-[11px] font-medium tracking-wide uppercase sm:min-h-10 ${tones[tone]}`}
     >
       {children}
       <Icon name="arrowRight" />
-    </a>
+    </Link>
   );
 }
 
@@ -243,9 +309,15 @@ function Markers({ className }: { className: string }) {
   );
 }
 
-function SectionTitle({ id, children }: { id: string; children: ReactNode }) {
+// `feature` is the larger cut for the featured story's hero-like title.
+const titleSizes = {
+  section: "text-[clamp(1.4rem,2.45cqw,2.5rem)] leading-[1.15]",
+  feature: "text-[clamp(2rem,4.3cqw,4.6rem)] leading-[1.02]",
+};
+
+function SectionTitle({ id, children, size = "section", className = "" }: { id: string; children: ReactNode; size?: keyof typeof titleSizes; className?: string }) {
   return (
-    <h2 id={id} className="lp-newsprint font-lp-display text-[clamp(1.4rem,2.45cqw,2.5rem)] leading-[1.15] tracking-[-.025em] text-lp-text uppercase">
+    <h2 id={id} className={`lp-newsprint font-lp-display tracking-[-.025em] text-lp-text uppercase ${titleSizes[size]} ${className}`}>
       {children}
     </h2>
   );
@@ -306,7 +378,7 @@ export function LandingMain() {
           />
 
           <div className="pb-[10%]">
-            <Rail href="#collection" first={`#${storyTiles[0].id}`} last={`#${storyTiles[storyTiles.length - 1].id}`} label="category">
+            <Rail href="/shop" first={`#${storyTiles[0].id}`} last={`#${storyTiles[storyTiles.length - 1].id}`} label="category">
               Browse all
             </Rail>
           </div>
@@ -338,9 +410,9 @@ export function LandingMain() {
             <div className="relative aspect-[3/4] overflow-hidden bg-[#7a3a20] lg:aspect-[315/450]">
               <Photo photo={photos.camelCoat} sizes="(min-width: 1024px) 420px, 62vw" className={hoverImage} />
             </div>
-            <a href="#collection" className={`${smallPatch} absolute inset-x-[10%] bottom-[7%] flex min-h-10 -rotate-1 items-center justify-between bg-lp-text px-3.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}>
+            <Link href="/collections/outerwear" className={`${smallPatch} absolute inset-x-[10%] bottom-[7%] flex min-h-10 -rotate-1 items-center justify-between bg-lp-text px-3.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}>
               Shop this look <Icon name="arrowRight" />
-            </a>
+            </Link>
           </figure>
 
           <article className={`lp-reveal-left ${cardPatch} absolute top-[62%] left-[3%] z-20 flex w-48 -rotate-2 gap-2.5 bg-lp-card p-3 text-lp-text lg:top-[33%] lg:left-[21%] lg:w-[19%]`}>
@@ -350,9 +422,9 @@ export function LandingMain() {
             <div className="text-[10px]">
               <h3 className="font-lp-display text-[11px] uppercase">Red beanie</h3>
               <p className="mt-0.5 text-lp-muted">৳ 1,850</p>
-              <a href="#item-tee" aria-label="Shop Red beanie" className="lp-patch mt-2 grid size-7 place-items-center bg-lp-accent text-lp-ink transition-colors [--lp-stitch-inset:2px] hover:bg-lp-text hover:text-lp-bg motion-reduce:transition-none">
+              <Link href="/collections/casual-wear" aria-label="Shop Red beanie" className="lp-patch mt-2 grid size-7 place-items-center bg-lp-accent text-lp-ink transition-colors [--lp-stitch-inset:2px] hover:bg-lp-text hover:text-lp-bg motion-reduce:transition-none">
                 <Icon name="plus" className="size-3" />
-              </a>
+              </Link>
             </div>
           </article>
 
@@ -366,10 +438,127 @@ export function LandingMain() {
             </div>
             <h3 className="mt-2 font-lp-display text-[11px] uppercase">Fur coat</h3>
             <p className="text-[10px] opacity-70">৳ 1,450</p>
-            <a href="#item-tee" aria-label="Shop Fur coat" className="lp-patch mt-1.5 grid size-7 place-items-center bg-lp-bg text-lp-text transition-colors [--lp-stitch-inset:2px] hover:bg-lp-accent hover:text-lp-ink motion-reduce:transition-none">
+            <Link href="/collections/outerwear" aria-label="Shop Fur coat" className="lp-patch mt-1.5 grid size-7 place-items-center bg-lp-bg text-lp-text transition-colors [--lp-stitch-inset:2px] hover:bg-lp-accent hover:text-lp-ink motion-reduce:transition-none">
               <Icon name="plus" className="size-3" />
-            </a>
+            </Link>
           </article>
+        </section>
+
+        {/* The first piece, as a story */}
+        <section id="featured" aria-labelledby="featured-title" className="relative isolate flex scroll-mt-4 flex-col overflow-hidden bg-lp-bg px-[3%] pt-14 pb-10 lg:grid lg:grid-cols-[35%_1fr] lg:gap-x-[5%] lg:pt-[7%] lg:pb-[5%]">
+          {/* A kantha quilt for a background: rows of running stitch in the text colour, the olive cloth's glow behind the tee, and grain. */}
+          <div className="lp-kantha lp-drift absolute inset-x-0 -top-[8%] -bottom-[8%] -z-20 bg-lp-text opacity-[.07]" aria-hidden="true" />
+          <div
+            className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_46%_32%_at_50%_36%,color-mix(in_oklab,var(--color-lp-patch-olive)_55%,transparent),transparent_70%)] lg:bg-[radial-gradient(ellipse_28%_44%_at_62%_36%,color-mix(in_oklab,var(--color-lp-patch-olive)_55%,transparent),transparent_70%)]"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 -z-10 lp-noise opacity-25 mix-blend-overlay" aria-hidden="true" />
+          <span className="lp-drift pointer-events-none absolute right-[1%] bottom-[1%] -z-10 font-lp-display text-[24cqw] leading-none text-lp-text/5 uppercase select-none lg:bottom-[9%] lg:text-[14cqw]" aria-hidden="true">
+            Vive
+          </span>
+
+          {/* The words: intro, then the story in three stitches. One column on desktop; on phones the tee sits between them. */}
+          <div className="contents lg:flex lg:flex-col lg:gap-9">
+            <div className="lp-reveal relative z-10 order-1 max-w-md lg:max-w-none">
+              <p className="flex flex-wrap gap-2">
+                <Label>Story No. 01</Label>
+                <Label tone="outline">Our first piece</Label>
+              </p>
+              <SectionTitle id="featured-title" size="feature" className="mt-4">
+                Naqshi Kantha
+                <br />
+                ঋ-Vive
+              </SectionTitle>
+              <p className="mt-4 max-w-sm font-lp-serif text-lg leading-snug text-lp-text italic sm:text-xl">{featuredStory.tagline}</p>
+              <p className={`${bodyText} mt-4 max-w-sm`}>{featuredStory.lede}</p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button href="/contact">Follow the first drop</Button>
+                <Button href="/collections/street-style" tone="text">
+                  See the collection
+                </Button>
+              </div>
+            </div>
+            <ol className="relative z-10 order-4 mt-10 ml-3 grid gap-5 border-l border-dashed border-lp-border pl-6 lg:mt-0 lg:gap-4" aria-label="The story in three stitches">
+              {featuredStory.chapters.map((chapter, index) => (
+                <li key={chapter.title} className="lp-reveal relative" style={{ "--lp-stagger": index } as CSSProperties}>
+                  <span
+                    className={`lp-patch absolute top-0 -left-[37px] grid size-6 place-items-center text-[9px] [--lp-stitch-inset:2px] ${["bg-lp-patch-mustard text-lp-ink -rotate-3", "bg-lp-patch-madder text-lp-canvas rotate-2", "bg-lp-patch-indigo text-lp-canvas -rotate-2"][index]}`}
+                    aria-hidden="true"
+                  >
+                    0{index + 1}
+                  </span>
+                  <h3 className="font-lp-display text-[12px] uppercase">
+                    <span className="sr-only">Stitch {index + 1}: </span>
+                    {chapter.title}
+                  </h3>
+                  <p className={`${bodyText} mt-1 max-w-sm`}>{chapter.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {/* The stage: the tee, cut out of its photograph, swaying on the page, with the quilt swatch sewing itself in beside it, the details called out around it and the facts floating as cards. */}
+          <div className="contents lg:relative lg:block lg:pt-[3%]">
+            <div className="lp-fade relative z-10 order-2 mx-auto mt-10 w-[86%] max-w-sm sm:w-[64%] lg:mx-0 lg:ml-[3%] lg:mt-0 lg:w-[63%] lg:max-w-none">
+              <div className="lp-float relative text-lp-text">
+                {/* The photograph in a cloth frame with a running stitch, like the page's other pictures; the leaders are drawn over the photograph itself. */}
+                <div className="lp-patch bg-lp-patch-olive p-2 text-lp-canvas shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/20 sm:p-2.5 sm:[--lp-stitch-inset:5px]">
+                  <div className="relative overflow-hidden bg-lp-surface text-lp-text">
+                    <Image src={viveTee.src} alt={viveTee.alt} width={viveTee.width} height={viveTee.height} sizes="(min-width: 1024px) 34vw, (min-width: 640px) 64vw, 86vw" className="block h-auto w-full" />
+                    <Leaders box={`0 0 ${viveTee.width} ${viveTee.height}`} leaders={featuredStory.callouts.map((callout) => ({ id: callout.id, ...callout.leader }))} className="pointer-events-none absolute inset-0 hidden size-full lg:block" />
+                  </div>
+                </div>
+                <div className="absolute top-[2%] -left-[7%] w-[30%] drop-shadow-[0_12px_14px_rgb(0_0_0/.45)] group-data-[lp-theme=light]/theme:drop-shadow-[0_10px_12px_rgb(0_0_0/.18)]" aria-hidden="true">
+                  <QuiltSwatch className="block w-full -rotate-3" />
+                </div>
+                <ul className="hidden lg:contents" aria-label="The details">
+                  {featuredStory.callouts.map((callout) => (
+                    <li key={callout.id} style={callout.at} className="lp-patch absolute z-10 w-max max-w-44 bg-lp-card px-2.5 py-1.5 text-[10px] leading-snug text-lp-text shadow-md shadow-black/35 [--lp-stitch-inset:3px] group-data-[lp-theme=light]/theme:shadow-black/12">
+                      <strong className="block font-lp-display font-normal uppercase">{callout.title}</strong>
+                      <span className="text-lp-muted">{callout.detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <ul className="relative z-20 order-5 mt-8 grid gap-3 sm:grid-cols-3 lg:contents" aria-label="The first piece in numbers">
+              {featuredStory.cards.map((card, index) => (
+                <li
+                  key={card.label}
+                  style={{ "--lp-stagger": index } as CSSProperties}
+                  className={`lp-reveal-right ${cardPatch} z-20 flex items-center gap-3 p-3 lg:absolute lg:w-[31%] lg:p-3.5 ${card.cloth} ${card.place}`}
+                >
+                  <span className="lp-patch relative aspect-[4/5] w-11 flex-none overflow-hidden bg-lp-surface [--lp-stitch-inset:2px]">
+                    <Photo photo={card.photo} sizes="44px" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="flex items-center gap-1.5 text-[9px] tracking-[.12em] uppercase opacity-70">
+                      <Icon name={card.icon} className="size-3" />
+                      {card.label}
+                    </span>
+                    <span className="block font-lp-display text-[13px] leading-tight uppercase">{card.value}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <ul className="relative z-10 order-3 mt-6 grid grid-cols-2 gap-2 lg:hidden" aria-label="The details">
+            {featuredStory.callouts.map((callout) => (
+              <li key={callout.id} className="lp-patch bg-lp-card px-2.5 py-2 text-[10px] leading-snug text-lp-text [--lp-stitch-inset:3px]">
+                <strong className="block font-lp-display font-normal uppercase">{callout.title}</strong>
+                <span className="text-lp-muted">{callout.detail}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="relative order-6 hidden h-4 lg:col-span-2 lg:mt-[4%] lg:block" aria-hidden="true">
+            <Markers className="top-0" />
+          </div>
+          <ul className="lp-drift-x relative order-7 -mx-[3.2%] mt-10 flex justify-between gap-6 overflow-hidden border-y border-lp-border px-[3%] py-2 text-[10px] whitespace-nowrap text-lp-muted uppercase lg:col-span-2 lg:mt-5" aria-label="Motifs">
+            {featuredStory.motifs.map((word, index) => (
+              <li key={word} className={index > 2 && index < 7 ? "hidden lg:block" : ""}>{word}</li>
+            ))}
+          </ul>
         </section>
 
         {/* Collection */}
@@ -385,13 +574,12 @@ export function LandingMain() {
             <ul className="flex min-w-max justify-between gap-3 py-4">
               {collectionTabs.map((tab, index) => (
                 <li key={tab.label}>
-                  <a
+                  <Link
                     href={tab.href}
-                    aria-current={index === 2 ? "true" : undefined}
-                    className={`${smallPatch} grid min-h-11 place-items-center bg-lp-card px-5 text-[11px] text-lp-muted uppercase hover:bg-lp-text hover:text-lp-bg aria-[current]:bg-lp-accent aria-[current]:text-lp-ink sm:min-h-10 ${index % 2 ? "rotate-1" : "-rotate-1"}`}
+                    className={`${smallPatch} grid min-h-11 place-items-center px-5 text-[11px] uppercase hover:bg-lp-text hover:text-lp-bg sm:min-h-10 ${index === 2 ? "bg-lp-accent text-lp-ink" : "bg-lp-card text-lp-muted"} ${index % 2 ? "rotate-1" : "-rotate-1"}`}
                   >
                     {tab.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -423,12 +611,12 @@ export function LandingMain() {
                     <br />
                     every month
                   </p>
-                  <a
-                    href="#journal"
+                  <Link
+                    href="/shop"
                     className={`${smallPatch} relative inline-flex min-h-10 -rotate-1 items-center justify-between gap-4 bg-lp-text px-3.5 text-[11px] font-medium tracking-wide text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}
                   >
                     Browse more <Icon name="arrowRight" />
-                  </a>
+                  </Link>
                 </li>
               ) : (
                 <li key={brick.id} aria-hidden="true" className={`lp-fade relative ${clothBrick} ${brick.cloth} ${brick.place}`} />
@@ -460,7 +648,7 @@ export function LandingMain() {
               <Icon name="arrowUpRight" className="absolute -left-6 size-3.5 text-lp-muted" />
               <Icon name="arrowUpLeft" className="absolute -right-6 size-3.5 text-lp-muted" />
               <div className="mt-6 grid place-items-center border-y border-lp-border py-4">
-                <Button href="#journal" tone="text">Learn more</Button>
+                <Button href="/about" tone="text">Learn more</Button>
               </div>
             </div>
           </div>
@@ -485,23 +673,23 @@ export function LandingMain() {
             <p className={`${bodyText} max-w-md`}>Explore our latest looks, behind-the-scenes moments, and stay connected with every new collection.</p>
           </div>
 
-          <Rail href="#footer" first="#journal-post-0" last={`#journal-post-${journalPosts.length - 1}`} label="post">
+          <Rail href="/journal" first="#journal-post-0" last={`#journal-post-${journalPosts.length - 1}`} label="post">
             Follow us
           </Rail>
 
           <ul className="grid grid-cols-2 items-start gap-5 px-[3%] pt-[4%] pb-[10%] lg:grid-cols-4 lg:gap-x-[1.6%]">
             {journalPosts.map((post, index) => (
-              <li key={post.date} id={`journal-post-${index}`} style={{ "--lp-stagger": index } as CSSProperties}
+              <li key={post.slug} id={`journal-post-${index}`} style={{ "--lp-stagger": index } as CSSProperties}
                 className={`lp-reveal lp-unveil scroll-mt-4 ${post.offset}`}>
                 {/* The tilt lives on the patch, not the li, so it does not fight the reveal's transform. */}
-                <div className={`${cardPatch} group relative p-2.5 [--lp-stitch-inset:5px] sm:p-3.5 sm:[--lp-stitch-inset:7px] ${post.cloth}`}>
+                <Link href={`/journal#${post.slug}`} aria-label={`${post.title}, ${post.date}`} className={`${cardPatch} group relative block p-2.5 [--lp-stitch-inset:5px] sm:p-3.5 sm:[--lp-stitch-inset:7px] ${post.cloth}`}>
                   <span className={`absolute -top-3 -left-1 z-10 sm:-left-2 ${patchShadow} ${post.tag}`}>
                     <Label tone="text">{post.date}</Label>
                   </span>
                   <div className="relative aspect-[3/4] overflow-hidden">
                     <Photo photo={post.photo} sizes="(min-width: 1024px) 320px, 50vw" className={hoverImage} />
                   </div>
-                </div>
+                </Link>
               </li>
             ))}
           </ul>
@@ -541,8 +729,8 @@ export function LandingMain() {
 
           <ul className="mx-[3%] mt-6 mb-8 flex flex-wrap justify-center gap-3">
             {legalLinks.map((link, index) => (
-              <li key={link}>
-                <a href="#footer" className={`${smallPatch} block min-w-40 bg-lp-text px-4 py-2.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink ${index % 2 ? "rotate-1" : "-rotate-1"}`}>{link}</a>
+              <li key={link.href}>
+                <Link href={link.href} className={`${smallPatch} block min-w-40 bg-lp-text px-4 py-2.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink ${index % 2 ? "rotate-1" : "-rotate-1"}`}>{link.label}</Link>
               </li>
             ))}
           </ul>
@@ -552,7 +740,7 @@ export function LandingMain() {
               {footerLinks.map((link, index) => (
                 <li key={link.label}>
                   {/* Dark patches on the yellow band: ink and accent read the same in both themes. */}
-                  <a href={link.href} className={`${smallPatch} block bg-lp-ink px-4 py-2.5 text-lp-accent hover:bg-lp-card hover:text-lp-text ${index % 2 ? "-rotate-1" : "rotate-1"}`}>{link.label}</a>
+                  <Link href={link.href} className={`${smallPatch} block bg-lp-ink px-4 py-2.5 text-lp-accent hover:bg-lp-card hover:text-lp-text ${index % 2 ? "-rotate-1" : "rotate-1"}`}>{link.label}</Link>
                 </li>
               ))}
             </ul>

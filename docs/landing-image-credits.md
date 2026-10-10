@@ -1,5 +1,16 @@
 # Landing page image credits
 
+## Current campaign photography
+
+The Find your story tiles, the collection wall, the About portrait and the journal use model photographs
+**hotlinked from other labels' stores** (Rakh, Samaajik, AZRAK, Vylax), shared with the product pages through
+`src/data/campaign-images.ts`. They are placeholders chosen by the user, not open-source images; each slot's
+source and the rights note are in [product-image-credits.md](product-image-credits.md). The generated photographs
+these replaced stay in `public/campaign/` ([generated-campaign-images.md](generated-campaign-images.md)). The older
+stock files below remain in the repository; their presence does not mean they are still used by these sections.
+
+## Original stock library and existing hero
+
 The stock photos listed below in `public/landing/` and `public/coming-soon/` are downloaded from Unsplash and used under the [Unsplash License](https://unsplash.com/license) (free for commercial use; attribution appreciated, not required). The generated hero assets are documented separately below.
 
 | File | Photographer | Source |

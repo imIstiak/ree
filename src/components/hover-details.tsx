@@ -6,9 +6,10 @@ import type { MouseEvent, PointerEvent, ReactNode } from "react";
 // A <details> that leaves the way it came. Closing it, whether through its <summary> or because
 // the mouse has been off it for `delay` ms, first sets `data-closing` so CSS can play the exit
 // animations, and only shuts the <details> once they have all finished (at once under reduced
-// motion, where there are none). The landing hero's only client island: opening is still the
-// native <summary> toggle, and without JavaScript it is a plain <details>.
-export function HoverDetails({ className, delay = 600, children }: { className?: string; delay?: number; children: ReactNode }) {
+// motion, where there are none). Used by the header's menu and bag, the size chart and the product
+// pages' accordions (`closeOnLeave={false}`: inline content should not shut under the reader).
+// Opening is still the native <summary> toggle, and without JavaScript it is a plain <details>.
+export function HoverDetails({ className, delay = 600, closeOnLeave = true, open, children }: { className?: string; delay?: number; closeOnLeave?: boolean; open?: boolean; children: ReactNode }) {
   const details = useRef<HTMLDetailsElement>(null);
   const timer = useRef<number | undefined>(undefined);
 
@@ -30,7 +31,7 @@ export function HoverDetails({ className, delay = 600, children }: { className?:
   };
 
   const scheduleClose = (event: PointerEvent<HTMLDetailsElement>) => {
-    if (event.pointerType !== "mouse" || !details.current?.open) return;
+    if (!closeOnLeave || event.pointerType !== "mouse" || !details.current?.open) return;
     cancel();
     timer.current = window.setTimeout(close, delay);
   };
@@ -45,7 +46,7 @@ export function HoverDetails({ className, delay = 600, children }: { className?:
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
   return (
-    <details ref={details} className={className} onClick={closeFromSummary} onPointerEnter={cancel} onPointerLeave={scheduleClose}>
+    <details ref={details} className={className} open={open} onClick={closeFromSummary} onPointerEnter={cancel} onPointerLeave={scheduleClose}>
       {children}
     </details>
   );

@@ -269,9 +269,13 @@ export function ComingSoon() {
     contactDialogRef.current?.showModal();
   };
 
+  // The window leaves the way it came (.ree-pop in globals.css): mark it closing, let the exit
+  // animations finish, then close it. `onClose` keeps the state in step however it was shut.
   const closeContact = () => {
-    contactDialogRef.current?.close();
-    setContactOpen(false);
+    const dialog = contactDialogRef.current;
+    if (!dialog?.open || dialog.hasAttribute("data-closing")) return;
+    dialog.setAttribute("data-closing", "");
+    Promise.allSettled(dialog.getAnimations({ subtree: true }).map((animation) => animation.finished)).then(() => dialog.close());
   };
 
   const activeHotspot = openHotspot === null
@@ -413,19 +417,26 @@ export function ComingSoon() {
         className="contact-dialog"
         aria-labelledby="contact-title"
         aria-describedby="contact-description"
-        onCancel={() => setContactOpen(false)}
+        onCancel={(event) => {
+          event.preventDefault();
+          closeContact();
+        }}
+        onClose={(event) => {
+          event.currentTarget.removeAttribute("data-closing");
+          setContactOpen(false);
+        }}
         onClick={(event) => {
           if (event.target === event.currentTarget) closeContact();
         }}
       >
-        <div className="contact-dialog__inner">
+        <div className="contact-dialog__inner ree-pop">
           <button className="contact-dialog__close" onClick={closeContact} aria-label="Close contact window" autoFocus>
             <X size={17} strokeWidth={1.5} aria-hidden="true" />
           </button>
-          <span className="contact-dialog__eyebrow">CONTACT · ঋ - Ree</span>
-          <h2 id="contact-title">Let&apos;s stay in touch.</h2>
-          <p id="contact-description">For Collection 01, collaborations, press, or anything else, choose how you&apos;d like to reach us.</p>
-          <div className="contact-dialog__actions">
+          <span className="contact-dialog__eyebrow ree-pop-row" style={{ "--i": 0 } as CSSProperties}>CONTACT · ঋ - Ree</span>
+          <h2 id="contact-title" className="ree-pop-row" style={{ "--i": 1 } as CSSProperties}>Let&apos;s stay in touch.</h2>
+          <p id="contact-description" className="ree-pop-row" style={{ "--i": 2 } as CSSProperties}>For Collection 01, collaborations, press, or anything else, choose how you&apos;d like to reach us.</p>
+          <div className="contact-dialog__actions ree-pop-row" style={{ "--i": 3 } as CSSProperties}>
             <a href="mailto:info@ree.bd">
               <span><small>Email</small>info@ree.bd</span>
               <ArrowUpRight size={18} strokeWidth={1.25} aria-hidden="true" />
@@ -435,7 +446,7 @@ export function ComingSoon() {
               <ArrowUpRight size={18} strokeWidth={1.25} aria-hidden="true" />
             </a>
           </div>
-          <span className="contact-dialog__location">DHAKA · BANGLADESH</span>
+          <span className="contact-dialog__location ree-pop-row" style={{ "--i": 4 } as CSSProperties}>DHAKA · BANGLADESH</span>
         </div>
       </dialog>
     </main>

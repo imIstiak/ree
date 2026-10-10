@@ -4,9 +4,13 @@
    caller uses must make it a containing block for the centred brand. */
 .bar {
   --header-cream: #fffdf3;
-  /* The menu and bag tiles: the yellow bag tile from the landing page's style section. */
-  --header-tile: #e6d21f;
-  --header-tile-ink: #3a3000;
+  /* The menu and bag tiles wear the logo's colours: emerald cloth, the icon and the count badge in
+     the logo's cream with an emerald number, like the logo's cream tile and its green mark. The user
+     asked for the cloth to stay green in every state, so hover and open only straighten the tile. */
+  --header-tile: #00664f;
+  --header-tile-ink: #ffe7cc;
+  /* The panels' links and remove buttons keep the yellow patch on hover, under dark ink. */
+  --header-hover: #e6d21f;
   /* Patchwork: cloth grain laid over a patch's fill, and the ink its running stitch is sewn in. */
   --header-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 .32'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --header-patch-ink: #2a1408;
@@ -14,6 +18,9 @@
   align-items: flex-start;
   justify-content: space-between;
 }
+
+/* On the dark theme the tiles take the deeper emerald (--color-lp-brand-deep in globals.css). */
+:global([data-lp-theme="dark"]) .bar { --header-tile: #004d3b; }
 
 .menu, .cart { position: relative; }
 
@@ -34,13 +41,13 @@
   outline-offset: -5px;
   box-shadow: 0 10px 24px rgb(0 0 0 / 28%);
   transform: rotate(var(--tilt));
-  transition: background-color 180ms ease, transform 220ms ease;
+  transition: transform 220ms ease;
 }
 
 .menu .navLabel { --tilt: -4deg; }
 .cart .navLabel { --tilt: 4deg; }
 .navLabel::-webkit-details-marker { display: none; }
-.navLabel:hover, .menu[open] .navLabel, .cart[open] .navLabel { background-color: var(--header-cream); transform: none; }
+.navLabel:hover, .menu[open] .navLabel, .cart[open] .navLabel { transform: none; }
 
 .navIcon { grid-area: 1 / 1; width: 50%; height: 50%; }
 .navIconOpen { display: none; }
@@ -59,9 +66,9 @@
   font-size: 10px;
   font-weight: 500;
   line-height: 1;
-  color: var(--header-cream);
-  background: #240c06;
-  border: 1px solid rgb(245 237 158 / 30%);
+  color: var(--header-tile);
+  background: var(--header-tile-ink);
+  border: 1px solid var(--header-tile);
 }
 
 .panelIcon { width: 14px; height: 14px; }
@@ -116,11 +123,13 @@
 .menuPanel li:nth-child(5n + 3) { --i: 2; --patch: #f1d9bd; --tilt: -.7deg; }
 .menuPanel li:nth-child(5n + 4) { --i: 3; --patch: #dfe3bd; --tilt: 1.3deg; }
 .menuPanel li:nth-child(5n + 5) { --i: 4; --patch: #f6e0d6; --tilt: -1deg; }
-.menuPanel a:hover, .cartPanel a:hover { background-color: var(--header-tile); transform: translateX(-4px) rotate(0deg); }
+.menuPanel a:hover, .cartPanel a:hover { background-color: var(--header-hover); transform: translateX(-4px) rotate(0deg); }
 .menuSettings { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 8px 0; border-top: 1px dashed rgb(42 20 8 / 45%); }
 .cartPanel { --panel-tilt: 1.5deg; --panel-from: 130%; --panel-lean: 9deg; right: 0; width: 288px; transform-origin: top right; }
 .empty { margin: 6px 4px 16px; }
 .panelLink { --patch: #f5ed9e; --tilt: -1deg; display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding-inline: 16px; font-size: 12px; }
+.panelActions { display: grid; gap: 7px; margin-top: 12px; }
+.panelActions .panelLink:first-child { --patch: #fffdf3; --tilt: .8deg; }
 
 /* The bag's lines and the saved pieces: one patch per piece, the remove button a small patch beside it. */
 .lines { display: grid; gap: 7px; }
@@ -144,9 +153,8 @@
   box-shadow: 0 2px 6px rgb(42 20 8 / 20%);
   transition: background-color 180ms ease;
 }
-.remove:hover { background-color: var(--header-tile); }
+.remove:hover { background-color: var(--header-hover); }
 .total { display: flex; justify-content: space-between; margin: 14px 4px 0; padding-top: 12px; border-top: 1px dashed rgb(42 20 8 / 45%); }
-.note { margin: 6px 4px 2px; font-size: 11px; opacity: .7; }
 .saved { margin: 16px 4px 8px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -14,16 +14,20 @@ import styles from "./site-header.module.css";
 // its own side of the window and leaves the same way (site-header.module.css, hover-details.tsx).
 // The bag reads the localStorage store, so its count and lines follow the visitor between pages;
 // saved pieces are listed under the bag.
+// Every menu link is its own page (the user asked for pages instead of scrolling the landing page).
 const menuLinks = [
-  { label: "Categories", hash: "#categories" },
-  { label: "Style", hash: "#style" },
-  { label: "Collection", hash: "#collection" },
-  { label: "About", hash: "#about" },
-  { label: "Journal", hash: "#journal" },
+  { label: "Shop", href: "/shop" },
+  { label: "Collections", href: "/collections" },
+  { label: "Men", href: "/men" },
+  { label: "Women", href: "/women" },
+  { label: "Kids", href: "/kids" },
+  { label: "Journal", href: "/journal" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
-// On the landing page the links are in-page anchors, which its own scroll container handles;
-// from anywhere else they are routes back to it.
+// The logo is an in-page anchor on the landing page itself, which its own scroll container
+// handles; everything else is a route.
 function NavLink({ href, className, children, label }: { href: string; className?: string; children: ReactNode; label?: string }) {
   return href.startsWith("#") ? (
     <a href={href} className={className} aria-label={label}>
@@ -66,8 +70,8 @@ export function SiteHeader({
         <div className={styles.menuPanel}>
           <ul>
             {menuLinks.map((link) => (
-              <li key={link.hash}>
-                <NavLink href={`${base}${link.hash}`}>{link.label}</NavLink>
+              <li key={link.href}>
+                <NavLink href={link.href}>{link.label}</NavLink>
               </li>
             ))}
           </ul>
@@ -95,7 +99,7 @@ export function SiteHeader({
           {cart.length === 0 ? (
             <>
               <p className={styles.empty}>Your bag is empty.</p>
-              <NavLink href={`${base}#collection`} className={styles.panelLink}>
+              <NavLink href="/shop" className={styles.panelLink}>
                 Explore the collection <Icon name="arrowUpRight" className={styles.panelIcon} />
               </NavLink>
             </>
@@ -123,7 +127,14 @@ export function SiteHeader({
                 <span>Subtotal</span>
                 <span>{formatPrice(subtotal)}</span>
               </p>
-              <p className={styles.note}>Checkout is coming soon.</p>
+              <div className={styles.panelActions}>
+                <Link href="/cart" className={styles.panelLink}>
+                  View bag <Icon name="arrowUpRight" className={styles.panelIcon} />
+                </Link>
+                <Link href="/checkout" className={styles.panelLink}>
+                  Checkout <Icon name="arrowRight" className={styles.panelIcon} />
+                </Link>
+              </div>
             </>
           )}
           {saved.length > 0 && (

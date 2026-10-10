@@ -74,7 +74,7 @@ export function RelatedProducts({ products, showPrice = true }: { products: Prod
         <h2 id="related-title" className="lp-newsprint font-lp-display text-[clamp(1.3rem,2.2cqw,2rem)] uppercase">
           More from the collection
         </h2>
-        <Link href="/landing#collection" className="text-[11px] whitespace-nowrap uppercase hover:text-lp-accent">
+        <Link href="/shop" className="text-[11px] whitespace-nowrap uppercase hover:text-lp-accent">
           Browse all →
         </Link>
       </div>
@@ -89,6 +89,15 @@ export function RelatedProducts({ products, showPrice = true }: { products: Prod
   );
 }
 
+const footerLinks = [
+  { label: "Home", href: "/landing" },
+  { label: "Shop", href: "/shop" },
+  { label: "Collections", href: "/collections" },
+  { label: "Journal", href: "/journal" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
+
 export function ShopFooter() {
   return (
     <footer className="border-t border-lp-border px-[3%] py-8 text-[11px] tracking-[.1em] text-lp-muted uppercase">
@@ -97,10 +106,12 @@ export function ShopFooter() {
           <Link href="/landing" aria-label="REE home"><BrandLogo className="w-12" decorative /></Link>
           <span>Not everything old belongs in the past</span>
         </div>
-        <nav aria-label="Shop" className="flex gap-5">
-          <Link href="/landing" className="hover:text-lp-text">Home</Link>
-          <Link href="/landing#collection" className="hover:text-lp-text">Collections</Link>
-          <Link href="/landing#journal" className="hover:text-lp-text">Journal</Link>
+        <nav aria-label="Shop" className="flex flex-wrap gap-x-5 gap-y-2">
+          {footerLinks.map((link) => (
+            <Link key={link.href} href={link.href} className="hover:text-lp-text">
+              {link.label}
+            </Link>
+          ))}
         </nav>
       </div>
     </footer>

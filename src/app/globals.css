@@ -180,7 +180,6 @@
   color: var(--ivory);
 }
 
-.contact-dialog[open] { animation: contact-in .32s var(--scene-ease) both; }
 .contact-dialog::backdrop { background: rgb(var(--surface-rgb) / 70%); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .contact-dialog__inner { position: relative; padding: 28px; overflow: hidden; border: 1px solid rgb(var(--ivory-rgb) / 20%); border-radius: inherit; background: rgb(var(--surface-rgb) / 88%); box-shadow: 0 32px 100px rgb(0 0 0 / 40%); -webkit-backdrop-filter: blur(30px) saturate(145%); backdrop-filter: blur(30px) saturate(145%); }
 .contact-dialog__inner::before { content: ""; position: absolute; top: -90px; right: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgb(169 190 135 / 18%), transparent 68%); pointer-events: none; }
@@ -205,7 +204,6 @@
 @keyframes title-shimmer { from { background-position: 200% 50%; } to { background-position: -60% 50%; } }
 @keyframes text-breathe { 0%, 100% { opacity: .74; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
 @keyframes waveform { from { transform: scaleY(.62); } to { transform: scaleY(1.15); } }
-@keyframes contact-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
 
 @media (max-width: 900px) {
   .stage-header { right: 20px; left: 20px; grid-template-columns: 1fr 1fr; }
@@ -336,6 +334,8 @@
   /* The logo's two colours (public/ree-logo.svg): its emerald and the base it sits on. The same in both themes. */
   --color-lp-brand: #00664f;
   --color-lp-brand-base: #ffe7cc;
+  /* The logo's emerald, deepened for the dark theme so it reads as dark as the logo does there. */
+  --color-lp-brand-deep: #004d3b;
   /* Cloth colours for the story-tile patches (kantha palette); the same in both themes. */
   --color-lp-patch-mustard: #d4a52a;
   --color-lp-patch-madder: #b4402c;
@@ -412,6 +412,15 @@
   background-blend-mode: overlay;
   outline: 1px dashed color-mix(in oklab, currentColor 60%, transparent);
   outline-offset: calc(var(--lp-stitch-inset, 4px) * -1);
+}
+
+/* Kantha quilting for the featured story's background (landing-main.tsx): rows of running stitch,
+   as a mask so the rows take the layer's own, theme-driven, colour. */
+@utility lp-kantha {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 16'%3E%3Cpath d='M0 4h9M14 4h9M-2 12h9M12 12h9M26 12h9' stroke='%23000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  -webkit-mask-size: 28px 16px;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 16'%3E%3Cpath d='M0 4h9M14 4h9M-2 12h9M12 12h9M26 12h9' stroke='%23000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-size: 28px 16px;
 }
 
 @utility lp-divider {
@@ -521,6 +530,15 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
 .lp-enter { animation: lp-enter .9s cubic-bezier(.22, .8, .24, 1) both; animation-delay: var(--lp-delay, 0s); }
 .lp-enter-fade { animation: lp-fade .9s ease both; animation-delay: var(--lp-delay, 0s); }
 
+/* The featured story (landing-main.tsx, vive-tee.tsx). The drawing of the tee sews itself in: the
+   SVG names a view timeline and every stitch inside draws along it, --lp-sew-from (a point of its
+   entry) to --lp-sew-to (a point of its cover) saying when, so the collar comes before the hems and
+   the needle finishes last. The tee also sways on its hanger, on the clock rather than the scroll,
+   so it keeps moving once the page is still. */
+@keyframes lp-sew { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes lp-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.lp-float { animation: lp-float 7s ease-in-out infinite; }
+
 @supports (animation-timeline: view()) {
   .lp-reveal, .lp-reveal-left, .lp-reveal-right {
     animation: lp-reveal linear both;
@@ -540,9 +558,175 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
   /* Slow drift for the oversized wordmarks and the style-section strip. */
   .lp-drift { animation: lp-drift-up linear both; animation-timeline: view(); animation-range: cover; }
   .lp-drift-x { animation: lp-drift-x linear both; animation-timeline: view(); animation-range: cover; }
+
+  /* Stitches draw with the dash trick (pathLength="1"), fades are for fills; both follow the SVG. */
+  .lp-sew { view-timeline-name: --lp-sew; }
+  .lp-sew .lp-sew-path, .lp-sew .lp-sew-fade {
+    animation: lp-sew linear both;
+    animation-timeline: --lp-sew;
+    animation-range: entry var(--lp-sew-from, 10%) cover var(--lp-sew-to, 45%);
+  }
+  .lp-sew .lp-sew-path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .lp-sew .lp-sew-fade { animation-name: lp-fade; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lp-enter, .lp-enter-fade, .lp-fade, .lp-reveal, .lp-reveal-left, .lp-reveal-right, .lp-drift, .lp-drift-x { animation: none; }
+  .lp-enter, .lp-enter-fade, .lp-fade, .lp-reveal, .lp-reveal-left, .lp-reveal-right, .lp-drift, .lp-drift-x, .lp-float { animation: none; }
   .lp-unveil img { animation: none; }
+  .lp-sew .lp-sew-path, .lp-sew .lp-sew-fade { animation: none; stroke-dasharray: none; }
 }
+
+/* Dropdowns and modals open the way the header's menu and bag do (site-header.module.css): the user
+   asked for every one of them to match. A panel (.ree-pop) comes out from beyond its side of the
+   window, leaning as it travels (`--pop-from` / `--pop-lean`), and settles at `--pop-tilt`; its rows
+   (.ree-pop-row, each numbered `--i`, the last one's number in `--last`) are sewn on one after
+   another from `--row-from` / `--row-lean`. It leaves the same way played backwards: the rows
+   last-first, then the panel, so both directions take 600 + 50 x `--last` ms. `data-closing` on the
+   <details> / <dialog> starts the way out; hover-details.tsx and coming-soon.tsx close the element
+   once these animations have finished. Inline accordions use the rows alone. Retime the in and out
+   rules together. */
+.ree-pop { transform: rotate(var(--pop-tilt, 0deg)); }
+
+@media (prefers-reduced-motion: no-preference) {
+  [open] > .ree-pop { animation: ree-pop-in 560ms cubic-bezier(.2, .8, .2, 1) both; }
+  [open] .ree-pop-row { animation: ree-row-in 440ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(160ms + var(--i, 0) * 50ms); }
+  [data-closing] > .ree-pop { animation: ree-pop-out 560ms cubic-bezier(.8, 0, .8, .2) both; animation-delay: calc(40ms + var(--last, 0) * 50ms); }
+  [data-closing] .ree-pop-row { animation: ree-row-out 440ms cubic-bezier(.8, 0, .8, .2) both; animation-delay: calc((var(--last, 0) - var(--i, 0)) * 50ms); }
+  .contact-dialog[open]::backdrop { animation: ree-veil 400ms ease both; }
+  .contact-dialog[data-closing]::backdrop { animation: ree-veil-out 400ms ease 400ms both; }
+}
+
+@keyframes ree-pop-in {
+  from { transform: translateX(var(--pop-from, 150%)) rotate(var(--pop-lean, 9deg)); }
+  to { transform: translateX(0) rotate(var(--pop-tilt, 0deg)); }
+}
+
+@keyframes ree-pop-out {
+  from { transform: translateX(0) rotate(var(--pop-tilt, 0deg)); }
+  to { transform: translateX(var(--pop-from, 150%)) rotate(var(--pop-lean, 9deg)); }
+}
+
+@keyframes ree-row-in {
+  from { opacity: 0; transform: translateX(var(--row-from, -40px)) rotate(var(--row-lean, -5deg)); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes ree-row-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateX(var(--row-from, -40px)) rotate(var(--row-lean, -5deg)); }
+}
+
+@keyframes ree-veil { from { opacity: 0; } to { opacity: 1; } }
+/* Its own name: reusing ree-veil backwards would count as the same, already finished animation. */
+@keyframes ree-veil-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* The coming-soon contact window: from beyond the right edge, wherever the centred window sits. */
+.contact-dialog__inner { --pop-from: calc(50vw + 65%); --pop-lean: 9deg; --last: 4; }
+.contact-dialog__eyebrow { display: inline-block; } /* transforms skip inline boxes */
+
+/* The coming-soon hotspot cards are toggled by a class rather than [open], so the same motion runs
+   on transitions: the card leans in from its own side (the side it is anchored to), its eyebrow,
+   title, text and button follow it in, and closing plays it backwards (rows first, the card 190 ms
+   later, hidden at 750 ms = 600 + 50 x 3). */
+.hotspot-card, .mobile-hotspot-card { --card-from: -56px; --card-lean: -6deg; }
+.hotspot-wrap--end .hotspot-card { --card-from: 56px; --card-lean: 6deg; }
+:is(.hotspot-card, .mobile-hotspot-card) > .card-eyebrow { --i: 0; }
+:is(.hotspot-card, .mobile-hotspot-card) > h3 { --i: 1; }
+:is(.hotspot-card, .mobile-hotspot-card) > p { --i: 2; }
+:is(.hotspot-card, .mobile-hotspot-card) > .card-contact { --i: 3; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hotspot-card, .mobile-hotspot-card {
+    transform: translateX(var(--card-from)) rotate(var(--card-lean));
+    transition: opacity 320ms ease 190ms, transform 560ms cubic-bezier(.8, 0, .8, .2) 190ms, visibility 0s linear 750ms;
+  }
+  .hotspot-card--open, .mobile-hotspot-card--open {
+    transform: none;
+    transition: opacity 320ms ease, transform 560ms cubic-bezier(.2, .8, .2, 1), visibility 0s;
+  }
+  /* The open hotspot stays on top of its neighbours until its card has gone. */
+  .hotspot-wrap { transition: top .35s var(--scene-ease), left .35s var(--scene-ease), z-index 0s linear 750ms; }
+  .hotspot-wrap--open { transition: top .35s var(--scene-ease), left .35s var(--scene-ease), z-index 0s; }
+  :is(.hotspot-card, .mobile-hotspot-card) > :is(.card-eyebrow, h3, p, .card-contact) {
+    opacity: 0;
+    translate: -40px 0;
+    rotate: -5deg;
+    transition-property: opacity, translate, rotate, background-color, color;
+    transition-duration: 440ms, 440ms, 440ms, .2s, .2s;
+    transition-timing-function: cubic-bezier(.8, 0, .8, .2), cubic-bezier(.8, 0, .8, .2), cubic-bezier(.8, 0, .8, .2), ease, ease;
+    transition-delay: calc((3 - var(--i)) * 50ms), calc((3 - var(--i)) * 50ms), calc((3 - var(--i)) * 50ms), 0s, 0s;
+  }
+  :is(.hotspot-card--open, .mobile-hotspot-card--open) > :is(.card-eyebrow, h3, p, .card-contact) {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+    transition-timing-function: cubic-bezier(.2, .8, .2, 1), cubic-bezier(.2, .8, .2, 1), cubic-bezier(.2, .8, .2, 1), ease, ease;
+    transition-delay: calc(160ms + var(--i) * 50ms), calc(160ms + var(--i) * 50ms), calc(160ms + var(--i) * 50ms), 0s, 0s;
+  }
+}
+
+/* The order letter (checkout-page.tsx): the user asked for the confirmation as a letter, on a
+   textured paper background. Three seamless tiles make the paper: grain (fine specks), fibres (long
+   faint strands) and mottle (the tone drifting across the sheet). Multiplied into light paper they
+   darken it a touch; on the dark theme they are screened in, so the dark page reads as dark paper. */
+:root {
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .18 0 0 0 0 .12 .8 0 0 0 -.34'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --paper-fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 260'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015 .2' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .22 0 0 0 0 .14 1.1 0 0 0 -.76'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --paper-mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 700'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .33 0 0 0 0 .2 .45 0 0 0 -.17'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@utility ree-paper {
+  background-image: var(--paper-grain), var(--paper-fibre), var(--paper-mottle);
+  background-size: 180px 180px, 520px 260px, 700px 700px;
+  background-blend-mode: multiply;
+}
+
+/* While the letter is on screen the whole page is paper. `local` lets the texture scroll with it. */
+#ree-product:has([data-paper-page]) {
+  background-image: var(--paper-grain), var(--paper-fibre), var(--paper-mottle);
+  background-size: 180px 180px, 520px 260px, 700px 700px;
+  background-attachment: local;
+  background-blend-mode: multiply;
+}
+#ree-product[data-lp-theme="dark"]:has([data-paper-page]) { background-blend-mode: screen; }
+
+/* The letter itself: ivory paper folded in three (two soft creases, a shadow line above each and a
+   catch of light below), with the same grain and fibres. */
+.ree-letter {
+  background-color: #fbf6ea;
+  background-image:
+    linear-gradient(to bottom, transparent calc(33.3% - 6px), rgb(80 56 30 / 6%) calc(33.3% - 1px), rgb(255 255 255 / 70%) 33.3%, transparent calc(33.3% + 5px)),
+    linear-gradient(to bottom, transparent calc(66.6% - 6px), rgb(80 56 30 / 6%) calc(66.6% - 1px), rgb(255 255 255 / 70%) 66.6%, transparent calc(66.6% + 5px)),
+    var(--paper-grain), var(--paper-fibre), var(--paper-mottle);
+  background-size: 100% 100%, 100% 100%, 180px 180px, 520px 260px, 700px 700px;
+  background-blend-mode: normal, normal, multiply, multiply, multiply;
+}
+
+/* The PDF copy of the letter and slip (order-letter.tsx) leaves the paper tiles out: their SVG filters
+   do not survive the capture and paint solid black, so order-pdf.ts multiplies the same tiles over the
+   captured image instead. The letter keeps its creases. */
+.ree-pdf-copy .ree-letter {
+  background-image:
+    linear-gradient(to bottom, transparent calc(33.3% - 6px), rgb(80 56 30 / 6%) calc(33.3% - 1px), rgb(255 255 255 / 70%) 33.3%, transparent calc(33.3% + 5px)),
+    linear-gradient(to bottom, transparent calc(66.6% - 6px), rgb(80 56 30 / 6%) calc(66.6% - 1px), rgb(255 255 255 / 70%) 66.6%, transparent calc(66.6% + 5px));
+  background-size: 100% 100%;
+  background-blend-mode: normal;
+}
+.ree-pdf-copy .ree-paper { background-image: none; }
+
+/* A postage stamp's perforated edge: holes centred on the border, the middle kept solid. */
+.ree-stamp {
+  padding: 7px;
+  mask: radial-gradient(3.4px at 3.4px 3.4px, #0000 96%, #000) -3.4px -3.4px / 9px 9px round, linear-gradient(#000 0 0) content-box;
+}
+
+/* A slip torn from a ring-bound pad: a row of punched holes along the top. */
+.ree-punched { mask: radial-gradient(circle 4.5px at 50% 15px, #0000 95%, #000) 0 0 / 28px 100% repeat-x; }
+/* Laid under the slip so each hole shows a shadow at its lower edge (the page alone is too close in tone). */
+.ree-punch-shadow { background: radial-gradient(circle 4.5px at 50% 16.5px, rgb(43 29 21 / 45%) 92%, transparent) 0 0 / 28px 100% repeat-x; }
+
+/* The checkout form, torn off its pad along the perforation: half-holes along the top edge. */
+.ree-perforated { mask: radial-gradient(circle 2.6px at 50% 1px, #0000 95%, #000) 0 0 / 11px 100% repeat-x; }
+
+/* Washi tape with torn, zigzag ends. */
+.ree-tape { clip-path: polygon(3% 0, 97% 0, 100% 18%, 96% 36%, 100% 54%, 96% 72%, 100% 90%, 97% 100%, 3% 100%, 0 82%, 4% 64%, 0 46%, 4% 28%, 0 10%); }
