@@ -7,12 +7,40 @@ import { COMING_SOON_ROOT_ID, ThemeControls, ThemeScript } from "./theme-control
 import { ArrowDownRight, ArrowUpRight, X } from "lucide-react";
 import {
   type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
+
+/* Where a modal's light comes from: the point (viewport px) of the click that opened it. */
+type BeamOrigin = { x: number; y: number };
+
+/* Each card is a cloth patch; the cloths cycle through the site's patch tokens (globals.css). */
+const cloths = ["var(--color-lp-patch-indigo)", "var(--color-lp-patch-olive)", "var(--color-lp-patch-madder)", "var(--color-lp-brand)"];
+
+/* The click's own coordinates, or the control's centre when it was activated from the keyboard. */
+function pointOf(event: ReactMouseEvent<HTMLElement>): BeamOrigin {
+  const bounds = event.currentTarget.getBoundingClientRect();
+  return event.detail === 0
+    ? { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 }
+    : { x: event.clientX, y: event.clientY };
+}
+
+/* Aims a modal's beam (globals.css `.ree-beam`): the torch sits at `origin`, written in the panel's
+   own pixels, and points at the panel's centre. Conic angles run clockwise from the top. */
+function aimBeam(panel: HTMLElement, origin: BeamOrigin) {
+  const bounds = panel.getBoundingClientRect();
+  const x = origin.x - bounds.left;
+  const y = origin.y - bounds.top;
+  const angle = Math.atan2(bounds.width / 2 - x, -(bounds.height / 2 - y)) * (180 / Math.PI);
+  panel.style.setProperty("--flash-x", `${x}px`);
+  panel.style.setProperty("--flash-y", `${y}px`);
+  panel.style.setProperty("--beam-angle", `${angle}deg`);
+}
 
 type Hotspot = {
   label: string;
@@ -37,7 +65,7 @@ type Scene = {
 const scenes: Scene[] = [
   {
     kicker: "01 / ARRIVAL",
-    title: <>ঋ - Ree IS <em>COMING SOON</em></>,
+    title: <>ঋ - Ree<br /><em>COMING SOON</em></>,
     navTitle: "The first arrival",
     subtitle: "An independent clothing label shaped in Bengal.",
     image: "/coming-soon/arrival-street.jpg",
@@ -106,7 +134,7 @@ const scenes: Scene[] = [
 ];
 
 function PlusIcon() {
-  return <span className="hotspot-icon" aria-hidden="true"><span /></span>;
+  return <span className="hotspot-icon lp-patch" aria-hidden="true"><span /></span>;
 }
 
 function SoundIcon({ active }: { active: boolean }) {
@@ -127,30 +155,48 @@ function MailIcon() {
 
 function HotspotDetails({
   hotspot,
+  cloth,
   open,
   onClose,
   onContact,
   mobile = false,
+  origin,
+  panelId,
 }: {
   hotspot: Hotspot;
+  cloth: string;
   open: boolean;
   onClose: () => void;
-  onContact: () => void;
+  onContact: (event: ReactMouseEvent<HTMLButtonElement>) => void;
   mobile?: boolean;
+  origin: BeamOrigin | null;
+  panelId?: string;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const base = mobile ? "mobile-hotspot-card" : "hotspot-card";
+
+  // Aim the beam before the open state paints, so the reveal starts from the right point.
+  useLayoutEffect(() => {
+    if (open && origin && ref.current) aimBeam(ref.current, origin);
+  }, [open, origin]);
+
   return (
-    <div
-      className={`${mobile ? "mobile-hotspot-card" : "hotspot-card"} ${open ? `${mobile ? "mobile-hotspot-card" : "hotspot-card"}--open` : ""}`}
-      role="region"
-      aria-label={hotspot.title}
-    >
-      <button className="card-close" onClick={onClose} aria-label="Close details">
-        <X size={15} strokeWidth={1.5} aria-hidden="true" />
-      </button>
-      <span className="card-eyebrow">{hotspot.eyebrow}</span>
-      <h3>{hotspot.title}</h3>
-      <p>{hotspot.body}</p>
-      <button className="card-contact" onClick={onContact}>Join the list <ArrowUpRight size={13} strokeWidth={1.5} aria-hidden="true" /></button>
+    <div className={mobile ? "mobile-hotspot-panel" : "hotspot-panel"} id={panelId}>
+      <div
+        ref={ref}
+        className={`${base} lp-patch ree-beam ${open ? `${base}--open` : ""}`}
+        style={{ "--cloth": cloth } as CSSProperties}
+        role="region"
+        aria-label={hotspot.title}
+      >
+        <button className="card-close lp-patch" onClick={onClose} aria-label="Close details">
+          <X size={15} strokeWidth={1.5} aria-hidden="true" />
+        </button>
+        <span className="card-eyebrow lp-patch">{hotspot.eyebrow}</span>
+        <h3>{hotspot.title}</h3>
+        <p>{hotspot.body}</p>
+        <button className="card-contact lp-patch" onClick={onContact}>Join the list <ArrowUpRight size={13} strokeWidth={1.5} aria-hidden="true" /></button>
+      </div>
     </div>
   );
 }
@@ -159,6 +205,9 @@ export function ComingSoon() {
   const [introState, setIntroState] = useState<"visible" | "leaving" | "gone">("visible");
   const [activeScene, setActiveScene] = useState(0);
   const [openHotspot, setOpenHotspot] = useState<number | null>(null);
+  // The card last opened stays mounted (the phone card too) so it can close with the beam reversed.
+  const [shownHotspot, setShownHotspot] = useState(0);
+  const [beamOrigin, setBeamOrigin] = useState<BeamOrigin | null>(null);
   const [soundOn, setSoundOn] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const stageRef = useRef<HTMLElement>(null);
@@ -263,10 +312,26 @@ export function ComingSoon() {
     stageRef.current?.style.setProperty("--parallax-y", `${y}px`);
   };
 
-  const openContact = () => {
+  const openHotspotFrom = (hotspotIndex: number, origin: BeamOrigin) => {
+    setBeamOrigin(origin);
+    setShownHotspot(hotspotIndex);
+    setOpenHotspot(hotspotIndex);
+  };
+
+  const toggleHotspot = (event: ReactMouseEvent<HTMLButtonElement>, sceneIndex: number, hotspotIndex: number) => {
+    if (sceneIndex === activeScene && openHotspot === hotspotIndex) setOpenHotspot(null);
+    else openHotspotFrom(hotspotIndex, pointOf(event));
+  };
+
+  // The contact window beams from the button that opened it, once it is in the top layer.
+  const openContact = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    const origin = pointOf(event);
     setOpenHotspot(null);
     setContactOpen(true);
-    contactDialogRef.current?.showModal();
+    const dialog = contactDialogRef.current;
+    dialog?.showModal();
+    const panel = dialog?.querySelector<HTMLElement>(".contact-dialog__inner");
+    if (panel) aimBeam(panel, origin);
   };
 
   // The window leaves the way it came (.ree-pop in globals.css): mark it closing, let the exit
@@ -278,9 +343,7 @@ export function ComingSoon() {
     Promise.allSettled(dialog.getAnimations({ subtree: true }).map((animation) => animation.finished)).then(() => dialog.close());
   };
 
-  const activeHotspot = openHotspot === null
-    ? null
-    : scenes[activeScene].hotspots[openHotspot];
+  const mobileHotspot = scenes[activeScene].hotspots[shownHotspot] ?? scenes[activeScene].hotspots[0];
 
   return (
     <main
@@ -355,18 +418,24 @@ export function ComingSoon() {
                     return (
                       <div className={`hotspot-wrap hotspot-wrap--${hotspot.align ?? "start"} ${isOpen ? "hotspot-wrap--open" : ""}`} style={{ "--x": `${hotspot.x}%`, "--y": `${hotspot.y}%` } as CSSProperties} key={hotspot.label}>
                         <button
-                          className="hotspot"
+                          className="hotspot lp-patch"
                           aria-expanded={isOpen}
                           aria-controls={`panel-${sceneIndex}-${hotspotIndex}`}
-                          onClick={() => setOpenHotspot(isOpen ? null : hotspotIndex)}
+                          onClick={(event) => toggleHotspot(event, sceneIndex, hotspotIndex)}
                           tabIndex={sceneIndex === activeScene ? 0 : -1}
                         >
                           <PlusIcon />
                           <span>{hotspot.label}</span>
                         </button>
-                        <div id={`panel-${sceneIndex}-${hotspotIndex}`}>
-                          <HotspotDetails hotspot={hotspot} open={isOpen} onClose={() => setOpenHotspot(null)} onContact={openContact} />
-                        </div>
+                        <HotspotDetails
+                          hotspot={hotspot}
+                          cloth={cloths[hotspotIndex % cloths.length]}
+                          open={isOpen}
+                          onClose={() => setOpenHotspot(null)}
+                          onContact={openContact}
+                          origin={beamOrigin}
+                          panelId={`panel-${sceneIndex}-${hotspotIndex}`}
+                        />
                       </div>
                     );
                   })}
@@ -376,9 +445,15 @@ export function ComingSoon() {
           ))}
         </div>
 
-        {activeHotspot ? (
-          <HotspotDetails hotspot={activeHotspot} open onClose={() => setOpenHotspot(null)} onContact={openContact} mobile />
-        ) : null}
+        <HotspotDetails
+          hotspot={mobileHotspot}
+          cloth={cloths[shownHotspot % cloths.length]}
+          open={openHotspot !== null && openHotspot === shownHotspot}
+          onClose={() => setOpenHotspot(null)}
+          onContact={openContact}
+          mobile
+          origin={beamOrigin}
+        />
 
         <div className="bottom-controls">
           <button className="round-control sound-control" onClick={toggleSound} aria-label={soundOn ? "Turn atmosphere off" : "Turn atmosphere on"} aria-pressed={soundOn}>
@@ -401,7 +476,13 @@ export function ComingSoon() {
           </nav>
 
           <div className="action-controls">
-            <button className="round-control" aria-label="Open the ঋ - Ree lookbook" onClick={() => { goTo(4); window.setTimeout(() => setOpenHotspot(0), 0); }}>
+            <button className="round-control" aria-label="Open the ঋ - Ree lookbook" onClick={(event) => {
+              // Open the card once the scene track has arrived (650 ms), so the beam is aimed from where the card settles.
+              const origin = pointOf(event);
+              const delay = activeScene === 4 ? 0 : 660;
+              goTo(4);
+              window.setTimeout(() => openHotspotFrom(0, origin), delay);
+            }}>
               <BookIcon /><span className="control-tooltip">Lookbook</span>
             </button>
             <button className="round-control" onClick={openContact} aria-label="Open contact options for ঋ - Ree">
@@ -429,19 +510,19 @@ export function ComingSoon() {
           if (event.target === event.currentTarget) closeContact();
         }}
       >
-        <div className="contact-dialog__inner ree-pop">
-          <button className="contact-dialog__close" onClick={closeContact} aria-label="Close contact window" autoFocus>
+        <div className="contact-dialog__inner lp-patch ree-beam">
+          <button className="contact-dialog__close lp-patch" onClick={closeContact} aria-label="Close contact window" autoFocus>
             <X size={17} strokeWidth={1.5} aria-hidden="true" />
           </button>
           <span className="contact-dialog__eyebrow ree-pop-row" style={{ "--i": 0 } as CSSProperties}>CONTACT · ঋ - Ree</span>
           <h2 id="contact-title" className="ree-pop-row" style={{ "--i": 1 } as CSSProperties}>Let&apos;s stay in touch.</h2>
           <p id="contact-description" className="ree-pop-row" style={{ "--i": 2 } as CSSProperties}>For Collection 01, collaborations, press, or anything else, choose how you&apos;d like to reach us.</p>
           <div className="contact-dialog__actions ree-pop-row" style={{ "--i": 3 } as CSSProperties}>
-            <a href="mailto:info@ree.bd">
+            <a href="mailto:info@ree.bd" className="lp-patch">
               <span><small>Email</small>info@ree.bd</span>
               <ArrowUpRight size={18} strokeWidth={1.25} aria-hidden="true" />
             </a>
-            <a href="tel:+8801789891616">
+            <a href="tel:+8801789891616" className="lp-patch">
               <span><small>Call</small>+880 17 8989 1616</span>
               <ArrowUpRight size={18} strokeWidth={1.25} aria-hidden="true" />
             </a>

@@ -19,6 +19,10 @@
    utility class, which silently broke `text-*` on links and `hidden` on icons. */
 @layer base {
   * { box-sizing: border-box; }
+  /* No visible scrollbars anywhere (the user asked): every page scrolls inside its own root, and
+     the bars broke the full-bleed layout. Scrolling still works by wheel, touch, keys and trackpad. */
+  * { scrollbar-width: none; }
+  *::-webkit-scrollbar { display: none; }
   html, body { width: 100%; min-height: 100%; }
 
   body {
@@ -112,25 +116,36 @@
 .hotspot-wrap--end { transform: translateX(-100%); }
 .hotspot-wrap--open { z-index: 40; }
 .hotspot-wrap { transition: top .35s var(--scene-ease), left .35s var(--scene-ease); }
-.hotspot { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 4px 13px 4px 4px; border: 0; border-radius: 100px; background: transparent; color: rgb(var(--ivory-rgb) / 88%); font-size: 11px; font-weight: 300; letter-spacing: -.02em; cursor: pointer; white-space: nowrap; box-shadow: inset 0 0 0 1px rgb(var(--ivory-rgb) / 6%); }
-.hotspot::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--glass); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); transition: background .25s ease, box-shadow .25s ease; }
-.hotspot:hover::before, .hotspot[aria-expanded="true"]::before { background: rgb(var(--glass-hover-rgb) / 35%); box-shadow: 0 8px 32px rgb(0 0 0 / 14%); }
-.hotspot-icon { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid rgb(var(--ivory-rgb) / 84%); border-radius: 50%; transition: transform .3s ease; }
-.hotspot[aria-expanded="true"] .hotspot-icon { transform: rotate(45deg); }
-.hotspot-icon span, .hotspot-icon span::after { display: block; width: 5px; height: 1px; background: var(--ivory); }
+/* The hotspot pills are black-and-white cloth patches (the user asked for them in black and white):
+   black cloth with a white running stitch and white text, the plus sewn on a small white patch;
+   the light theme swaps the two. They rest tilted and straighten on hover / while open. */
+.hotspot { --pill-cloth: #141414; --pill-ink: #fff; position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 4px 13px 4px 4px; border: 0; border-radius: 2px; background-color: var(--pill-cloth); color: var(--pill-ink); font-size: 11px; font-weight: 300; letter-spacing: -.02em; cursor: pointer; white-space: nowrap; transform: rotate(-1.5deg); --lp-stitch-inset: 4px; box-shadow: 0 10px 24px rgb(0 0 0 / 28%); transition: transform .25s ease, box-shadow .25s ease; }
+.hotspot:hover, .hotspot[aria-expanded="true"] { transform: none; box-shadow: 0 14px 30px rgb(0 0 0 / 34%); }
+.hotspot-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 2px; background-color: var(--pill-ink); color: var(--pill-cloth); transform: rotate(3deg); --lp-stitch-inset: 3px; transition: transform .3s ease; }
+.hotspot:hover .hotspot-icon, .hotspot[aria-expanded="true"] .hotspot-icon { transform: none; }
+.hotspot-icon span, .hotspot-icon span::after { display: block; width: 7px; height: 1px; background: currentColor; transition: transform .3s ease; }
 .hotspot-icon span::after { content: ""; transform: rotate(90deg); }
-.hotspot-card { position: absolute; top: calc(100% + 10px); left: 0; width: min(410px, calc(100vw - 80px)); padding: 22px; border: 1px solid rgb(var(--ivory-rgb) / 18%); border-radius: 18px; background: rgb(var(--surface-rgb) / 60%); -webkit-backdrop-filter: blur(28px) saturate(140%); backdrop-filter: blur(28px) saturate(140%); box-shadow: 0 25px 70px rgb(0 0 0 / 22%); max-height: calc(100svh - 212px); overflow-y: auto; overscroll-behavior: contain; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .28s ease, transform .32s var(--scene-ease), visibility .28s; pointer-events: none; }
-.hotspot-wrap--end .hotspot-card { right: 0; left: auto; }
-.hotspot-card--open { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
-.card-close { position: absolute; top: 14px; right: 14px; display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 1px solid rgb(var(--ivory-rgb) / 28%); border-radius: 50%; background: transparent; color: var(--ivory); cursor: pointer; transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
-.card-close:hover { border-color: rgb(var(--ivory-rgb) / 60%); background: rgb(var(--ivory-rgb) / 12%); }
-.card-close:active { background: rgb(var(--ivory-rgb) / 20%); }
-.card-eyebrow { display: inline-flex; padding: 5px 9px; border: 1px solid rgb(var(--ivory-rgb) / 22%); border-radius: 999px; color: var(--ivory-muted); font-size: 8px; letter-spacing: .13em; text-transform: uppercase; }
+.hotspot[aria-expanded="true"] .hotspot-icon span { transform: rotate(45deg); }
+/* The hotspot cards and the contact window are cloth patches (the user asked for the modals to be
+   patchwork too): a dyed cloth (`--cloth`, one of the site's patch tokens, set per card in
+   coming-soon.tsx) with the grain and running stitch of `lp-patch`, a resting tilt that straightens
+   on hover, and square-cut corners. `background-color`, never the shorthand, or the grain is reset.
+   The shadow is a drop-shadow on the panel wrapper, because the beam mask (below) would cut a
+   box-shadow off with the card. */
+.hotspot-panel { filter: drop-shadow(0 22px 28px rgb(0 0 0 / 30%)); }
+.hotspot-card { position: absolute; top: calc(100% + 10px); left: 0; width: min(410px, calc(100vw - 80px)); padding: 22px; border-radius: 3px; background-color: var(--cloth); color: var(--ivory); --lp-stitch-inset: 7px; max-height: calc(100svh - 212px); overflow-y: auto; overscroll-behavior: contain; opacity: 0; visibility: hidden; transform: rotate(-.8deg); transition: opacity .28s ease, transform .32s var(--scene-ease), visibility .28s; pointer-events: none; }
+.hotspot-wrap--end .hotspot-card { right: 0; left: auto; transform: rotate(.8deg); }
+.hotspot-card--open { opacity: 1; visibility: visible; pointer-events: auto; }
+.hotspot-card--open:hover, .mobile-hotspot-card--open:hover { transform: none; }
+.card-close { position: absolute; top: 14px; right: 14px; display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 2px; background-color: rgb(var(--ivory-rgb) / 12%); color: var(--ivory); cursor: pointer; transform: rotate(3deg); --lp-stitch-inset: 3px; transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+.card-close:hover { background-color: rgb(var(--ivory-rgb) / 24%); transform: none; }
+.card-close:active { background-color: rgb(var(--ivory-rgb) / 32%); }
+.card-eyebrow { display: inline-flex; padding: 6px 10px; border-radius: 2px; background-color: rgb(var(--ivory-rgb) / 10%); color: var(--ivory-muted); font-size: 8px; letter-spacing: .13em; text-transform: uppercase; transform: rotate(-1.5deg); --lp-stitch-inset: 3px; }
 .hotspot-card h3 { max-width: 300px; margin: 38px 0 9px; font-family: var(--font-serif), Georgia, serif; font-size: 28px; font-weight: 300; line-height: 1.06; letter-spacing: -.035em; }
 .hotspot-card p { margin: 0; color: var(--ivory-muted); font-size: 11px; font-weight: 300; line-height: 1.65; }
-.hotspot-card > .card-contact { display: inline-flex; gap: 24px; align-items: center; margin-top: 21px; padding: 9px 14px; border: 1px solid rgb(var(--ivory-rgb) / 42%); border-radius: 999px; background: transparent; color: inherit; font-size: 10px; cursor: pointer; transition: background .2s ease, color .2s ease; }
-.hotspot-card > .card-contact:hover { background: var(--ivory); color: var(--stage-dark); }
-.mobile-hotspot-card { display: none; }
+.card-contact { display: inline-flex; gap: 24px; align-items: center; margin-top: 21px; padding: 10px 14px; border: 0; border-radius: 2px; background-color: var(--ivory); color: var(--stage-dark); font-size: 10px; cursor: pointer; transform: rotate(-1deg); --lp-stitch-inset: 4px; transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+.card-contact:hover { background-color: var(--ivory-bright); transform: none; }
+.mobile-hotspot-panel, .mobile-hotspot-card { display: none; }
 
 @media (min-width: 701px) {
   .hotspot-wrap--open { top: clamp(0px, var(--y), calc(100% - 380px)); }
@@ -175,23 +190,25 @@
   padding: 0;
   overflow: visible;
   border: 0;
-  border-radius: 22px;
+  border-radius: 3px;
   background: transparent;
   color: var(--ivory);
+  --cloth: var(--color-lp-brand);
+  filter: drop-shadow(0 28px 36px rgb(0 0 0 / 40%));
 }
 
 .contact-dialog::backdrop { background: rgb(var(--surface-rgb) / 70%); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.contact-dialog__inner { position: relative; padding: 28px; overflow: hidden; border: 1px solid rgb(var(--ivory-rgb) / 20%); border-radius: inherit; background: rgb(var(--surface-rgb) / 88%); box-shadow: 0 32px 100px rgb(0 0 0 / 40%); -webkit-backdrop-filter: blur(30px) saturate(145%); backdrop-filter: blur(30px) saturate(145%); }
-.contact-dialog__inner::before { content: ""; position: absolute; top: -90px; right: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgb(169 190 135 / 18%), transparent 68%); pointer-events: none; }
-.contact-dialog__close { position: absolute; z-index: 1; top: 18px; right: 18px; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 1px solid rgb(var(--ivory-rgb) / 28%); border-radius: 50%; background: transparent; color: var(--ivory); cursor: pointer; transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
-.contact-dialog__close:hover { border-color: rgb(var(--ivory-rgb) / 60%); background: rgb(var(--ivory-rgb) / 12%); }
-.contact-dialog__close:active { background: rgb(var(--ivory-rgb) / 20%); }
+.contact-dialog__inner { position: relative; padding: 28px; overflow: hidden; border-radius: inherit; background-color: var(--cloth); --lp-stitch-inset: 8px; transform: rotate(-.6deg); }
+.contact-dialog__close { position: absolute; z-index: 1; top: 18px; right: 18px; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 2px; background-color: rgb(var(--ivory-rgb) / 12%); color: var(--ivory); cursor: pointer; transform: rotate(3deg); --lp-stitch-inset: 3px; transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+.contact-dialog__close:hover { background-color: rgb(var(--ivory-rgb) / 24%); transform: none; }
+.contact-dialog__close:active { background-color: rgb(var(--ivory-rgb) / 32%); }
 .contact-dialog__eyebrow { color: rgb(var(--ivory-rgb) / 58%); font-size: 8px; letter-spacing: .22em; }
 .contact-dialog h2 { max-width: 330px; margin: 46px 0 11px; font-family: var(--font-serif), Georgia, serif; font-size: 38px; font-weight: 300; line-height: 1; letter-spacing: -.04em; }
 .contact-dialog p { max-width: 360px; margin: 0; color: var(--ivory-muted); font-size: 11px; font-weight: 300; line-height: 1.65; }
 .contact-dialog__actions { display: grid; gap: 8px; margin-top: 27px; }
-.contact-dialog__actions a { display: flex; align-items: center; justify-content: space-between; min-height: 60px; padding: 10px 15px; border: 1px solid rgb(var(--ivory-rgb) / 20%); border-radius: 13px; background: rgb(var(--ivory-rgb) / 3%); font-family: var(--font-serif), Georgia, serif; font-size: 18px; transition: background .2s ease, color .2s ease; }
-.contact-dialog__actions a:hover { background: var(--ivory); color: var(--stage-dark); }
+.contact-dialog__actions a { display: flex; align-items: center; justify-content: space-between; min-height: 60px; padding: 10px 15px; border-radius: 2px; background-color: rgb(var(--ivory-rgb) / 10%); font-family: var(--font-serif), Georgia, serif; font-size: 18px; transform: rotate(-.7deg); --lp-stitch-inset: 4px; transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+.contact-dialog__actions a:nth-child(2) { transform: rotate(.7deg); }
+.contact-dialog__actions a:hover { background-color: var(--ivory); color: var(--stage-dark); transform: none; }
 .contact-dialog__actions small { display: block; margin-bottom: 4px; color: var(--ivory-muted); font-family: var(--font-sans), sans-serif; font-size: 7px; letter-spacing: .18em; text-transform: uppercase; }
 .contact-dialog__actions a:hover small { color: rgb(var(--surface-rgb) / 62%); }
 .contact-dialog__location { display: block; margin-top: 24px; color: rgb(var(--ivory-rgb) / 42%); font-size: 7px; letter-spacing: .22em; }
@@ -241,13 +258,14 @@
   .hotspot-wrap--end { transform: none; }
   .hotspot { min-height: 44px; font-size: 11px; }
   .hotspot-card { display: none; }
-  .mobile-hotspot-card { position: absolute; z-index: 60; right: 16px; bottom: 126px; left: 16px; display: block; max-height: calc(100svh - 180px); padding: 22px; overflow-y: auto; overscroll-behavior: contain; border: 1px solid rgb(var(--ivory-rgb) / 18%); border-radius: 18px; background: rgb(var(--surface-rgb) / 88%); -webkit-backdrop-filter: blur(28px) saturate(140%); backdrop-filter: blur(28px) saturate(140%); box-shadow: 0 25px 70px rgb(0 0 0 / 22%); opacity: 0; transform: translateY(14px); transition: opacity .28s ease, transform .32s var(--scene-ease); pointer-events: none; }
-  .mobile-hotspot-card--open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  /* The phone card hangs from a zero-height wrapper that carries its shadow (see .hotspot-panel). */
+  .mobile-hotspot-panel { position: absolute; z-index: 60; right: 16px; bottom: 126px; left: 16px; display: block; height: 0; filter: drop-shadow(0 22px 28px rgb(0 0 0 / 30%)); pointer-events: none; }
+  .mobile-hotspot-card { position: absolute; right: 0; bottom: 0; left: 0; display: block; max-height: calc(100svh - 180px); padding: 22px; overflow-y: auto; overscroll-behavior: contain; border-radius: 3px; background-color: var(--cloth); color: var(--ivory); --lp-stitch-inset: 7px; opacity: 0; visibility: hidden; transform: rotate(-.8deg); transition: opacity .28s ease, transform .32s var(--scene-ease), visibility .28s; pointer-events: none; }
+  .mobile-hotspot-card--open { opacity: 1; visibility: visible; pointer-events: auto; }
   .mobile-hotspot-card h3 { max-width: 300px; margin: 26px 0 9px; font-family: var(--font-serif), Georgia, serif; font-size: 25px; font-weight: 300; line-height: 1.06; letter-spacing: -.035em; }
   .mobile-hotspot-card p { margin: 0; color: var(--ivory-muted); font-size: 11px; font-weight: 300; line-height: 1.65; }
   .card-close, .contact-dialog__close { width: 34px; height: 34px; }
   .card-close::after, .contact-dialog__close::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; }
-  .mobile-hotspot-card > .card-contact { display: inline-flex; gap: 24px; align-items: center; margin-top: 21px; padding: 9px 14px; border: 1px solid rgb(var(--ivory-rgb) / 42%); border-radius: 999px; background: transparent; color: inherit; font-size: 10px; }
   .contact-dialog__inner { padding: 24px; }
   .contact-dialog h2 { margin-top: 40px; font-size: 32px; }
   .scene-nav { gap: 9px; }
@@ -306,9 +324,10 @@
   --stage-dark: #f6f1e4;
 }
 
-[data-lp-theme="light"] .hotspot { box-shadow: inset 0 0 0 1px rgb(35 18 12 / 8%); }
-[data-lp-theme="light"] .hotspot-card,
-[data-lp-theme="light"] .mobile-hotspot-card { box-shadow: 0 25px 70px rgb(35 18 12 / 18%); }
+[data-lp-theme="light"] .hotspot { --pill-cloth: #fff; --pill-ink: #141414; box-shadow: 0 10px 24px rgb(0 0 0 / 18%); }
+[data-lp-theme="light"] .hotspot:hover, [data-lp-theme="light"] .hotspot[aria-expanded="true"] { box-shadow: 0 14px 30px rgb(0 0 0 / 24%); }
+[data-lp-theme="light"] :is(.hotspot-card, .mobile-hotspot-card, .contact-dialog__inner) { background-color: color-mix(in oklab, var(--cloth) 24%, #fffcf4); }
+[data-lp-theme="light"] :is(.hotspot-panel, .mobile-hotspot-panel, .contact-dialog) { filter: drop-shadow(0 22px 28px rgb(35 18 12 / 22%)); }
 [data-lp-theme="light"] .round-control { background: rgb(255 252 244 / 62%); }
 [data-lp-theme="light"] .round-control:hover { background: rgb(255 252 244 / 85%); }
 [data-lp-theme="light"] .nav-markers { background: rgb(255 252 244 / 62%); }
@@ -342,6 +361,14 @@
   --color-lp-patch-indigo: #2f4d78;
   --color-lp-patch-olive: #6d7a3c;
   --color-lp-patch-terracotta: #c8744a;
+  /* The brand values (data/brand.ts): each value's icon and title share one colour from the palette
+     above (the user asked for a different theme colour per value, text and icon alike): terracotta
+     for comfort, the crown's gold, the Roadster's light-bar red, the logo's emerald. Brightened here
+     for the dark page; in the light theme saturated but deep enough for 4.5:1 on the cream. */
+  --color-lp-value-comfort: #d98559;
+  --color-lp-value-quality: #e0b23a;
+  --color-lp-value-delivery: #e0604a;
+  --color-lp-value-timeless: #3fae8f;
 }
 
 /* Light theme for the landing page; toggled by LandingThemeToggle on the page wrapper. */
@@ -358,6 +385,30 @@
   --color-lp-card: #fffaf0;
   --color-lp-deep: #e0d3b6;
   --color-lp-deep-top: #eadfc8;
+  --color-lp-value-comfort: #a8461a;
+  --color-lp-value-quality: #8a6400;
+  --color-lp-value-delivery: #b01f17;
+  --color-lp-value-timeless: #00704f;
+}
+
+/* Sections laid over a photograph or film (the story page's film header and epilogue) keep the dark
+   theme's palette in both themes: the user asked for their wash to stay as it is on the dark theme
+   instead of turning cream. The tokens are re-declared with their dark values inside the scope, so
+   the wash, the text and the buttons all read as they do on the dark theme. Keep in step with @theme. */
+[data-lp-theme="light"] .lp-dark-scope {
+  --color-lp-bg: #0a0000;
+  --color-lp-surface: #050505;
+  --color-lp-accent: #f5ed9e;
+  --color-lp-olive: #8c8450;
+  --color-lp-text: #fffdf0;
+  --color-lp-muted: rgb(216 211 173 / 75%);
+  --color-lp-border: rgb(216 211 173 / 25%);
+  --color-lp-stage: #230a04;
+  --color-lp-spotlight: #713124;
+  --color-lp-card: #2a1a14;
+  --color-lp-deep: #1d0806;
+  --color-lp-deep-top: #3a0f0b;
+  color: var(--color-lp-text);
 }
 
 @theme inline {
@@ -494,6 +545,59 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
   .silk-veil { display: none; }
 }
 
+/* Page transitions (src/components/page-transition.tsx): the new page is laid over the old one like
+   a fresh length of cloth. The old page settles back and dims; the new one rises from the bottom,
+   its leading edge cut with pinking shears. The cut is a mask: a row of zigzag teeth sitting on a
+   solid block, both placed at `--ree-seam` (registered so it animates) as it climbs from below the
+   viewport to above it. The emerald edge and the shadow are drop-shadows on the image pair, so they
+   follow the zigzag (on the new snapshot itself the mask would cut them off). Clicks pass through to the live page. */
+@property --ree-seam { syntax: "<length>"; inherits: false; initial-value: 0px; }
+
+::view-transition { pointer-events: none; }
+::view-transition-group(.ree-page-out) { z-index: 1; }
+::view-transition-group(.ree-page-in) { z-index: 2; }
+
+::view-transition-old(.ree-page-out) {
+  transform-origin: 50% 35%;
+  animation: ree-page-settle 900ms cubic-bezier(.65, 0, .35, 1) both;
+}
+::view-transition-image-pair(.ree-page-in) {
+  /* A thin edge in the logo's emerald traces the zigzag, then the shadow under the cut. */
+  filter: drop-shadow(0 -2.5px 0 #00664f) drop-shadow(0 -18px 26px rgb(0 0 0 / 45%));
+}
+::view-transition-new(.ree-page-in) {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 14'%3E%3Cpath d='M0 14 14 0l14 14Z'/%3E%3C/svg%3E"), linear-gradient(#000, #000);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 14'%3E%3Cpath d='M0 14 14 0l14 14Z'/%3E%3C/svg%3E"), linear-gradient(#000, #000);
+  -webkit-mask-size: 28px 14px, 100% 100%;
+  mask-size: 28px 14px, 100% 100%;
+  -webkit-mask-repeat: repeat-x, no-repeat;
+  mask-repeat: repeat-x, no-repeat;
+  -webkit-mask-position: 0 calc(var(--ree-seam) - 13.5px), 0 var(--ree-seam);
+  mask-position: 0 calc(var(--ree-seam) - 13.5px), 0 var(--ree-seam);
+  animation: ree-page-lay 900ms cubic-bezier(.65, 0, .35, 1) both;
+}
+
+@keyframes ree-page-settle {
+  to { transform: translateY(-2.5%) scale(.93); filter: brightness(.4) saturate(.75) blur(1px); }
+}
+/* The seam starts a tooth below the bottom edge and ends a tooth above the top, so the page is whole. */
+@keyframes ree-page-lay {
+  from { --ree-seam: calc(100lvh + 16px); transform: translateY(4%) rotate(.8deg); }
+  to { --ree-seam: -16px; transform: none; }
+}
+
+/* Reduced motion: no travelling, just a short cross-fade. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(.ree-page-out), ::view-transition-new(.ree-page-in) {
+    -webkit-mask-image: none;
+    mask-image: none;
+    animation: ree-page-fade 220ms ease both;
+  }
+  ::view-transition-old(.ree-page-out) { animation-direction: reverse; }
+  ::view-transition-image-pair(.ree-page-in) { filter: none; }
+}
+@keyframes ree-page-fade { from { opacity: 0; } to { opacity: 1; } }
+
 /* Floating theme/language dock (src/components/theme-controls.tsx) */
 
 .lp-dock {
@@ -538,6 +642,10 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
 @keyframes lp-sew { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes lp-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 .lp-float { animation: lp-float 7s ease-in-out infinite; }
+/* Timeless design: the infinity mark is sewn in dashes that drift along the loop as time moves
+   (landing-icons.tsx `flow`; the path is 100 units long, so ten periods of 6 + 4 close the loop). */
+.lp-flow path { stroke-dasharray: 6 4; animation: lp-flow 6s linear infinite; }
+@keyframes lp-flow { to { stroke-dashoffset: -10; } }
 
 @supports (animation-timeline: view()) {
   .lp-reveal, .lp-reveal-left, .lp-reveal-right {
@@ -572,6 +680,7 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
 
 @media (prefers-reduced-motion: reduce) {
   .lp-enter, .lp-enter-fade, .lp-fade, .lp-reveal, .lp-reveal-left, .lp-reveal-right, .lp-drift, .lp-drift-x, .lp-float { animation: none; }
+  .lp-flow path { animation: none; }
   .lp-unveil img { animation: none; }
   .lp-sew .lp-sew-path, .lp-sew .lp-sew-fade { animation: none; stroke-dasharray: none; }
 }
@@ -620,49 +729,87 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
 /* Its own name: reusing ree-veil backwards would count as the same, already finished animation. */
 @keyframes ree-veil-out { from { opacity: 1; } to { opacity: 0; } }
 
-/* The coming-soon contact window: from beyond the right edge, wherever the centred window sits. */
-.contact-dialog__inner { --pop-from: calc(50vw + 65%); --pop-lean: 9deg; --last: 4; }
+/* The coming-soon contact window keeps the sewn-on rows; the panel itself opens as a beam (below). */
+.contact-dialog__inner { --last: 4; }
 .contact-dialog__eyebrow { display: inline-block; } /* transforms skip inline boxes */
 
-/* The coming-soon hotspot cards are toggled by a class rather than [open], so the same motion runs
-   on transitions: the card leans in from its own side (the side it is anchored to), its eyebrow,
-   title, text and button follow it in, and closing plays it backwards (rows first, the card 190 ms
-   later, hidden at 750 ms = 600 + 50 x 3). */
-.hotspot-card, .mobile-hotspot-card { --card-from: -56px; --card-lean: -6deg; }
-.hotspot-wrap--end .hotspot-card { --card-from: 56px; --card-lean: 6deg; }
+/* Flashlight: the coming-soon modals open as a beam of light cast from the button that opened them
+   (the user asked for this). coming-soon.tsx writes the torch's position (`--flash-x` / `--flash-y`,
+   in the panel's own pixels, usually outside its box) and the direction to the panel's centre
+   (`--beam-angle`, clockwise from the top). The panel is masked to a cone around that axis whose
+   spread (`--beam-spread`) widens and whose reach (`--beam-reach`) lengthens, both registered so
+   they animate; closing runs them back to nothing. Its soft edge is a share of the spread so a shut
+   beam is fully dark. `::after` is the torch's wash on the cloth, bright at the apex and fading as the
+   eye adjusts. The hotspot cards are class-toggled and transition; the contact window animates on
+   [open] / [data-closing]. Rows sew on after the light reaches them (the row timing matches .ree-pop). */
+@property --beam-spread { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@property --beam-reach { syntax: "<length>"; inherits: false; initial-value: 0px; }
+
+.ree-beam { --flash-x: 50%; --flash-y: -24px; --beam-angle: 180deg; }
+.ree-beam::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at var(--flash-x) var(--flash-y), rgb(255 249 234 / 55%), rgb(255 249 234 / 16%) 34%, transparent 72%); opacity: 0; pointer-events: none; }
 :is(.hotspot-card, .mobile-hotspot-card) > .card-eyebrow { --i: 0; }
 :is(.hotspot-card, .mobile-hotspot-card) > h3 { --i: 1; }
 :is(.hotspot-card, .mobile-hotspot-card) > p { --i: 2; }
 :is(.hotspot-card, .mobile-hotspot-card) > .card-contact { --i: 3; }
 
 @media (prefers-reduced-motion: no-preference) {
+  .ree-beam {
+    -webkit-mask-image:
+      conic-gradient(from calc(var(--beam-angle) - var(--beam-spread) / 2) at var(--flash-x) var(--flash-y), transparent 0deg, #000 calc(var(--beam-spread) * .14), #000 calc(var(--beam-spread) * .86), transparent var(--beam-spread), transparent 360deg),
+      radial-gradient(circle at var(--flash-x) var(--flash-y), #000 var(--beam-reach), transparent calc(var(--beam-reach) * 1.4 + 1px));
+    -webkit-mask-composite: source-in;
+    mask-image:
+      conic-gradient(from calc(var(--beam-angle) - var(--beam-spread) / 2) at var(--flash-x) var(--flash-y), transparent 0deg, #000 calc(var(--beam-spread) * .14), #000 calc(var(--beam-spread) * .86), transparent var(--beam-spread), transparent 360deg),
+      radial-gradient(circle at var(--flash-x) var(--flash-y), #000 var(--beam-reach), transparent calc(var(--beam-reach) * 1.4 + 1px));
+    mask-composite: intersect;
+  }
   .hotspot-card, .mobile-hotspot-card {
-    transform: translateX(var(--card-from)) rotate(var(--card-lean));
-    transition: opacity 320ms ease 190ms, transform 560ms cubic-bezier(.8, 0, .8, .2) 190ms, visibility 0s linear 750ms;
+    opacity: 1;
+    --beam-spread: 0deg;
+    --beam-reach: 0px;
+    transition: --beam-spread 560ms cubic-bezier(.7, 0, .6, 1) 190ms, --beam-reach 640ms cubic-bezier(.7, 0, .6, 1) 110ms, transform .3s ease, visibility 0s linear 750ms;
   }
   .hotspot-card--open, .mobile-hotspot-card--open {
-    transform: none;
-    transition: opacity 320ms ease, transform 560ms cubic-bezier(.2, .8, .2, 1), visibility 0s;
+    --beam-spread: 260deg;
+    --beam-reach: 1100px;
+    transition: --beam-spread 900ms cubic-bezier(.45, 0, .25, 1), --beam-reach 900ms cubic-bezier(.3, .4, .2, 1), transform .3s ease, visibility 0s;
   }
+  :is(.hotspot-card--open, .mobile-hotspot-card--open)::after { animation: ree-torch 1400ms ease-out both; }
   /* The open hotspot stays on top of its neighbours until its card has gone. */
   .hotspot-wrap { transition: top .35s var(--scene-ease), left .35s var(--scene-ease), z-index 0s linear 750ms; }
   .hotspot-wrap--open { transition: top .35s var(--scene-ease), left .35s var(--scene-ease), z-index 0s; }
   :is(.hotspot-card, .mobile-hotspot-card) > :is(.card-eyebrow, h3, p, .card-contact) {
     opacity: 0;
-    translate: -40px 0;
-    rotate: -5deg;
-    transition-property: opacity, translate, rotate, background-color, color;
-    transition-duration: 440ms, 440ms, 440ms, .2s, .2s;
-    transition-timing-function: cubic-bezier(.8, 0, .8, .2), cubic-bezier(.8, 0, .8, .2), cubic-bezier(.8, 0, .8, .2), ease, ease;
-    transition-delay: calc((3 - var(--i)) * 50ms), calc((3 - var(--i)) * 50ms), calc((3 - var(--i)) * 50ms), 0s, 0s;
+    translate: 0 10px;
+    transition-property: opacity, translate, background-color, color, transform;
+    transition-duration: 440ms, 440ms, .2s, .2s, .2s;
+    transition-timing-function: cubic-bezier(.8, 0, .8, .2), cubic-bezier(.8, 0, .8, .2), ease, ease, ease;
+    transition-delay: calc((3 - var(--i)) * 50ms), calc((3 - var(--i)) * 50ms), 0s, 0s, 0s;
   }
   :is(.hotspot-card--open, .mobile-hotspot-card--open) > :is(.card-eyebrow, h3, p, .card-contact) {
     opacity: 1;
     translate: 0 0;
-    rotate: 0deg;
-    transition-timing-function: cubic-bezier(.2, .8, .2, 1), cubic-bezier(.2, .8, .2, 1), cubic-bezier(.2, .8, .2, 1), ease, ease;
-    transition-delay: calc(160ms + var(--i) * 50ms), calc(160ms + var(--i) * 50ms), calc(160ms + var(--i) * 50ms), 0s, 0s;
+    transition-timing-function: cubic-bezier(.2, .8, .2, 1), cubic-bezier(.2, .8, .2, 1), ease, ease, ease;
+    transition-delay: calc(360ms + var(--i) * 60ms), calc(360ms + var(--i) * 60ms), 0s, 0s, 0s;
   }
+  .contact-dialog[open] > .contact-dialog__inner { animation: ree-beam-in 1000ms cubic-bezier(.7, 0, .3, 1) both; }
+  .contact-dialog[open] .ree-pop-row { animation-delay: calc(360ms + var(--i, 0) * 60ms); }
+  .contact-dialog[open] > .contact-dialog__inner::after { animation: ree-torch 1400ms ease-out both; }
+  .contact-dialog[data-closing] > .contact-dialog__inner { animation: ree-beam-out 560ms cubic-bezier(.8, 0, .8, .2) both; animation-delay: calc(40ms + var(--last, 0) * 50ms); }
+}
+
+@keyframes ree-beam-in {
+  from { --beam-spread: 0deg; --beam-reach: 0px; }
+  to { --beam-spread: 260deg; --beam-reach: 1400px; }
+}
+/* Its own name: a reversed ree-beam-in would count as the same, already finished animation. */
+@keyframes ree-beam-out {
+  from { --beam-spread: 260deg; --beam-reach: 1400px; }
+  to { --beam-spread: 0deg; --beam-reach: 0px; }
+}
+@keyframes ree-torch {
+  0%, 20% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* The order letter (checkout-page.tsx): the user asked for the confirmation as a letter, on a
@@ -680,6 +827,26 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
   background-size: 180px 180px, 520px 260px, 700px 700px;
   background-blend-mode: multiply;
 }
+
+/* Handloom (khadi) behind every page in the product shell: shop, collections, products, about,
+   journal, contact, legal, bag and checkout (the user asked for it on every page except the landing
+   and coming-soon pages, which have their own roots and are untouched):
+   the weft as fine horizontal threads, the warp as vertical ones, a few thick slubs where the yarn
+   was uneven, over the paper's grain and mottle. Multiplied into the light page, screened into the
+   dark one, like the paper. The tiles need x / y / width / height on their filter (see the paper). */
+:root {
+  --linen-weft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.02 .85' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .18 0 0 0 0 .12 .95 0 0 0 -.53'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --linen-warp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85 .02' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .18 0 0 0 0 .12 .85 0 0 0 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --linen-slub: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .09' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .18 0 0 0 0 .12 1.6 0 0 0 -1.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#ree-product {
+  background-image: var(--linen-weft), var(--linen-warp), var(--linen-slub), var(--paper-grain), var(--paper-mottle);
+  background-size: 240px 240px, 240px 240px, 600px 600px, 180px 180px, 700px 700px;
+  background-attachment: local;
+  background-blend-mode: multiply;
+}
+#ree-product[data-lp-theme="dark"] { background-blend-mode: screen; }
+/* The order letter swaps the weave for paper (below); its :has() rules outrank these. */
 
 /* While the letter is on screen the whole page is paper. `local` lets the texture scroll with it. */
 #ree-product:has([data-paper-page]) {

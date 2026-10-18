@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import campaignStage from "../../public/landing/campaign-stage.webp";
 import campaignLounge from "../../public/landing/campaign-lounge-wide.webp";
 import campaignStairs from "../../public/landing/campaign-stairs-wide.webp";
+import campaignAhnaf from "../../public/landing/campaign-ahnaf-wide.webp";
 import styles from "./landing-hero.module.css";
 import { SiteHeader } from "./site-header";
 
@@ -32,6 +33,14 @@ const slides = [
     alt: "A model in a tailored herringbone suit and leather gloves, seated in a burgundy lounge chair under a warm spotlight.",
     href: "/collections",
     label: "Shop the curated collections",
+  },
+  {
+    // The user's own photograph (assets/hero/ahnaf-2-original.png), scaled and cropped to the
+    // hero's canvas with the subject under the frame; see docs/landing-hero-assets.md.
+    src: campaignAhnaf,
+    alt: "A man in a mustard graphic tee, flat cap and sunglasses, seated on old stone steps under sunlit trees.",
+    href: "/shop",
+    label: "Shop the everyday tees",
   },
   {
     src: campaignLounge,

@@ -11,6 +11,7 @@ const jobs = [
   { name: "stage", output: "campaign-stage.webp" },
   { name: "stairs", output: "campaign-stairs-wide.webp" },
   { name: "lounge", output: "campaign-lounge-wide.webp" },
+  { name: "ahnaf", output: "campaign-ahnaf-wide.webp" },
 ];
 
 await mkdir(new URL("../public/landing/", import.meta.url), { recursive: true });

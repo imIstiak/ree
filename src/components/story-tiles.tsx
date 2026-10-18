@@ -1,7 +1,7 @@
 "use client";
 
 import { MotionConfig, motion } from "motion/react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 // The "Find your story" tiles as cloth patches. This is the landing page's motion island
 // (Framer Motion, published as `motion`): the page stays a server component and passes the
@@ -15,6 +15,8 @@ export type StoryTileProps = {
   tilt: number;
   // Cloth colour and stitch colour as full class literals (Tailwind needs to see them whole).
   frame: string;
+  // The garment-colour cloth (shop-ui `garmentCloth`): overrides the frame class's colours when set.
+  frameStyle?: CSSProperties;
   caption?: ReactNode;
   image: ReactNode;
 };
@@ -54,7 +56,7 @@ export function StoryTiles({ tiles }: { tiles: StoryTileProps[] }) {
               {t.shape === "hung" && <div className="mb-2">{t.caption}</div>}
               <motion.div
                 className={`relative p-2 shadow-lg shadow-black/40 outline-1 outline-dashed -outline-offset-4 transition-shadow duration-500 group-data-[lp-theme=light]/theme:shadow-black/15 before:pointer-events-none before:absolute before:inset-0 before:lp-noise before:opacity-25 before:mix-blend-overlay before:content-[''] hover:shadow-2xl sm:p-2.5 sm:-outline-offset-[5px] ${t.frame}`}
-                style={{ rotate: t.tilt }}
+                style={{ ...t.frameStyle, rotate: t.tilt }}
                 variants={patch}
                 whileHover="hover"
                 whileTap={{ scale: 0.98 }}

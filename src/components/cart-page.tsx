@@ -6,6 +6,7 @@ import { FREE_DELIVERY_FROM, deliveryAreas } from "../data/checkout";
 import { formatPrice, getProduct, type Product } from "../data/products";
 import { Icon } from "./landing-icons";
 import { useHydrated, useShop, type CartLine } from "./shop-store";
+import { garmentCloth } from "./shop-ui";
 import { EmptyNote, PageButton, PageIntro, ShopGrid, bodyText, cloths, patchShadow, sectionTitle } from "./site-page";
 
 // The bag (/cart): every line as a cloth patch with a quantity stepper, a summary with the delivery
@@ -60,7 +61,8 @@ export function CartView() {
             {lines.map((line, index) => (
               <li
                 key={`${line.slug}-${line.size}`}
-                className={`lp-patch ${patchShadow} grid grid-cols-[84px_1fr] gap-4 p-3 [--lp-stitch-inset:5px] sm:grid-cols-[108px_1fr] sm:p-4 ${cloths[index % cloths.length]} ${index % 2 ? "rotate-[.4deg]" : "-rotate-[.4deg]"}`}
+                style={garmentCloth(line.product.images[0])}
+                className={`lp-patch ${patchShadow} grid grid-cols-[84px_1fr] gap-4 p-3 [--lp-stitch-inset:5px] sm:grid-cols-[108px_1fr] sm:p-4 ${line.product.images[0].swatch ? "" : cloths[index % cloths.length]} ${index % 2 ? "rotate-[.4deg]" : "-rotate-[.4deg]"}`}
               >
                 <Link href={`/products/${line.slug}`} className="relative block aspect-[3/4] overflow-hidden bg-lp-surface" tabIndex={-1} aria-hidden="true">
                   <Image src={line.product.images[0].src} alt="" fill sizes="108px" className="object-cover" style={{ objectPosition: line.product.images[0].position }} />

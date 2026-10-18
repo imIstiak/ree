@@ -117,3 +117,7 @@ ffmpeg -i public/products/life-is-short-film.mp4 -frames:v 1 -q:v 4 -update 1 pu
 
 Product descriptions, prices, sizes and the quotes on the story page are sample content written for the
 mock-up, like the landing page's names and prices.
+
+## Tee cut-out masks (`public/products/cutouts/`)
+
+The story page's chapter cards show the tee from four of the hotlinked Rakh photographs without the models. The repo holds only the silhouettes (`tee-front`, `tee-back`, `tee-pair`, `tee-portrait` `-mask.png`, alpha PNGs at up to 1200 px covering the whole photo); the page lays each over the same hotlinked image with a CSS mask, so no copy of the store's photograph is stored or served from this site. The masks were made with the Segment Anything model (ViT-B, via rembg) prompted with points on the shirt and off the skin and hair, then cleaned (holes filled, stray pieces dropped, edges feathered). They are tied to each photo's exact pixel grid: if a photo is replaced, its mask must be made again. The rights note above applies: these are placeholders for the brand's own product photography.

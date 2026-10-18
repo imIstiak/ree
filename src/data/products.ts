@@ -1,13 +1,11 @@
 // The shop's catalogue. There is no backend: every product page is generated from this file.
 // `kind` picks the template. "classic" is the conventional details page (description, price,
 // sizes, add to cart); "story" is the premium chapter-by-chapter page with a header film and
-// drawn illustrations. Copy, prices and quotes are sample content, like the landing page's.
+// each chapter's tee cut out of its photograph. Copy, prices and quotes are sample content, like the landing page's.
 
-import { campaignPhotos } from "./campaign-images";
+import { campaignPhotos, type Cutout } from "./campaign-images";
 
-export type ProductImage = { src: string; alt: string; position?: string };
-
-export type IllustrationName = "hourglass" | "cotton" | "cut" | "print" | "stitch" | "day";
+export type ProductImage = { src: string; alt: string; position?: string; cutout?: Cutout; swatch?: string };
 
 export type StoryChapter = {
   kicker: string;
@@ -17,8 +15,7 @@ export type StoryChapter = {
   // Short specifics under the copy, and a maker's or wearer's voice.
   facts?: string[];
   voice?: { text: string; who: string };
-  illustration: IllustrationName;
-  // Index into `images`: the photograph pinned to the chapter's illustration.
+  // Index into `images`: the photograph pinned to the chapter card; the card shows its tee cut out.
   photo: number;
 };
 
@@ -85,7 +82,7 @@ export const products: Product[] = [
     story: {
       headline: "Life is short.",
       intro: "The story of one tee, told in six chapters: three words, a bale of cotton, a dropped shoulder, a hand-pulled print, forty minutes of hands, and a long day.",
-      film: { youtube: "rkpzYNB6xks", src: "/products/life-is-short-film.mp4", poster: campaignPhotos.teePortrait.src, caption: "Film by kiransahu films · YouTube" },
+      film: { youtube: "tgEo0EqQpIc", src: "/products/life-is-short-film.mp4", poster: campaignPhotos.teePortrait.src, caption: "Film by kiransahu films · YouTube" },
       prologue:
         "We started ঋ - Ree with one sentence: not everything old belongs in the past. This tee is that sentence made wearable. Heavy cotton the way tees used to be, a print pulled by hand the way posters used to be, and three words for a city that never sits still.",
       facts: [
@@ -105,7 +102,6 @@ export const products: Product[] = [
           pull: "A note to the person behind you.",
           facts: ["Set in a grotesque cut from an old Dhaka signboard", "Printed 18 cm wide, between the shoulder blades"],
           voice: { text: "People read it on the bus and smile at the back of your head.", who: "Mahir, who wears one" },
-          illustration: "hourglass",
           photo: 1,
         },
         {
@@ -114,7 +110,6 @@ export const products: Product[] = [
           body: "Combed cotton from the delta, knit heavy at 240 grams so it falls instead of clings, then garment-dyed ink black. It fades the way good denim does: slowly, and only where you live in it.",
           facts: ["Combed, ring-spun cotton", "240 g per square metre, knit as a 24-gauge single jersey", "Garment-dyed, so the seams carry the colour too"],
           voice: { text: "Heavy jersey is honest. It shows every skipped step, so we skip none.", who: "Shanta, knitting master" },
-          illustration: "cotton",
           photo: 3,
         },
         {
@@ -123,7 +118,6 @@ export const products: Product[] = [
           body: "The seam sits two fingers down the arm. The body is boxy, the sleeve is wide, the hem stops at the hip. It is cut for a hot city and long afternoons, not for a mannequin.",
           pull: "Two fingers down the arm.",
           facts: ["Shoulder seam 4 cm past the natural shoulder", "Chest 56 cm and length 70 cm in size M", "Sleeve wide enough to roll once"],
-          illustration: "cut",
           photo: 2,
         },
         {
@@ -132,7 +126,6 @@ export const products: Product[] = [
           body: "Water-based ink pushed through a silk screen by hand in Old Dhaka. No two pulls are identical, and the letters soften after the first wash instead of cracking.",
           facts: ["Water-based ink, cured at 160 °C", "One pull per tee; the misprints become our shop rags"],
           voice: { text: "A good pull sounds like tearing paper. You learn it by ear.", who: "Rahim, printer, Old Dhaka" },
-          illustration: "print",
           photo: 1,
         },
         {
@@ -142,7 +135,6 @@ export const products: Product[] = [
           pull: "People we know by name.",
           facts: ["Side-seamed, not tubular", "Twin-needle hems; rib collar with a taped back neck", "Paid by the hour, not by the piece"],
           voice: { text: "The collar tells you who sewed it. Mine sit flat.", who: "Rina, sewing line two" },
-          illustration: "stitch",
           photo: 0,
         },
         {
@@ -152,7 +144,6 @@ export const products: Product[] = [
           pull: "Made to be forgotten on you.",
           facts: ["Fades at the shoulders first, slowly", "Softens after the third wash", "Mended free for two years of wearing"],
           voice: { text: "I have washed mine forty times. The words are still there.", who: "Arif, Mirpur" },
-          illustration: "day",
           photo: 2,
         },
       ],

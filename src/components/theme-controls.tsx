@@ -49,7 +49,16 @@ export function ThemeControls({ rootId, inline = false }: { rootId: string; inli
   // Covers client-side navigations, where the inline script does not run.
   useLayoutEffect(() => {
     const theme = readStoredTheme();
-    if (theme) document.getElementById(rootId)?.setAttribute(ATTRIBUTE, theme);
+    // On a client-side navigation the inline ThemeScript does not run, so the saved theme lands here.
+    // Skip the root's colour fade for it: the page transition captures this page as it mounts, and it
+    // must already be in its final colours, not fading from dark (page-transition.tsx).
+    const root = document.getElementById(rootId);
+    if (theme && root && root.getAttribute(ATTRIBUTE) !== theme) {
+      root.style.transition = "none";
+      root.setAttribute(ATTRIBUTE, theme);
+      void root.offsetHeight;
+      requestAnimationFrame(() => root.style.removeProperty("transition"));
+    }
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       preloadSilkTransition();
     }

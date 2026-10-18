@@ -9,6 +9,7 @@ import { display, mono } from "./landing-fonts";
 import type { CSSProperties, ReactNode } from "react";
 import { LANDING_ROOT_ID, ThemeControls, ThemeScript } from "./theme-controls";
 import { campaignPhotos } from "../data/campaign-images";
+import { garmentCloth } from "./shop-ui";
 import { values } from "../data/brand";
 import { journalPosts as posts } from "../data/journal";
 
@@ -18,6 +19,8 @@ type Photo = {
   src: string;
   alt: string;
   position?: string;
+  // The garment's colour (campaign-images.ts); a product brick's frame is cut from it.
+  swatch?: string;
 };
 
 // Model photographs hotlinked from the reference stores are shared with the product pages
@@ -367,6 +370,7 @@ export function LandingMain() {
               shape: tile.shape,
               tilt: tile.tilt,
               frame: tile.frame,
+              frameStyle: garmentCloth(tile.photo),
               caption: tile.caption && (
                 <div className="flex items-center justify-between gap-2">
                   <Label>{tile.caption.label}</Label>
@@ -591,7 +595,7 @@ export function LandingMain() {
                 <li
                   key={brick.id}
                   id={brick.id}
-                  style={{ "--lp-stagger": index % 3 } as CSSProperties}
+                  style={{ "--lp-stagger": index % 3, ...garmentCloth(brick.photo) } as CSSProperties}
                   className={`lp-reveal lp-unveil lp-patch group relative scroll-mt-4 [--lp-stitch-inset:3px] sm:[--lp-stitch-inset:4px] ${brick.featured ? "aspect-[2/1] lg:aspect-auto" : "aspect-[5/4]"} ${brick.cloth} ${brick.place}`}
                 >
                   {/* The photograph sits inside the cloth frame, clear of the stitch. */}
@@ -656,9 +660,9 @@ export function LandingMain() {
           <ul className="mt-14 lg:mt-0">
             {values.map((value, index) => (
               <li key={value.title} style={{ "--lp-stagger": index } as CSSProperties} className="lp-reveal-right grid grid-cols-[40px_1fr] items-center gap-5 border-b border-lp-border py-8 first:pt-0 last:border-b-0 sm:grid-cols-[56px_1fr] lg:py-[9%]">
-                <Icon name={value.icon} className="size-10 text-lp-text sm:size-12" />
+                <Icon name={value.icon} flow={value.flow} className={`size-10 drop-shadow-[0_0_6px_var(--color-lp-bg)] sm:size-12 ${value.tone}`} />
                 <div>
-                  <h3 className="font-lp-display text-[clamp(1rem,1.6cqw,1.4rem)] leading-[1.15] uppercase">{value.title}</h3>
+                  <h3 className={`font-lp-display text-[clamp(1rem,1.6cqw,1.4rem)] leading-[1.15] uppercase [text-shadow:0_0_14px_var(--color-lp-bg)] ${value.tone}`}>{value.title}</h3>
                   <p className={`${bodyText} mt-2 max-w-72`}>{value.body}</p>
                 </div>
               </li>

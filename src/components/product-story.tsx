@@ -9,8 +9,13 @@ import { Icon } from "./landing-icons";
 import { ProductShell } from "./product-shell";
 import { PurchasePanel } from "./purchase-panel";
 import { RelatedProducts, ShopFooter, cloth, kicker, pageHeader } from "./shop-ui";
+
+// The bag card is a cloth patch in the logo's emerald (the user asked for the brand green, not the
+// coffee card colour), deeper on the dark theme. The lp colour tokens are re-pointed at the logo's
+// cream inside it, so the shared PurchasePanel's text, stitches and fills read on the green.
+const brandCard =
+  "lp-patch relative -rotate-[.6deg] bg-lp-brand p-5 text-lp-brand-base shadow-2xl shadow-black/40 [--lp-stitch-inset:8px] group-data-[lp-theme=dark]/theme:bg-lp-brand-deep in-[.lp-dark-scope]:bg-lp-brand-deep group-data-[lp-theme=light]/theme:shadow-black/20 sm:p-6 [--color-lp-text:var(--color-lp-brand-base)] [--color-lp-muted:color-mix(in_oklab,var(--color-lp-brand-base)_78%,transparent)] [--color-lp-border:color-mix(in_oklab,var(--color-lp-brand-base)_30%,transparent)] [--color-lp-bg:var(--color-lp-brand)] group-data-[lp-theme=dark]/theme:[--color-lp-bg:var(--color-lp-brand-deep)] in-[.lp-dark-scope]:[--color-lp-bg:var(--color-lp-brand-deep)]";
 import { SiteHeader } from "./site-header";
-import { Illustration } from "./story-illustrations";
 
 // The premium, story-led product page: a header film, a prologue, six illustrated chapters that
 // draw themselves in as they scroll into view, the journey from field to street, and an epilogue
@@ -40,7 +45,6 @@ export function ProductStory({ product, related }: { product: Product; related: 
   const { scrollYProgress: heroProgress } = useScroll({ container: scrollRef, target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(heroProgress, [0, 1], [0, 140]);
   const heroFade = useTransform(heroProgress, [0, 0.65], [1, 0]);
-  const filmScale = useTransform(heroProgress, [0, 1], [1, 1.12]);
 
   const story = product.story;
   if (!story) return null;
@@ -52,34 +56,41 @@ export function ProductStory({ product, related }: { product: Product; related: 
       <ProductShell ref={scrollRef}>
         <motion.div style={{ scaleX: progress }} className="fixed inset-x-0 top-0 z-40 h-0.5 origin-left bg-lp-accent" aria-hidden="true" />
 
-        {/* Header: the film plays behind the title; the copy drifts and fades as it scrolls away. */}
-        <section ref={heroRef} className="relative isolate flex h-svh min-h-[640px] flex-col overflow-hidden">
-          <motion.div style={{ scale: reduce ? 1 : filmScale }} className="absolute inset-0 -z-20" aria-hidden="true">
-            {film.youtube ? (
-              <FilmEmbed id={film.youtube} still={reduce} />
-            ) : reduce ? (
-              <Image src={film.poster} alt="" fill priority sizes="100vw" className="object-cover" />
-            ) : (
-              <video
-                // React does not write the `muted` attribute to the HTML, and browsers only autoplay muted video.
-                ref={(el) => {
-                  if (el) {
-                    el.muted = true;
-                    el.defaultMuted = true;
-                  }
-                }}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster={film.poster}
-                className="size-full object-cover"
-              >
-                <source src={film.src} type="video/mp4" />
-              </video>
-            )}
-          </motion.div>
+        {/* Header: the film plays behind the title; the copy drifts and fades as it scrolls away. `lp-dark-scope`
+            keeps the dark wash and light text on the light theme too (globals.css). */}
+        {/* The film holds still while the page scrolls (the user asked for it to stay put and only the
+            content to move): it is sticky to the top of the scroller inside a layer twice the hero's
+            height, and the section clips it. `overflow-clip`, not `overflow-hidden`, which would make the
+            section the sticky element's scroller and pin nothing. */}
+        <section ref={heroRef} className="lp-dark-scope relative isolate flex h-svh min-h-[640px] flex-col overflow-clip">
+          <div className="absolute inset-x-0 top-0 -z-20 h-[200%]" aria-hidden="true">
+            <div className="sticky top-0 h-1/2 overflow-hidden">
+              {film.youtube ? (
+                <FilmEmbed id={film.youtube} still={reduce} />
+              ) : reduce ? (
+                <Image src={film.poster} alt="" fill priority sizes="100vw" className="object-cover" />
+              ) : (
+                <video
+                  // React does not write the `muted` attribute to the HTML, and browsers only autoplay muted video.
+                  ref={(el) => {
+                    if (el) {
+                      el.muted = true;
+                      el.defaultMuted = true;
+                    }
+                  }}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  poster={film.poster}
+                  className="size-full object-cover"
+                >
+                  <source src={film.src} type="video/mp4" />
+                </video>
+              )}
+            </div>
+          </div>
           <div
             className="absolute inset-0 -z-10 bg-[linear-gradient(to_top,var(--color-lp-bg)_0%,color-mix(in_oklab,var(--color-lp-bg)_55%,transparent)_40%,color-mix(in_oklab,var(--color-lp-bg)_18%,transparent)_100%)]"
             aria-hidden="true"
@@ -138,7 +149,7 @@ export function ProductStory({ product, related }: { product: Product; related: 
         <Journey steps={story.journey} />
 
         {/* Epilogue: sizes and the bag over the back-print photograph, with no price. */}
-        <section id="buy" aria-labelledby="buy-title" className="relative isolate scroll-mt-4 overflow-hidden px-[3%] py-[8%]">
+        <section id="buy" aria-labelledby="buy-title" className="lp-dark-scope relative isolate scroll-mt-4 overflow-hidden px-[3%] py-[8%]">
           <div className="absolute inset-0 -z-20">
             <Image src={buyPhoto.src} alt="" fill sizes="100vw" className="object-cover" style={{ objectPosition: buyPhoto.position }} />
           </div>
@@ -165,7 +176,7 @@ export function ProductStory({ product, related }: { product: Product; related: 
               <Accordion title="Care" items={product.care} />
             </motion.div>
             <motion.div variants={rise} className="lg:col-span-5 lg:col-start-8">
-              <div className="border border-lp-border bg-lp-card p-5 shadow-2xl shadow-black/40 group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-6">
+              <div className={brandCard}>
                 <p className="font-lp-display text-lg leading-tight uppercase">{product.name}</p>
                 <p className="mt-1 text-[11px] text-lp-muted">{product.colour} · unisex</p>
                 <div className="mt-6">
@@ -201,6 +212,52 @@ export function ProductStory({ product, related }: { product: Product; related: 
   );
 }
 
+// A tee on the cloth: the hotlinked photograph seen through the tee's silhouette (`cutout.mask`), the
+// photo scaled and shifted so the tee's crop (`cutout.box`) fills the frame. The frame keeps the
+// crop's aspect inside a square stage, so every chapter's tee is the same visual size. The drop
+// shadow sits on the wrapper (the mask would clip it on the masked element). Decorative: the small
+// photo beside it carries the alt text. Without a cutout it falls back to the plain photo.
+function TeeCutout({ photo, tilt }: { photo: ProductImage; tilt: number }) {
+  const cutout = photo.cutout;
+  if (!cutout) {
+    return (
+      <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden">
+        <Image src={photo.src} alt="" fill sizes="(min-width: 1024px) 30vw, 80vw" className="object-cover" style={{ objectPosition: photo.position }} />
+      </div>
+    );
+  }
+  const [x, y, w, h] = cutout.box;
+  const mask = `url("${cutout.mask}")`;
+  return (
+    <div className="relative mx-auto flex aspect-square w-full max-w-sm items-center justify-center" aria-hidden="true">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, rotate: tilt * 2 }}
+        whileInView={{ opacity: 1, scale: 1, rotate: tilt }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
+        className={`relative drop-shadow-[0_22px_22px_rgb(0_0_0/45%)] ${cutout.aspect >= 1 ? "w-full" : "h-full"}`}
+        style={{ aspectRatio: cutout.aspect }}
+      >
+        <div
+          className="absolute"
+          style={{
+            left: `${(-x / w) * 100}%`,
+            top: `${(-y / h) * 100}%`,
+            width: `${100 / w}%`,
+            height: `${100 / h}%`,
+            maskImage: mask,
+            WebkitMaskImage: mask,
+            maskSize: "100% 100%",
+            WebkitMaskSize: "100% 100%",
+          }}
+        >
+          <Image src={photo.src} alt="" fill sizes={`(min-width: 1024px) ${Math.round(34 / w)}vw, ${Math.round(80 / w)}vw`} className="object-cover" />
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 function Chapter({ chapter, index, photo }: { chapter: StoryChapter; index: number; photo: ProductImage }) {
   const flip = index % 2 === 1;
   const number = String(index + 1).padStart(2, "0");
@@ -211,9 +268,10 @@ function Chapter({ chapter, index, photo }: { chapter: StoryChapter; index: numb
       </span>
       <motion.div variants={group} initial="hidden" whileInView="visible" viewport={inView} className="relative grid items-center gap-12 lg:grid-cols-12 lg:gap-6">
         <motion.div variants={rise} className={`relative lg:col-span-5 ${flip ? "lg:order-2 lg:col-start-8" : ""}`}>
-          {/* The logo's emerald with the drawing in the logo's base colour; fixed, so it reads the same in both themes. */}
+          {/* The logo's emerald with the chapter photo's tee laid on it, cut out of the photograph (the
+              user asked for the tee without the models in place of the drawings); fixed colours. */}
           <div className={`relative bg-lp-brand p-6 text-lp-brand-base outline-lp-brand-base/40 sm:p-10 ${cloth} ${flip ? "rotate-1" : "-rotate-1"}`}>
-            <Illustration name={chapter.illustration} className="relative mx-auto w-full max-w-sm" />
+            <TeeCutout photo={photo} tilt={flip ? 2.5 : -2.5} />
           </div>
           <motion.div
             variants={rise}

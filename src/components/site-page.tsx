@@ -1,10 +1,12 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import { formatPrice, type Product } from "../data/products";
+import type { Product } from "../data/products";
 import { Icon } from "./landing-icons";
 import { ProductShell } from "./product-shell";
-import { ShopFooter, kicker, pageHeader } from "./shop-ui";
+import { ShopCard, ShopFooter, kicker, pageHeader, patchShadow, smallPatch } from "./shop-ui";
+
+// The patch classes and the product patch live in shop-ui.tsx (the product pages use them too).
+export { ShopCard, cardPatch, cloths, hoverImage, patchShadow, smallPatch, tilts } from "./shop-ui";
 import { SiteHeader } from "./site-header";
 
 // The frame and the small pieces for the shop's own pages (shop, men / women / kids, collections,
@@ -13,24 +15,8 @@ import { SiteHeader } from "./site-header";
 // cloth patch with a running stitch, resting at a tilt that straightens on hover). No hooks, so
 // server pages can use it.
 
-export const patchShadow = "shadow-md shadow-black/35 group-data-[lp-theme=light]/theme:shadow-black/12";
-const patchMotion = "transition-[color,background-color,rotate,translate,box-shadow] duration-300 ease-out hover:rotate-0 motion-reduce:transition-none";
-export const smallPatch = `lp-patch [--lp-stitch-inset:3px] ${patchShadow} ${patchMotion}`;
-export const cardPatch = `lp-patch ${patchShadow} ${patchMotion} hover:-translate-y-1.5 hover:shadow-xl`;
-export const hoverImage = "transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100";
 export const bodyText = "text-[13px] leading-[1.75] text-lp-muted";
 export const sectionTitle = "lp-newsprint font-lp-display text-[clamp(1.4rem,2.6cqw,2.4rem)] leading-[1.05] tracking-[-.02em] uppercase";
-
-// Card cloths and resting tilts, cycled through a grid. Full class literals, as Tailwind needs.
-export const cloths = [
-  "bg-lp-card text-lp-text",
-  "bg-lp-patch-indigo text-lp-canvas",
-  "bg-lp-patch-olive text-lp-canvas",
-  "bg-lp-patch-terracotta text-lp-ink",
-  "bg-lp-patch-madder text-lp-canvas",
-  "bg-lp-patch-mustard text-lp-ink",
-];
-export const tilts = ["-rotate-1", "rotate-1", "rotate-[.6deg]", "-rotate-[.7deg]"];
 
 export function SitePage({ children }: { children: ReactNode }) {
   return (
@@ -88,23 +74,6 @@ export function PageButton({ href, children, tone = "accent" }: { href: string; 
     <Link href={href} className={`${smallPatch} inline-flex min-h-11 min-w-44 -rotate-1 items-center justify-between gap-6 px-4 text-[11px] font-medium tracking-wide uppercase sm:min-h-10 ${tones[tone]}`}>
       {children}
       <Icon name="arrowRight" />
-    </Link>
-  );
-}
-
-// A product as a cloth patch: the photograph in the frame, name and price sewn underneath. The story
-// piece shows "Story" instead of a price, as it does on the landing page's wall.
-export function ShopCard({ product, index }: { product: Product; index: number }) {
-  const photo = product.images[0];
-  return (
-    <Link href={`/products/${product.slug}`} className={`${cardPatch} group block p-2 [--lp-stitch-inset:4px] sm:p-2.5 ${cloths[index % cloths.length]} ${tilts[index % tilts.length]}`}>
-      <div className="relative aspect-[3/4] overflow-hidden bg-lp-surface">
-        <Image src={photo.src} alt={photo.alt} fill sizes="(min-width: 1024px) 23vw, 46vw" className={`object-cover ${hoverImage}`} style={{ objectPosition: photo.position }} />
-      </div>
-      <div className="flex items-start justify-between gap-2 px-1 pt-2.5 pb-1 text-[11px] leading-snug uppercase">
-        <span>{product.name}</span>
-        <span className="whitespace-nowrap opacity-75">{product.kind === "story" ? "Story" : formatPrice(product.price)}</span>
-      </div>
     </Link>
   );
 }

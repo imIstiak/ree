@@ -12,10 +12,14 @@ export const iconPaths = {
   chevronRight: "M9 5l7 7-7 7",
   plus: "M12 5v14M5 12h14",
   bag: "M5 8h14l-1 13H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2",
-  comfort: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm-4 13c3-1 5-4 5-8m-2 11c3-2 5-5 5-9",
-  quality: "M3 18h18M4 18 3 7l5 4 4-6 4 6 5-4-1 11M8 14l2-2 2 2 2-2 2 2",
-  delivery: "M3 12l6-6 6 6-6 6-6-6Zm6 0 6-6 6 6-6 6",
-  timeless: "M12 3v8M7.5 5.5a8 8 0 1 0 9 0",
+  // The brand values (data/brand.ts). Comfort is a feather; quality a crown after the user's
+  // reference (five points with pearls, a fleur-de-lis in the middle, a jewelled band); delivery the
+  // rear of the Tesla Roadster the user sent (wing, light bar, four thrusters, exhaust plumes);
+  // timeless an infinity loop drawn as flowing dashes (`flow` below).
+  comfort: "M19.5 4.5c-6 0-11 3-12 9.5L6.5 18.5l4.5-1C16.5 16 19.5 11 19.5 4.5ZM19.5 4.5 4.5 19.5M14.5 9.5l3.2-1M12 12l3.6-.6M9.5 14.5l3.5-.7",
+  quality: "M5 17 3.5 9.5l2.5 3L8 7l2 3.5L12 4l2 6.5L16 7l2 5.5 2.5-3L19 17M4.5 17h15v3h-15ZM2.7 8.3a.8.8 0 1 0 1.6 0 .8.8 0 1 0-1.6 0M7.2 5.8a.8.8 0 1 0 1.6 0 .8.8 0 1 0-1.6 0M11.2 2.8a.8.8 0 1 0 1.6 0 .8.8 0 1 0-1.6 0M15.2 5.8a.8.8 0 1 0 1.6 0 .8.8 0 1 0-1.6 0M19.7 8.3a.8.8 0 1 0 1.6 0 .8.8 0 1 0-1.6 0M11.6 7.8c-1.3-1.5-2.8-1-2.6.1s1.5 1.2 2.6.3m.8-.4c1.3-1.5 2.8-1 2.6.1s-1.5 1.2-2.6.3M12 17.6l1 .9-1 .9-1-.9ZM7.5 18.5a.5.5 0 1 0 1 0 .5.5 0 1 0-1 0M15.5 18.5a.5.5 0 1 0 1 0 .5.5 0 1 0-1 0",
+  delivery: "M3.5 4.5h17L19 7H5ZM9 7v2.5M15 7v2.5M4 10.5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v6H4ZM6 12h12M7.1 14.5a.9.9 0 1 0 1.8 0 .9.9 0 1 0-1.8 0M9.8 14.5a.9.9 0 1 0 1.8 0 .9.9 0 1 0-1.8 0M12.4 14.5a.9.9 0 1 0 1.8 0 .9.9 0 1 0-1.8 0M15.1 14.5a.9.9 0 1 0 1.8 0 .9.9 0 1 0-1.8 0M4.5 16.5v2h2v-2M17.5 16.5v2h2v-2M8 18.5l-1.5 4M11 18.5l-.5 4M13 18.5l.5 4M16 18.5l1.5 4",
+  timeless: "M12 12c-2-2.8-3.6-4.2-5.6-4.2a4.2 4.2 0 1 0 0 8.4c2 0 3.6-1.4 5.6-4.2s3.6-4.2 5.6-4.2a4.2 4.2 0 1 1 0 8.4c-2 0-3.6-1.4-5.6-4.2Z",
   x: "M4 4l16 16M20 4 4 20",
   menu: "M4 7h16M4 12h16M4 17h16",
   heart: "M12 20.5S3.5 15.5 3.5 9.3A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 8.5 2.3c0 6.2-8.5 11.2-8.5 11.2Z",
@@ -32,10 +36,13 @@ export const iconPaths = {
 
 export type IconName = keyof typeof iconPaths;
 
-export function Icon({ name, className = "size-3.5" }: { name: IconName; className?: string }) {
+// `flow` draws the icon in dashes that drift along the path for as long as it is on screen (the
+// timeless mark; `.lp-flow` in globals.css). `pathLength` makes the dash pattern divide the path
+// evenly, so the loop has no seam.
+export function Icon({ name, className = "size-3.5", flow = false }: { name: IconName; className?: string; flow?: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} strokeLinejoin="miter" className={className} aria-hidden="true">
-      <path d={iconPaths[name]} />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} strokeLinejoin="miter" className={flow ? `lp-flow ${className}` : className} aria-hidden="true">
+      <path d={iconPaths[name]} pathLength={flow ? 100 : undefined} />
     </svg>
   );
 }

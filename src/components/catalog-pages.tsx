@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { collectionProducts, collections, type Collection } from "../data/collections";
 import { products, productsFor, type Department } from "../data/products";
+import { garmentCloth } from "./shop-ui";
 import { ChipNav, EmptyNote, PageButton, PageIntro, ShopGrid, SitePage, cardPatch, cloths, hoverImage, sectionTitle, tilts, type Chip } from "./site-page";
 
 // The shop's listing pages: everything (/shop), one department (/men, /women, /kids), the
@@ -113,8 +114,14 @@ export function CollectionsPage() {
 function CollectionCard({ collection, index }: { collection: Collection; index: number }) {
   const items = collectionProducts(collection);
   const cover = items[0].images[0];
+  // The frame is cut from the garment in the cover photo, like every product card.
+  const garment = garmentCloth(cover);
   return (
-    <Link href={`/collections/${collection.slug}`} className={`${cardPatch} group block p-2.5 [--lp-stitch-inset:5px] sm:p-3 ${cloths[index % cloths.length]} ${tilts[index % tilts.length]}`}>
+    <Link
+      href={`/collections/${collection.slug}`}
+      className={`${cardPatch} group block p-2.5 [--lp-stitch-inset:5px] sm:p-3 ${garment ? "" : cloths[index % cloths.length]} ${tilts[index % tilts.length]}`}
+      style={garment}
+    >
       <div className="relative aspect-[5/4] overflow-hidden bg-lp-surface">
         <Image src={cover.src} alt={cover.alt} fill sizes="(min-width: 1024px) 31vw, (min-width: 640px) 47vw, 94vw" className={`object-cover ${hoverImage}`} style={{ objectPosition: cover.position }} />
       </div>

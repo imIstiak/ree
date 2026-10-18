@@ -72,9 +72,9 @@ export function AboutPage() {
         <ul className="mt-8 grid gap-x-8 sm:grid-cols-2">
           {values.map((value) => (
             <li key={value.title} className="grid grid-cols-[40px_1fr] items-center gap-5 border-b border-lp-border py-7 sm:grid-cols-[52px_1fr]">
-              <Icon name={value.icon} className="size-10 text-lp-text sm:size-12" />
+              <Icon name={value.icon} flow={value.flow} className={`size-10 sm:size-12 ${value.tone}`} />
               <div>
-                <h3 className="font-lp-display text-[clamp(1rem,1.5cqw,1.3rem)] leading-[1.15] uppercase">{value.title}</h3>
+                <h3 className={`font-lp-display text-[clamp(1rem,1.5cqw,1.3rem)] leading-[1.15] uppercase ${value.tone}`}>{value.title}</h3>
                 <p className={`${bodyText} mt-1.5`}>{value.body}</p>
               </div>
             </li>

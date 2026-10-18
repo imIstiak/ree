@@ -14,6 +14,12 @@ The wide stairs and lounge rooms were extended with the built-in imagegen tool; 
 
 The original generated PNGs are retained in the tool's generated-images directory. All runtime assets live in `public/landing/`; no external image service or generated-image path is required.
 
+## The user's photograph (second slide)
+
+- `assets/hero/ahnaf-2-original.png` — a 1586 × 992 landscape the user supplied of themself (mustard graphic tee, flat cap, seated on old stone steps under sunlit trees), moved here from `public/landing/` because it is not served directly.
+- `assets/hero/campaign-ahnaf-master.webp` — the 1840 × 1090 master: the original scaled by 1.24 (Lanczos) and cropped at x 2, y 130, so the subject's centre sits under the frame (x 50.75%), the cap at about 25% of the height and the shoes in, with room below. `node scripts/build-hero-backdrops.mjs` encodes it to `public/landing/campaign-ahnaf-wide.webp`.
+- `assets/hero/ahnaf-original.png` is the earlier portrait of the same shot, kept for reference; it is no longer used.
+
 ## Generation prompts
 
 ### Stage

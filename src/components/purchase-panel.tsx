@@ -14,6 +14,10 @@ import { useShop } from "./shop-store";
 const chartPatches = ["bg-[#fffdf3] -rotate-[1.2deg]", "bg-[#f5ed9e] rotate-[.9deg]", "bg-[#f1d9bd] -rotate-[.7deg]", "bg-[#dfe3bd] rotate-[1.3deg]", "bg-[#f6e0d6] -rotate-1"];
 const row = (i: number) => ({ "--i": i }) as CSSProperties;
 
+// The sizes and both buttons are small cloth patches with a running stitch in their text colour,
+// resting at a tilt that straightens on hover.
+const patch = "lp-patch shadow-sm shadow-black/25 [--lp-stitch-inset:3px] transition-[color,background-color,rotate] duration-300 ease-out hover:rotate-0 motion-reduce:transition-none";
+
 // Size choice, add to bag and wishlist, shared by both product page templates.
 export function PurchasePanel({ product, showPrice = true }: { product: Product; showPrice?: boolean }) {
   const { addToCart, toggleWishlist, wishlist } = useShop();
@@ -66,8 +70,8 @@ export function PurchasePanel({ product, showPrice = true }: { product: Product;
         </HoverDetails>
       </div>
 
-      <motion.ul animate={nudge ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }} transition={{ duration: 0.45 }} className="mt-3 flex flex-wrap gap-2" aria-label="Sizes">
-        {product.sizes.map((label) => {
+      <motion.ul animate={nudge ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }} transition={{ duration: 0.45 }} className="mt-3 flex flex-wrap gap-2.5" aria-label="Sizes">
+        {product.sizes.map((label, index) => {
           const selected = size === label;
           return (
             <li key={label}>
@@ -75,7 +79,7 @@ export function PurchasePanel({ product, showPrice = true }: { product: Product;
                 type="button"
                 onClick={() => setSize(label)}
                 aria-pressed={selected}
-                className={`grid min-w-11 cursor-pointer place-items-center rounded-full border px-3 text-[11px] leading-none transition-colors motion-reduce:transition-none ${selected ? "border-lp-text bg-lp-text text-lp-bg" : "border-lp-border text-lp-muted hover:border-lp-text hover:text-lp-text"} h-11`}
+                className={`${patch} grid h-11 min-w-11 cursor-pointer place-items-center px-3 text-[11px] leading-none ${index % 2 ? "rotate-2" : "-rotate-2"} ${selected ? "rotate-0 bg-lp-text text-lp-bg" : "bg-lp-text/10 text-lp-muted hover:text-lp-text"}`}
               >
                 {label}
               </button>
@@ -90,7 +94,7 @@ export function PurchasePanel({ product, showPrice = true }: { product: Product;
       <button
         type="button"
         onClick={add}
-        className={`mt-4 flex min-h-12 w-full cursor-pointer items-center justify-center gap-3 px-4 text-[11px] font-medium tracking-[.1em] uppercase transition-colors motion-reduce:transition-none ${added ? "bg-lp-accent text-lp-ink" : "bg-lp-text text-lp-bg hover:bg-lp-accent hover:text-lp-ink"}`}
+        className={`${patch} mt-4 flex min-h-12 w-full -rotate-[.5deg] cursor-pointer items-center justify-center gap-3 px-4 text-[11px] font-medium tracking-[.1em] uppercase [--lp-stitch-inset:5px] ${added ? "bg-lp-accent text-lp-ink" : "bg-lp-text text-lp-bg hover:bg-lp-accent hover:text-lp-ink"}`}
       >
         <Icon name={added ? "check" : "plus"} />
         {added ? "Added to your bag" : showPrice ? `Add to cart · ${formatPrice(product.price)}` : "Add to bag"}
@@ -99,7 +103,7 @@ export function PurchasePanel({ product, showPrice = true }: { product: Product;
         type="button"
         onClick={() => toggleWishlist(product.slug)}
         aria-pressed={saved}
-        className="mt-2 flex min-h-12 w-full cursor-pointer items-center justify-center gap-3 border border-lp-border px-4 text-[11px] font-medium tracking-[.1em] uppercase transition-colors hover:border-lp-text motion-reduce:transition-none"
+        className={`${patch} mt-3 flex min-h-12 w-full rotate-[.5deg] cursor-pointer items-center justify-center gap-3 bg-lp-text/10 px-4 text-[11px] font-medium tracking-[.1em] uppercase [--lp-stitch-inset:5px] hover:bg-lp-text/20`}
       >
         <Icon name="heart" className={`size-3.5 ${saved ? "fill-current" : ""}`} />
         {saved ? "Saved to wishlist" : "Add to wishlist"}
