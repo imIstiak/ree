@@ -121,3 +121,7 @@ mock-up, like the landing page's names and prices.
 ## Tee cut-out masks (`public/products/cutouts/`)
 
 The story page's chapter cards show the tee from four of the hotlinked Rakh photographs without the models. The repo holds only the silhouettes (`tee-front`, `tee-back`, `tee-pair`, `tee-portrait` `-mask.png`, alpha PNGs at up to 1200 px covering the whole photo); the page lays each over the same hotlinked image with a CSS mask, so no copy of the store's photograph is stored or served from this site. The masks were made with the Segment Anything model (ViT-B, via rembg) prompted with points on the shirt and off the skin and hair, then cleaned (holes filled, stray pieces dropped, edges feathered). They are tied to each photo's exact pixel grid: if a photo is replaced, its mask must be made again. The rights note above applies: these are placeholders for the brand's own product photography.
+
+## DHAKA tee (`public/products/dhaka-tee-front.webp`, `dhaka-tee-back.webp`)
+
+The landing page's featured story shows the brand's own DHAKA tee: front and back photographs the user supplied in the conversation (1194 × 1600 each), encoded to WebP at quality 84 without cropping or retouching. They replace the hotlinked AZRAK, Samaajik, Rakh and Vylax photographs the section used for the earlier Naqshi Kantha piece.

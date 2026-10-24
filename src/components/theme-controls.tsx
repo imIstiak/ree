@@ -38,6 +38,10 @@ export function ThemeScript({ rootId }: { rootId: string }) {
 
 // Icons cross-fade instead of toggling `display`: globals.css sets an unlayered
 // `svg { display: block }` that would beat Tailwind's `hidden`, and fading animates better.
+// The dock's buttons: small cream cloth patches with an emerald stitch and icon, tilted at rest.
+const dockPatch =
+  "lp-patch grid size-8 cursor-pointer place-items-center bg-lp-brand-base text-lp-brand shadow-[0_2px_5px_rgb(0_0_0/.3)] [--lp-stitch-inset:2px] transition-[rotate,translate,background-color] duration-300 ease-out hover:rotate-0 hover:-translate-y-px hover:bg-[#fff3e2] active:translate-y-px motion-reduce:transition-none";
+
 const icon =
   "absolute inset-0 size-full transition-[opacity,transform,color] duration-500 ease-out motion-reduce:transition-none";
 
@@ -96,14 +100,17 @@ export function ThemeControls({ rootId, inline = false }: { rootId: string; inli
 
   return (
     <div className={inline ? "relative" : "lp-dock fixed top-1/2 right-3 z-[110] -translate-y-1/2 sm:right-5"}>
-      <div className="flex flex-col items-center gap-0.5 rounded-full border border-white/10 bg-black/70 p-1 shadow-[0_12px_28px_rgb(0_0_0/.4)] backdrop-blur-md group-data-[lp-theme=light]/theme:border-black/10 group-data-[lp-theme=light]/theme:bg-white/75 group-data-[lp-theme=light]/theme:shadow-[0_12px_28px_rgb(60_40_28/.2)]">
+      {/* A cloth patch in the logo's emerald, like the header's menu and bag tiles (the user asked for
+          the dock as patchwork too): cream running stitch, a slight tilt, and each button a small cream
+          patch sewn on with an emerald stitch that straightens on hover. Fixed colours, as the header's. */}
+      <div className="lp-patch flex rotate-2 flex-col items-center gap-1.5 bg-lp-brand p-1.5 text-lp-brand-base shadow-[0_12px_24px_rgb(0_0_0/.38)] [--lp-stitch-inset:3px] group-data-[lp-theme=dark]/theme:bg-lp-brand-deep group-data-[lp-theme=light]/theme:shadow-[0_12px_24px_rgb(60_40_28/.22)]">
         <button
           type="button"
           onClick={toggleTheme}
           aria-disabled={isTransitioning}
           aria-label="Switch between light and dark theme"
           title="Switch theme"
-          className="group/btn grid size-8 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/10 text-lp-accent transition-[transform,background-color,box-shadow] duration-300 ease-out hover:scale-105 hover:bg-white/20 hover:shadow-[0_0_14px_rgb(245_237_158/.35)] active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100 group-data-[lp-theme=light]/theme:border-black/10 group-data-[lp-theme=light]/theme:bg-black/5 group-data-[lp-theme=light]/theme:text-[#2c1a0e] group-data-[lp-theme=light]/theme:hover:bg-black/10"
+          className={`${dockPatch} group/btn -rotate-3`}
         >
           <span className="relative block size-4">
             {/* Sun: shown in dark mode, meaning "switch to light". */}
@@ -140,7 +147,7 @@ export function ThemeControls({ rootId, inline = false }: { rootId: string; inli
           type="button"
           aria-label="Switch language"
           title="Switch language"
-          className="grid size-8 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/10 text-[9px] font-medium tracking-[.08em] text-white/90 transition-[transform,background-color,box-shadow,color] duration-300 ease-out hover:scale-105 hover:bg-white/20 active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100 group-data-[lp-theme=light]/theme:border-black/10 group-data-[lp-theme=light]/theme:bg-black/5 group-data-[lp-theme=light]/theme:text-black/80 group-data-[lp-theme=light]/theme:hover:bg-black/10"
+          className={`${dockPatch} rotate-2 text-[9px] font-medium tracking-[.08em]`}
         >
           EN
         </button>}

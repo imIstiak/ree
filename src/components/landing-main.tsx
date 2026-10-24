@@ -3,7 +3,7 @@ import { BrandLogo } from "./brand-logo";
 import { LandingHero } from "./landing-hero";
 import { BrandIcon, Icon, type IconName } from "./landing-icons";
 import { StoryTiles } from "./story-tiles";
-import { Leaders, QuiltSwatch } from "./vive-art";
+import { Leaders } from "./vive-art";
 import Link from "next/link";
 import { display, mono } from "./landing-fonts";
 import type { CSSProperties, ReactNode } from "react";
@@ -130,54 +130,60 @@ const journalPosts = [
 
 const styleWords = ["Streetwear", "Linen sets", "Overshirts", "Handloom", "Outerwear", "Knitwear", "Formal wear"];
 
-// The first piece, ঋ-Vive, told as a story (the user asked for the first product featured this way,
-// after the hero-like "EcoTech" / "Nakasei" references: one large object, a big title, small floating
-// cards with the facts). Sample copy like the rest of the page: the words live here, the drawn swatch
-// and the leaders in vive-art.tsx. The photographs are hotlinked from the reference stores the user
-// sent (hosts allowed in next.config.ts, sources and the rights note in docs/product-image-credits.md);
-// they are placeholders for the brand's own pictures of ঋ-Vive. Each callout label sits at `at`
-// (percent of the framed photograph's box, from the corner it names) and its leader is a path on
-// the photograph's pixel grid, from the detail (`dot`) out to the label; the patch callout is
-// captioned under the drawn swatch of the quilt.
-const viveTee = {
-  src: "https://ymvykcvbtnxwszfliaov.supabase.co/storage/v1/object/public/product-images/olive-urdu-tee/3.jpg",
-  width: 1200,
+// The first piece, ঋ-Vive DHAKA, told as a story (the user asked for the first product featured this
+// way, after the hero-like "EcoTech" / "Nakasei" references: one large object, a big title, small
+// floating cards with the facts; then for the DHAKA tee in place of the earlier kantha piece). The
+// photographs are the brand's own (public/products/dhaka-tee-*.webp, provenance in
+// docs/product-image-credits.md): the front in the big frame, the back pinned beside it. Sample copy
+// like the rest of the page. Each callout label sits at `at` (percent of the framed photograph's box,
+// from the corner it names) and its leader is a path on the photograph's pixel grid (1194 x 1600),
+// from the detail (`dot`) out to the label; the back's label has no leader and sits under its photo.
+const dhakaTee = {
+  src: "/products/dhaka-tee-front.webp",
+  width: 1194,
   height: 1600,
-  alt: "A washed olive drop-shoulder tee with printed cloth patches sewn on the chest, the side and the hem, hanging on a wooden hanger against a white wall",
+  alt: "A cream mock-neck tee printed with DHAKA in maroon, a Lalbagh Fort postage stamp, and a hand-drawn Old Dhaka lane with a rickshaw and biryani pots under a raw-edged front panel",
 };
-type Callout = { id: string; title: string; detail: string; at: CSSProperties; leader: { d: string; dot: [number, number] }; swatch?: boolean };
+const dhakaBack = {
+  src: "/products/dhaka-tee-back.webp",
+  alt: "The back of the cream tee: two woven motif patches and an Old Dhaka alley showing through a wave cut at the hem",
+  position: "50% 45%",
+};
+type Callout = { id: string; title: string; detail: string; at: CSSProperties; leader?: { d: string; dot: [number, number] } };
 type FactCard = { icon: IconName; label: string; value: string; photo: Photo; cloth: string; place: string };
 
 const featuredStory: { tagline: string; lede: string; chapters: { title: string; body: string }[]; callouts: Callout[]; cards: FactCard[]; motifs: string[] } = {
-  tagline: "A grandmother's quilt, sewn onto a tee you will wear for years.",
-  lede: "Every nakshi kantha begins as worn-out saris, layered and quilted with a running stitch until the cloth is new again. ঋ-Vive takes one quilt's motif, cuts it as a patch, and sews it by hand onto a heavy olive tee.",
+  tagline: "Old Dhaka, worn close: a lane, a rickshaw and a stamp from Lalbagh.",
+  lede: "ঋ-Vive DHAKA draws the old city by hand: biryani shops with their shutters half down, a rickshaw painted the way they still are, and Lalbagh Fort on a postage stamp. A raw-edged panel is laid over the chest, so the street shows through like a page torn back.",
   chapters: [
-    { title: "The quilt", body: "Old saris folded five deep and quilted with thread pulled from their own borders. Nothing is thrown away; it becomes the next thing." },
-    { title: "The stitch", body: "One running stitch, ten thousand times over. The women of Jashore draw the lotus, the fish and the sun from memory, so no two patches match." },
-    { title: "The tee", body: "280-gram cotton, garment-dyed olive, dropped two fingers at the shoulder. The patch is whipped on by hand and the quilt's border is block-printed down one sleeve." },
+    { title: "The lane", body: "Drawn from a walk through Old Dhaka: a shahi biryani sign, the handis steaming on the pavement, wires strung between balconies and a rickshaw heading into the light." },
+    { title: "The stamp", body: "Lalbagh Fort, begun in 1678 and never finished, printed as a perforated postage stamp in the same maroon as the wordmark." },
+    { title: "The tee", body: "Heavy cream cotton with a mock neck and a dropped shoulder. The front panel is cut on a wave and left raw; the back carries two woven motif patches over a lane cut through at the hem." },
   ],
   callouts: [
-    { id: "patch", title: "Kantha patch", detail: "Cut from one quilt, whipped on by hand", at: { left: "-6%", top: "22%" }, leader: { d: "M430 665 180 160", dot: [430, 665] }, swatch: true },
-    { id: "collar", title: "Running-stitch collar", detail: "Sewn through the rib by hand", at: { left: "60%", top: "14%" }, leader: { d: "M562 404 716 272", dot: [562, 404] } },
-    { id: "sleeve", title: "Block-printed border", detail: "The quilt's edge, down one sleeve", at: { left: "84%", top: "52%" }, leader: { d: "M972 918 1004 876", dot: [972, 918] } },
-    { id: "cloth", title: "Garment-dyed olive", detail: "280 g combed cotton, twin-needle hem", at: { right: "52%", top: "88%" }, leader: { d: "M640 1330 580 1446", dot: [640, 1330] } },
+    { id: "back", title: "The back", detail: "Woven motif patches, a lane cut through the hem", at: { left: "-6%", top: "30%" } },
+    { id: "collar", title: "Mock neck", detail: "Ribbed and stood up, like an old kurta collar", at: { left: "66%", top: "3%" }, leader: { d: "M747 173 788 100", dot: [747, 173] } },
+    { id: "wordmark", title: "DHAKA", detail: "The city's name in maroon, across the chest", at: { left: "84%", top: "27%" }, leader: { d: "M785 505 1003 470", dot: [785, 505] } },
+    { id: "stamp", title: "Lalbagh Fort stamp", detail: "Perforated edges, printed in the wordmark's maroon", at: { left: "84%", top: "50%" }, leader: { d: "M893 760 1003 840", dot: [893, 760] } },
+    { id: "panel", title: "Raw-edge panel", detail: "Cut on a wave and left unhemmed", at: { left: "-8%", top: "64%" }, leader: { d: "M287 925 200 1024", dot: [287, 925] } },
+    { id: "lane", title: "Old Dhaka lane", detail: "Biryani handis and a rickshaw, drawn by hand", at: { right: "52%", top: "88%" }, leader: { d: "M607 1330 580 1446", dot: [607, 1330] } },
   ],
-  // Each card carries a photograph from one of the reference stores. Cloth and desktop placement are
-  // full class literals, as Tailwind needs.
+  // Each card carries a view of the tee. Cloth and desktop placement are full class literals, as
+  // Tailwind needs.
   cards: [
     {
       icon: "pin",
-      label: "Stitched in",
-      value: "Jashore, Bengal",
-      photo: { src: "https://cdn.shopify.com/s/files/1/0880/2448/2082/files/A3.jpg", alt: "A woven label sewn onto a sky-blue tee, printed with the names of rivers", position: "50% 50%" },
+      label: "Drawn in",
+      value: "Old Dhaka",
+      photo: { src: "/products/dhaka-tee-front.webp", alt: "The hand-drawn Old Dhaka lane on the front of the tee", position: "50% 85%" },
       cloth: "bg-lp-card text-lp-text",
       place: "lg:top-[4%] lg:right-0 -rotate-2",
     },
     {
       icon: "needle",
-      label: "Hand-stitching",
-      value: "14 h per patch",
-      photo: { src: "https://cdn.shopify.com/s/files/1/0940/5576/0157/files/DSC09831.jpg", alt: "A white patch with Urdu calligraphy hand-stitched onto the back of a black tee", position: "50% 45%" },
+      label: "Front panel",
+      value: "Cut on a wave",
+      photo: { src: "/products/dhaka-tee-back.webp", alt: "The back of the tee with its woven motif patches", position: "50% 40%" },
       cloth: "bg-lp-patch-mustard text-lp-ink",
       place: "lg:top-[72%] lg:right-[1%] rotate-2",
     },
@@ -185,12 +191,12 @@ const featuredStory: { tagline: string; lede: string; chapters: { title: string;
       icon: "tag",
       label: "Edition",
       value: "001 · 100 pieces",
-      photo: { src: "https://vylaxclothing.com/wp/wp-content/uploads/2026/09/WhatsApp-Image-2026-09-08-at-6.37.53-PM.jpeg", alt: "A red oversized tee with Urdu script and a cloth band on the sleeve", position: "50% 30%" },
+      photo: { src: "/products/dhaka-tee-front.webp", alt: "The Lalbagh Fort stamp printed on the chest", position: "72% 45%" },
       cloth: "bg-lp-text text-lp-bg",
       place: "lg:top-[95%] lg:left-[6%] -rotate-1",
     },
   ],
-  motifs: ["Old saris", "Running stitch", "Lotus", "Fish", "Sun", "Jashore", "Garment-dyed", "280 g", "Drop 001"],
+  motifs: ["Old Dhaka", "Nazira Bazar", "Shahi biryani", "Rickshaw art", "Lalbagh Fort", "Raw edge", "Mock neck", "Cream cotton", "Drop 001"],
 };
 
 const footerLinks = [
@@ -450,15 +456,15 @@ export function LandingMain() {
 
         {/* The first piece, as a story */}
         <section id="featured" aria-labelledby="featured-title" className="relative isolate flex scroll-mt-4 flex-col overflow-hidden bg-lp-bg px-[3%] pt-14 pb-10 lg:grid lg:grid-cols-[35%_1fr] lg:gap-x-[5%] lg:pt-[7%] lg:pb-[5%]">
-          {/* A kantha quilt for a background: rows of running stitch in the text colour, the olive cloth's glow behind the tee, and grain. */}
+          {/* Rows of running stitch in the text colour for a background, the print's maroon glowing behind the tee, and grain. */}
           <div className="lp-kantha lp-drift absolute inset-x-0 -top-[8%] -bottom-[8%] -z-20 bg-lp-text opacity-[.07]" aria-hidden="true" />
           <div
-            className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_46%_32%_at_50%_36%,color-mix(in_oklab,var(--color-lp-patch-olive)_55%,transparent),transparent_70%)] lg:bg-[radial-gradient(ellipse_28%_44%_at_62%_36%,color-mix(in_oklab,var(--color-lp-patch-olive)_55%,transparent),transparent_70%)]"
+            className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_46%_32%_at_50%_36%,color-mix(in_oklab,var(--color-lp-patch-madder)_45%,transparent),transparent_70%)] lg:bg-[radial-gradient(ellipse_28%_44%_at_62%_36%,color-mix(in_oklab,var(--color-lp-patch-madder)_45%,transparent),transparent_70%)]"
             aria-hidden="true"
           />
           <div className="absolute inset-0 -z-10 lp-noise opacity-25 mix-blend-overlay" aria-hidden="true" />
           <span className="lp-drift pointer-events-none absolute right-[1%] bottom-[1%] -z-10 font-lp-display text-[24cqw] leading-none text-lp-text/5 uppercase select-none lg:bottom-[9%] lg:text-[14cqw]" aria-hidden="true">
-            Vive
+            Dhaka
           </span>
 
           {/* The words: intro, then the story in three stitches. One column on desktop; on phones the tee sits between them. */}
@@ -469,9 +475,9 @@ export function LandingMain() {
                 <Label tone="outline">Our first piece</Label>
               </p>
               <SectionTitle id="featured-title" size="feature" className="mt-4">
-                Naqshi Kantha
+                Old Dhaka
                 <br />
-                ঋ-Vive
+                <span className="font-[900]">ঋ</span>-Vive
               </SectionTitle>
               <p className="mt-4 max-w-sm font-lp-serif text-lg leading-snug text-lp-text italic sm:text-xl">{featuredStory.tagline}</p>
               <p className={`${bodyText} mt-4 max-w-sm`}>{featuredStory.lede}</p>
@@ -501,19 +507,22 @@ export function LandingMain() {
             </ol>
           </div>
 
-          {/* The stage: the tee, cut out of its photograph, swaying on the page, with the quilt swatch sewing itself in beside it, the details called out around it and the facts floating as cards. */}
+          {/* The stage: the front of the tee swaying in its frame, the back pinned beside it, the details called out around it and the facts floating as cards. */}
           <div className="contents lg:relative lg:block lg:pt-[3%]">
             <div className="lp-fade relative z-10 order-2 mx-auto mt-10 w-[86%] max-w-sm sm:w-[64%] lg:mx-0 lg:ml-[3%] lg:mt-0 lg:w-[63%] lg:max-w-none">
               <div className="lp-float relative text-lp-text">
                 {/* The photograph in a cloth frame with a running stitch, like the page's other pictures; the leaders are drawn over the photograph itself. */}
-                <div className="lp-patch bg-lp-patch-olive p-2 text-lp-canvas shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/20 sm:p-2.5 sm:[--lp-stitch-inset:5px]">
+                <div className="lp-patch bg-lp-patch-madder p-2 text-lp-canvas shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/20 sm:p-2.5 sm:[--lp-stitch-inset:5px]">
                   <div className="relative overflow-hidden bg-lp-surface text-lp-text">
-                    <Image src={viveTee.src} alt={viveTee.alt} width={viveTee.width} height={viveTee.height} sizes="(min-width: 1024px) 34vw, (min-width: 640px) 64vw, 86vw" className="block h-auto w-full" />
-                    <Leaders box={`0 0 ${viveTee.width} ${viveTee.height}`} leaders={featuredStory.callouts.map((callout) => ({ id: callout.id, ...callout.leader }))} className="pointer-events-none absolute inset-0 hidden size-full lg:block" />
+                    <Image src={dhakaTee.src} alt={dhakaTee.alt} width={dhakaTee.width} height={dhakaTee.height} sizes="(min-width: 1024px) 34vw, (min-width: 640px) 64vw, 86vw" className="block h-auto w-full" />
+                    <Leaders box={`0 0 ${dhakaTee.width} ${dhakaTee.height}`} leaders={featuredStory.callouts.flatMap((callout) => (callout.leader ? [{ id: callout.id, ...callout.leader }] : []))} className="pointer-events-none absolute inset-0 hidden size-full lg:block" />
                   </div>
                 </div>
-                <div className="absolute top-[2%] -left-[7%] w-[30%] drop-shadow-[0_12px_14px_rgb(0_0_0/.45)] group-data-[lp-theme=light]/theme:drop-shadow-[0_10px_12px_rgb(0_0_0/.18)]" aria-hidden="true">
-                  <QuiltSwatch className="block w-full -rotate-3" />
+                {/* The back of the tee, pinned beside the front like a print in a cream border. */}
+                <div className="absolute top-[2%] -left-[7%] w-[26%] -rotate-3 border-[5px] border-lp-brand-base bg-lp-brand-base shadow-xl shadow-black/45 group-data-[lp-theme=light]/theme:shadow-black/18">
+                  <div className="relative aspect-[3/4] overflow-hidden">
+                    <Photo photo={dhakaBack} sizes="(min-width: 1024px) 9vw, 22vw" />
+                  </div>
                 </div>
                 <ul className="hidden lg:contents" aria-label="The details">
                   {featuredStory.callouts.map((callout) => (
