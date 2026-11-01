@@ -84,7 +84,7 @@ export const products: Product[] = [
       intro: "The story of one tee, told in six chapters: three words, a bale of cotton, a dropped shoulder, a hand-pulled print, forty minutes of hands, and a long day.",
       film: { youtube: "tgEo0EqQpIc", src: "/products/life-is-short-film.mp4", poster: campaignPhotos.teePortrait.src, caption: "Film by kiransahu films · YouTube" },
       prologue:
-        "We started ঋ - Ree with one sentence: not everything old belongs in the past. This tee is that sentence made wearable. Heavy cotton the way tees used to be, a print pulled by hand the way posters used to be, and three words for a city that never sits still.",
+        "We started ঋ - Reé with one sentence: not everything old belongs in the past. This tee is that sentence made wearable. Heavy cotton the way tees used to be, a print pulled by hand the way posters used to be, and three words for a city that never sits still.",
       facts: [
         { value: "3", label: "words on the back" },
         { value: "240 g", label: "of cotton per square metre" },

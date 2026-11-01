@@ -1,3 +1,4 @@
+import { MossWordmark } from "./moss-wordmark";
 import Image from "next/image";
 import { BrandLogo } from "./brand-logo";
 import { LandingHero } from "./landing-hero";
@@ -11,6 +12,7 @@ import { LANDING_ROOT_ID, ThemeControls, ThemeScript } from "./theme-controls";
 import { campaignPhotos } from "../data/campaign-images";
 import { garmentCloth } from "./shop-ui";
 import { values } from "../data/brand";
+import { socialProfiles } from "../data/site";
 import { journalPosts as posts } from "../data/journal";
 
 // Visual spec: docs/landing-design-spec.json. Theme tokens live in src/app/globals.css.
@@ -152,6 +154,9 @@ const dhakaBack = {
 type Callout = { id: string; title: string; detail: string; at: CSSProperties; leader?: { d: string; dot: [number, number] } };
 type FactCard = { icon: IconName; label: string; value: string; photo: Photo; cloth: string; place: string };
 
+// The DHAKA tee is not announced yet: the featured story is hidden, not removed. Flip this to show it.
+const showFeaturedStory = false;
+
 const featuredStory: { tagline: string; lede: string; chapters: { title: string; body: string }[]; callouts: Callout[]; cards: FactCard[]; motifs: string[] } = {
   tagline: "Old Dhaka, worn close: a lane, a rickshaw and a stamp from Lalbagh.",
   lede: "ঋ-Vive DHAKA draws the old city by hand: biryani shops with their shutters half down, a rickshaw painted the way they still are, and Lalbagh Fort on a postage stamp. A raw-edged panel is laid over the chest, so the street shows through like a page torn back.",
@@ -176,7 +181,7 @@ const featuredStory: { tagline: string; lede: string; chapters: { title: string;
       label: "Drawn in",
       value: "Old Dhaka",
       photo: { src: "/products/dhaka-tee-front.webp", alt: "The hand-drawn Old Dhaka lane on the front of the tee", position: "50% 85%" },
-      cloth: "bg-lp-card text-lp-text",
+      cloth: "bg-lp-patch-maroon text-lp-brand-base",
       place: "lg:top-[4%] lg:right-0 -rotate-2",
     },
     {
@@ -218,10 +223,9 @@ const legalLinks = [
 // colour, and turns the full brand colour on hover. Brand colours are fixed: they do not follow
 // the theme. Full class literals, as Tailwind needs.
 const socials = [
-  { icon: "instagram", label: "Instagram", cloth: "bg-[#f9d0de] text-[#c2256c] hover:bg-[#d62976] hover:text-white" },
-  { icon: "facebook", label: "Facebook", cloth: "bg-[#cfe1fd] text-[#1668e0] hover:bg-[#1877f2] hover:text-white" },
-  { icon: "linkedin", label: "LinkedIn", cloth: "bg-[#c6e6ec] text-[#0a66c2] hover:bg-[#0a66c2] hover:text-white" },
-  { icon: "x", label: "X", cloth: "bg-[#dadad7] text-[#0f0f0f] hover:bg-[#0f0f0f] hover:text-white" },
+  { icon: "instagram", label: "Instagram", href: socialProfiles.instagram, cloth: "bg-[#f9d0de] text-[#c2256c] hover:bg-[#d62976] hover:text-white" },
+  { icon: "facebook", label: "Facebook", href: socialProfiles.facebook, cloth: "bg-[#cfe1fd] text-[#1668e0] hover:bg-[#1877f2] hover:text-white" },
+  { icon: "linkedin", label: "LinkedIn", href: socialProfiles.linkedin, cloth: "bg-[#c6e6ec] text-[#0a66c2] hover:bg-[#0a66c2] hover:text-white" },
 ] as const;
 
 function Photo({ photo, sizes, priority, className = "" }: { photo: Photo; sizes: string; priority?: boolean; className?: string }) {
@@ -454,7 +458,9 @@ export function LandingMain() {
           </article>
         </section>
 
-        {/* The first piece, as a story */}
+        {/* The first piece, as a story. Held back for now (showFeaturedStory); the section stays
+            in place for when the DHAKA tee is announced. */}
+        {showFeaturedStory && (
         <section id="featured" aria-labelledby="featured-title" className="relative isolate flex scroll-mt-4 flex-col overflow-hidden bg-lp-bg px-[3%] pt-14 pb-10 lg:grid lg:grid-cols-[35%_1fr] lg:gap-x-[5%] lg:pt-[7%] lg:pb-[5%]">
           {/* Rows of running stitch in the text colour for a background, the print's maroon glowing behind the tee, and grain. */}
           <div className="lp-kantha lp-drift absolute inset-x-0 -top-[8%] -bottom-[8%] -z-20 bg-lp-text opacity-[.07]" aria-hidden="true" />
@@ -526,9 +532,9 @@ export function LandingMain() {
                 </div>
                 <ul className="hidden lg:contents" aria-label="The details">
                   {featuredStory.callouts.map((callout) => (
-                    <li key={callout.id} style={callout.at} className="lp-patch absolute z-10 w-max max-w-44 bg-lp-card px-2.5 py-1.5 text-[10px] leading-snug text-lp-text shadow-md shadow-black/35 [--lp-stitch-inset:3px] group-data-[lp-theme=light]/theme:shadow-black/12">
+                    <li key={callout.id} style={callout.at} className="lp-patch absolute z-10 w-max max-w-44 bg-lp-patch-maroon text-lp-brand-base px-2.5 py-1.5 text-[10px] leading-snug shadow-md shadow-black/35 [--lp-stitch-inset:3px] group-data-[lp-theme=light]/theme:shadow-black/12">
                       <strong className="block font-lp-display font-normal uppercase">{callout.title}</strong>
-                      <span className="text-lp-muted">{callout.detail}</span>
+                      <span className="opacity-80">{callout.detail}</span>
                     </li>
                   ))}
                 </ul>
@@ -557,9 +563,9 @@ export function LandingMain() {
           </div>
           <ul className="relative z-10 order-3 mt-6 grid grid-cols-2 gap-2 lg:hidden" aria-label="The details">
             {featuredStory.callouts.map((callout) => (
-              <li key={callout.id} className="lp-patch bg-lp-card px-2.5 py-2 text-[10px] leading-snug text-lp-text [--lp-stitch-inset:3px]">
+              <li key={callout.id} className="lp-patch bg-lp-patch-maroon text-lp-brand-base px-2.5 py-2 text-[10px] leading-snug [--lp-stitch-inset:3px]">
                 <strong className="block font-lp-display font-normal uppercase">{callout.title}</strong>
-                <span className="text-lp-muted">{callout.detail}</span>
+                <span className="opacity-80">{callout.detail}</span>
               </li>
             ))}
           </ul>
@@ -573,6 +579,7 @@ export function LandingMain() {
             ))}
           </ul>
         </section>
+        )}
 
         {/* Collection */}
         <section id="collection" aria-labelledby="collection-title" className="scroll-mt-4 bg-lp-bg pt-[8%] pb-[10%]">
@@ -641,7 +648,7 @@ export function LandingMain() {
         <Divider />
 
         {/* About */}
-        <section id="about" aria-labelledby="about-title" className="relative isolate scroll-mt-4 overflow-hidden bg-lp-surface px-[3%] py-16 lg:grid lg:aspect-[254/205] lg:grid-cols-[1fr_.9fr] lg:gap-[6%] lg:py-[6%]">
+        <section id="about" aria-labelledby="about-title" className="relative isolate scroll-mt-4 overflow-hidden bg-lp-surface px-[3%] py-12 sm:py-16 lg:grid lg:grid-cols-[1fr_.9fr] lg:items-start lg:gap-x-[6%] lg:py-20">
           <div className="absolute -top-[20%] -right-[10%] -z-10 h-[70%] w-[75%] scale-y-50 rotate-12 opacity-45 blur-2xl saturate-150" aria-hidden="true">
             <Photo photo={photos.redGown} sizes="60vw" />
           </div>
@@ -668,7 +675,7 @@ export function LandingMain() {
 
           <ul className="mt-14 lg:mt-0">
             {values.map((value, index) => (
-              <li key={value.title} style={{ "--lp-stagger": index } as CSSProperties} className="lp-reveal-right grid grid-cols-[40px_1fr] items-center gap-5 border-b border-lp-border py-8 first:pt-0 last:border-b-0 sm:grid-cols-[56px_1fr] lg:py-[9%]">
+              <li key={value.title} style={{ "--lp-stagger": index } as CSSProperties} className="lp-reveal-right grid grid-cols-[40px_1fr] items-center gap-5 border-b border-lp-border py-8 first:pt-0 last:border-b-0 last:pb-0 sm:grid-cols-[56px_1fr] lg:py-10">
                 <Icon name={value.icon} flow={value.flow} className={`size-10 drop-shadow-[0_0_6px_var(--color-lp-bg)] sm:size-12 ${value.tone}`} />
                 <div>
                   <h3 className={`font-lp-display text-[clamp(1rem,1.6cqw,1.4rem)] leading-[1.15] uppercase [text-shadow:0_0_14px_var(--color-lp-bg)] ${value.tone}`}>{value.title}</h3>
@@ -718,15 +725,16 @@ export function LandingMain() {
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_35%,color-mix(in_oklab,var(--color-lp-bg)_90%,transparent)_20%,color-mix(in_oklab,var(--color-lp-bg)_40%,transparent)_70%)]" aria-hidden="true" />
 
           <div className="lp-reveal grid justify-items-center gap-3 px-[3%]">
-            <Link href="/landing" aria-label="REE home"><BrandLogo className="w-20 sm:w-24" decorative /></Link>
-            <p className={`${bodyText} max-w-sm`}>ঋ - Ree brings stories, symbols, and heritage forward into clothing made for now.</p>
+            <Link href="/landing" aria-label="Reé home"><BrandLogo className="w-20 sm:w-24" decorative /></Link>
+            <p className={`${bodyText} max-w-sm`}>ঋ - Reé brings stories, symbols, and heritage forward into clothing made for now.</p>
             <ul className="mt-1 flex gap-2">
               {socials.map((social, index) => (
                 <li key={social.icon}>
-                  {/* Replace with verified profile URLs during integration. */}
                   <a
-                    href="#footer"
-                    aria-label={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${social.label} (opens in a new tab)`}
                     className={`${smallPatch} grid size-11 place-items-center sm:size-10 ${social.cloth} ${index % 2 ? "rotate-3" : "-rotate-3"}`}
                   >
                     <BrandIcon name={social.icon} className="size-[18px] sm:size-4" />
@@ -748,22 +756,20 @@ export function LandingMain() {
             ))}
           </ul>
 
-          <nav aria-label="Footer" className="overflow-x-auto bg-lp-accent text-lp-ink">
+          <nav aria-label="Footer" className="overflow-x-auto bg-lp-brand text-lp-ink">
             <ul className="flex min-w-max justify-between gap-3 px-[8%] py-3 text-[11px] uppercase">
               {footerLinks.map((link, index) => (
                 <li key={link.label}>
-                  {/* Dark patches on the yellow band: ink and accent read the same in both themes. */}
+                  {/* Dark patches on the green band: ink and accent read the same in both themes. */}
                   <Link href={link.href} className={`${smallPatch} block bg-lp-ink px-4 py-2.5 text-lp-accent hover:bg-lp-card hover:text-lp-text ${index % 2 ? "-rotate-1" : "rotate-1"}`}>{link.label}</Link>
                 </li>
               ))}
             </ul>
           </nav>
 
-          <div className="bg-linear-to-b from-lp-deep-top to-lp-deep px-[3%] pt-4 pb-2">
-            <Wordmark className="w-full" />
-          </div>
-
-          <p className="border-t border-lp-border bg-lp-deep px-[3%] py-2.5 text-[10px] text-lp-muted">© 2026 ঋ - Ree. All rights reserved.</p>
+          <MossWordmark>
+            <p className="relative border-t border-white/15 bg-transparent px-[3%] py-2.5 text-[10px] text-lp-brand-base backdrop-blur-md">© 2026 ঋ - Reé. All rights reserved.</p>
+          </MossWordmark>
         </footer>
       </main>
     </div>

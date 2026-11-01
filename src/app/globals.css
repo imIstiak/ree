@@ -347,7 +347,7 @@
   --color-lp-spotlight: #713124;
   --color-lp-signal: #ed2620;
   --color-lp-ink: #0a0000;
-  --color-lp-card: #2a1a14;
+  --color-lp-card: #004d3b;
   --color-lp-deep: #1d0806;
   --color-lp-deep-top: #3a0f0b;
   /* The logo's two colours (public/ree-logo.svg): its emerald and the base it sits on. The same in both themes. */
@@ -358,6 +358,8 @@
   /* Cloth colours for the story-tile patches (kantha palette); the same in both themes. */
   --color-lp-patch-mustard: #d4a52a;
   --color-lp-patch-madder: #b4402c;
+  /* The maroon of the DHAKA wordmark on the tee (featured story patches). */
+  --color-lp-patch-maroon: #7a1f3a;
   --color-lp-patch-indigo: #2f4d78;
   --color-lp-patch-olive: #6d7a3c;
   --color-lp-patch-terracotta: #c8744a;
@@ -405,7 +407,7 @@
   --color-lp-border: rgb(216 211 173 / 25%);
   --color-lp-stage: #230a04;
   --color-lp-spotlight: #713124;
-  --color-lp-card: #2a1a14;
+  --color-lp-card: #004d3b;
   --color-lp-deep: #1d0806;
   --color-lp-deep-top: #3a0f0b;
   color: var(--color-lp-text);

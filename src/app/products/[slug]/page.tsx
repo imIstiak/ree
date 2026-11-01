@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { createPageMetadata } from "../../../lib/seo";
 import { notFound } from "next/navigation";
 import { ProductClassic } from "../../../components/product-classic";
 import { ProductStory } from "../../../components/product-story";
@@ -15,12 +16,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/products/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const product = getProduct(slug);
-  if (!product) return {};
-  return {
-    title: `ঋ - Ree | ${product.name}`,
-    description: product.tagline,
-    openGraph: { images: [{ url: product.images[0].src, alt: product.images[0].alt }] },
-  };
+  if (!product) notFound();
+  return createPageMetadata({
+    path: `/products/${product.slug}`,
+    title: `${product.name} — Preview`,
+    description: `${product.tagline} Preview the upcoming Ree collection from Bangladesh.`,
+    image: { url: product.images[0].src, alt: product.images[0].alt },
+  });
 }
 
 export default async function ProductPage({ params }: PageProps<"/products/[slug]">) {

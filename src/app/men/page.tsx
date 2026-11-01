@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 import { DepartmentPage } from "../../components/catalog-pages";
 
-export const metadata: Metadata = {
-  title: "ঋ - Ree | Men",
-  description: "Men's pieces from ঋ - Ree: heavy tees, soft tailoring and outerwear, with the unisex range.",
-};
+export const metadata = createPageMetadata({
+  path: "/men",
+  title: "Men's Clothing Preview",
+  description: "Preview upcoming men's and unisex clothing from Ree, a Bangladeshi fashion label inspired by heritage and contemporary life.",
+});
 
 export default function Page() {
   return <DepartmentPage department="men" />;

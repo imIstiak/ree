@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 import { ShopPage } from "../../components/catalog-pages";
 
-export const metadata: Metadata = {
-  title: "ঋ - Ree | Shop",
-  description: "Every piece from ঋ - Ree's first collections: heavy tees, handloom, soft tailoring and satin for the evening.",
-};
+export const metadata = createPageMetadata({
+  path: "/shop",
+  title: "Shop Preview",
+  description: "Preview Ree's upcoming clothing collections from Bangladesh. Explore the design direction before the first drop; products and prices are previews.",
+});
 
 export default function Page() {
   return <ShopPage />;

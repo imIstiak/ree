@@ -151,7 +151,7 @@ export function CheckoutView() {
                     <div className="flex items-center gap-3">
                       <BrandLogo variant="mark" className="w-10 sm:w-12" decorative />
                       <p className={`${label} leading-relaxed`}>
-                        ঋ - Ree
+                        ঋ - Reé
                         <br />
                         Dhaka · Bangladesh
                       </p>
@@ -237,7 +237,7 @@ export function CheckoutView() {
 
                 <Section number={4} title="Declaration">
                   <p className="max-w-[60ch] font-lp-serif text-[16px] leading-relaxed">
-                    I would like ঋ - Ree to deliver the pieces on the attached slip to the address above, {areaLabel.charAt(0).toLowerCase() + areaLabel.slice(1)}, for{" "}
+                    I would like ঋ - Reé to deliver the pieces on the attached slip to the address above, {areaLabel.charAt(0).toLowerCase() + areaLabel.slice(1)}, for{" "}
                     <strong className="font-semibold">{formatPrice(subtotal + delivery)}</strong> payable on delivery.
                   </p>
                   <div className="flex flex-wrap items-end justify-between gap-8">

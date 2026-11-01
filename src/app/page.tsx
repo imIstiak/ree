@@ -1,10 +1,16 @@
 
 import { ComingSoon } from "../components/coming-soon";
-// import { LandingMain } from "../components/landing-main";
+import { JsonLd } from "../components/json-ld";
+import { site } from "../data/site";
+import { createPageMetadata, homeStructuredData } from "../lib/seo";
+
+export const metadata = createPageMetadata({ path: "/", description: site.description });
 
 export default function Home() {
   return (
-    <ComingSoon />
-    // <LandingMain />
+    <>
+      <JsonLd data={homeStructuredData} />
+      <ComingSoon />
+    </>
   );
 }

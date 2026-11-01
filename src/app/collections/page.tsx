@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 import { CollectionsPage } from "../../components/catalog-pages";
 
-export const metadata: Metadata = {
-  title: "ঋ - Ree | Collections",
-  description: "Six edits from ঋ - Ree: casual wear, loungewear, street style, outerwear, handloom and formal wear.",
-};
+export const metadata = createPageMetadata({
+  path: "/collections",
+  title: "Collection Previews",
+  description: "Explore Ree's upcoming collections, from everyday silhouettes to handloom-inspired pieces. A preview of contemporary fashion shaped by Bengali heritage.",
+});
 
 export default function Page() {
   return <CollectionsPage />;

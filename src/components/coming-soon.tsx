@@ -65,16 +65,16 @@ type Scene = {
 const scenes: Scene[] = [
   {
     kicker: "01 / ARRIVAL",
-    title: <>ঋ - Ree<br /><em>COMING SOON</em></>,
+    title: <>ঋ - Reé<br /><em>ARRIVING SOON</em></>,
     navTitle: "The first arrival",
-    subtitle: "An independent clothing label shaped in Bengal.",
+    subtitle: "Luxury fashion from Bangladesh, rooted in Bengali heritage.",
     image: "/coming-soon/arrival-street.jpg",
     imageAlt: "A man in a relaxed T-shirt and sunglasses walking down a city street",
     hotspots: [
-      { label: "First drop", eyebrow: "Collection 01", title: "The beginning of ঋ - Ree", body: "A considered wardrobe of fluid layers, quiet tailoring, and everyday pieces made to stay with you.", x: 8, y: 25 },
+      { label: "First drop", eyebrow: "Collection 01", title: "The beginning of ঋ - Reé", body: "A considered wardrobe of fluid layers, quiet tailoring, and everyday pieces made to stay with you.", x: 8, y: 25 },
       { label: "Our language", eyebrow: "Clothes with feeling", title: "Soft form. Clear intention.", body: "We design for movement, repetition, and the private rituals that make clothing feel like your own.", x: 28, y: 58 },
-      { label: "Our roots", eyebrow: "Designed in Bengal", title: "Rooted here", body: "The name ঋ - Ree comes from ঋ, a symbol of season, rhythm, and return. Our clothes begin with the same idea.", x: 72, y: 51, align: "end" },
-      { label: "Early access", eyebrow: "Before the first release", title: "Be first to wear ঋ - Ree", body: "Join the private list for the collection reveal, launch date, and first access to limited pieces.", x: 52, y: 70 },
+      { label: "Our roots", eyebrow: "Designed in Bengal", title: "Rooted here", body: "The name ঋ - Reé comes from ঋ, a symbol of season, rhythm, and return. Our clothes begin with the same idea.", x: 72, y: 51, align: "end" },
+      { label: "Early access", eyebrow: "Before the first release", title: "Be first to wear ঋ - Reé", body: "Join the private list for the collection reveal, launch date, and first access to limited pieces.", x: 52, y: 70 },
     ],
   },
   {
@@ -94,7 +94,7 @@ const scenes: Scene[] = [
     kicker: "03 / HANDS",
     title: <>MADE WITH <em>MANY HANDS</em></>,
     navTitle: "Made with many hands",
-    subtitle: "A collection is only as meaningful as the people behind it.",
+    subtitle: "Rural craft and living tradition shape our design language.",
     image: "/coming-soon/hands-weaving.jpg",
     imageAlt: "Hands weaving striped cloth on a traditional loom",
     hotspots: [
@@ -114,7 +114,7 @@ const scenes: Scene[] = [
       { label: "Natural fibres", eyebrow: "Chosen by touch", title: "Materials that breathe", body: "Cotton, linen, and other considered fibres bring softness, structure, and ease to the collection.", x: 8, y: 42 },
       { label: "Colour", eyebrow: "Drawn from the landscape", title: "A grounded palette", body: "Moss, silt, night, and undyed ivory form the quiet colour language of our first release.", x: 31, y: 67 },
       { label: "Finish", eyebrow: "The beauty of detail", title: "Made to reveal itself slowly", body: "Subtle seams, tactile surfaces, and careful finishing reward a closer look.", x: 68, y: 31, align: "end" },
-      { label: "Care", eyebrow: "Wear longer", title: "Keep what you love", body: "Simple care guidance and repair-minded construction help every ঋ - Ree piece remain in your wardrobe.", x: 82, y: 68, align: "end" },
+      { label: "Care", eyebrow: "Wear longer", title: "Keep what you love", body: "Simple care guidance and repair-minded construction help every ঋ - Reé piece remain in your wardrobe.", x: 82, y: 68, align: "end" },
     ],
   },
   {
@@ -127,8 +127,8 @@ const scenes: Scene[] = [
     hotspots: [
       { label: "Lookbook", eyebrow: "A first glimpse", title: "Collection 01", body: "The complete lookbook will be revealed ahead of launch to members of our private list.", x: 10, y: 28 },
       { label: "Editions", eyebrow: "Small runs, considered pieces", title: "Limited by intention", body: "We produce in focused quantities so every garment receives the time and attention it deserves.", x: 31, y: 62 },
-      { label: "Journal", eyebrow: "Behind the garment", title: "Notes from the studio", body: "Materials, fittings, maker stories, and the evolving ideas behind ঋ - Ree.", x: 72, y: 30, align: "end" },
-      { label: "Join the list", eyebrow: "Early access", title: "Meet ঋ - Ree before anyone else", body: "Receive the launch date, private previews, and first access to Collection 01.", x: 80, y: 66, align: "end" },
+      { label: "Journal", eyebrow: "Behind the garment", title: "Notes from the studio", body: "Materials, fittings, maker stories, and the evolving ideas behind ঋ - Reé.", x: 72, y: 30, align: "end" },
+      { label: "Join the list", eyebrow: "Early access", title: "Meet ঋ - Reé before anyone else", body: "Receive the launch date, private previews, and first access to Collection 01.", x: 80, y: 66, align: "end" },
     ],
   },
 ];
@@ -355,7 +355,7 @@ export function ComingSoon() {
       <ThemeScript rootId={COMING_SOON_ROOT_ID} />
       <ThemeControls rootId={COMING_SOON_ROOT_ID} />
       {introState !== "gone" && (
-        <section className={`intro-gate ${introState === "leaving" ? "intro-gate--leaving" : ""}`} aria-label="Welcome to ঋ - Ree">
+        <section className={`intro-gate ${introState === "leaving" ? "intro-gate--leaving" : ""}`} aria-label="Welcome to ঋ - Reé">
           <div className="intro-top"><BrandLogo className="intro-logo" /></div>
           <div className="intro-center">
             <div className="intro-thumbnails" aria-hidden="true">
@@ -370,15 +370,20 @@ export function ComingSoon() {
             </div>
             <h1 className="intro-title">
               <BrandLogo variant="wordmark" className="intro-title__brand" />
-              <span className="intro-title__status">COMING SOON</span>
+              <span className="intro-title__status">ARRIVING SOON</span>
             </h1>
             <p className="intro-subtitle">Not everything old belongs in the past.</p>
-            <p className="intro-copy">We’re bringing stories, symbols, and heritage forward, shaping them into something made for now.</p>
-            <button className="enter-button" onClick={enter}>
+            <button className="enter-button mt-6" onClick={enter}>
               <span>Explore</span><span aria-hidden="true"><ArrowDownRight size={14} strokeWidth={1.75} /></span>
             </button>
           </div>
-          <p className="intro-edition">DHAKA · BANGLADESH · COLLECTION 01</p>
+          <div className="intro-edition">
+            <p>DHAKA · BANGLADESH · COLLECTION 01</p>
+            <nav aria-label="About Reé" className="mt-3 flex justify-center gap-5 text-[10px] tracking-normal">
+              <Link href="/about" className="underline underline-offset-4">Our story</Link>
+              <Link href="/contact" className="underline underline-offset-4">Contact Reé</Link>
+            </nav>
+          </div>
         </section>
       )}
 
@@ -386,14 +391,14 @@ export function ComingSoon() {
         ref={stageRef}
         tabIndex={-1}
         className="scene-stage"
-        aria-label="ঋ - Ree immersive landscape"
+        aria-label="ঋ - Reé immersive landscape"
         aria-hidden={introState !== "gone"}
         inert={introState !== "gone"}
         onPointerMove={handlePointerMove}
         style={{ "--scene-index": activeScene } as CSSProperties}
       >
         <header className="stage-header">
-          <Link href="/" aria-label="REE home"><BrandLogo className="stage-logo" decorative /></Link>
+          <Link href="/" aria-label="Reé home"><BrandLogo className="stage-logo" decorative /></Link>
           <span className="stage-location">DHAKA · COLLECTION 01</span>
           <button className="primary-action" onClick={openContact}>Join the list <span aria-hidden="true"><ArrowUpRight size={13} strokeWidth={1.75} /></span></button>
         </header>
@@ -476,7 +481,7 @@ export function ComingSoon() {
           </nav>
 
           <div className="action-controls">
-            <button className="round-control" aria-label="Open the ঋ - Ree lookbook" onClick={(event) => {
+            <button className="round-control" aria-label="Open the ঋ - Reé lookbook" onClick={(event) => {
               // Open the card once the scene track has arrived (650 ms), so the beam is aimed from where the card settles.
               const origin = pointOf(event);
               const delay = activeScene === 4 ? 0 : 660;
@@ -485,7 +490,7 @@ export function ComingSoon() {
             }}>
               <BookIcon /><span className="control-tooltip">Lookbook</span>
             </button>
-            <button className="round-control" onClick={openContact} aria-label="Open contact options for ঋ - Ree">
+            <button className="round-control" onClick={openContact} aria-label="Open contact options for ঋ - Reé">
               <MailIcon /><span className="control-tooltip">+880 17 8989 1616 · info@ree.bd</span>
             </button>
           </div>
@@ -514,7 +519,7 @@ export function ComingSoon() {
           <button className="contact-dialog__close lp-patch" onClick={closeContact} aria-label="Close contact window" autoFocus>
             <X size={17} strokeWidth={1.5} aria-hidden="true" />
           </button>
-          <span className="contact-dialog__eyebrow ree-pop-row" style={{ "--i": 0 } as CSSProperties}>CONTACT · ঋ - Ree</span>
+          <span className="contact-dialog__eyebrow ree-pop-row" style={{ "--i": 0 } as CSSProperties}>CONTACT · ঋ - Reé</span>
           <h2 id="contact-title" className="ree-pop-row" style={{ "--i": 1 } as CSSProperties}>Let&apos;s stay in touch.</h2>
           <p id="contact-description" className="ree-pop-row" style={{ "--i": 2 } as CSSProperties}>For Collection 01, collaborations, press, or anything else, choose how you&apos;d like to reach us.</p>
           <div className="contact-dialog__actions ree-pop-row" style={{ "--i": 3 } as CSSProperties}>

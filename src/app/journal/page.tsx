@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 import { JournalPage } from "../../components/info-pages";
 
-export const metadata: Metadata = {
-  title: "ঋ - Ree | Journal",
-  description: "Latest looks, behind-the-scenes moments and the people who make every ঋ - Ree collection.",
-};
+export const metadata = createPageMetadata({
+  path: "/journal",
+  title: "Journal Preview",
+  description: "Preview the Ree journal: upcoming stories about cloth, tradition, design and the inspiration behind our Bangladeshi fashion label.",
+});
 
 export default function Page() {
   return <JournalPage />;

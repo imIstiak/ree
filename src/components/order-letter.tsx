@@ -101,7 +101,7 @@ function Letter({ order, forPdf = false }: { order: PlacedOrder; forPdf?: boolea
         <div className="flex items-center gap-3">
           <Mark className="w-10 sm:w-12" forPdf={forPdf} />
           <p className={`${label} leading-relaxed`}>
-            ঋ - Ree
+            ঋ - Reé
             <br />
             Dhaka · Bangladesh
           </p>
@@ -115,7 +115,7 @@ function Letter({ order, forPdf = false }: { order: PlacedOrder; forPdf?: boolea
               </div>
             </div>
           </div>
-          <Postmark place="DHAKA · BANGLADESH · ঋ-REE · " date={order.dateShort} className="absolute top-8 -left-24 w-44 -rotate-12 text-[#5b3a22]/55 sm:-left-28 sm:w-52" />
+          <Postmark place="DHAKA · BANGLADESH · ঋ-REÉ · " date={order.dateShort} className="absolute top-8 -left-24 w-44 -rotate-12 text-[#5b3a22]/55 sm:-left-28 sm:w-52" />
         </div>
       </header>
 
@@ -149,8 +149,8 @@ function Letter({ order, forPdf = false }: { order: PlacedOrder; forPdf?: boolea
 
       <div className="mt-10">
         <p className="font-lp-serif text-[17px] italic">With warmth,</p>
-        <p className={`${script.className} mt-1 -rotate-3 text-[3.4rem] leading-none text-[#00664f]`}>Ree</p>
-        <p className={`${label} mt-3`}>The ঋ - Ree studio, Dhaka</p>
+        <p className={`${script.className} mt-1 -rotate-3 text-[3.4rem] leading-none text-[#00664f]`}>Reé</p>
+        <p className={`${label} mt-3`}>The ঋ - Reé studio, Dhaka</p>
       </div>
 
       <p className={`${hand.className} mt-12 max-w-[46ch] -rotate-1 text-[22px] leading-snug text-[#6b3f22] sm:text-[24px]`}>

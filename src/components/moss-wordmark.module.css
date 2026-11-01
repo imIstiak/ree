@@ -1,0 +1,16 @@
+.panorama {
+  position: relative;
+  overflow: hidden;
+  background: #050d08;
+}
+
+.forest {
+  object-fit: cover;
+}
+
+.stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+}

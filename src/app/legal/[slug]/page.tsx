@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { createPageMetadata } from "../../../lib/seo";
 import { notFound } from "next/navigation";
 import { LegalPage, legalPages } from "../../../components/info-pages";
 
@@ -12,7 +13,8 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/legal/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const page = legalPages.find((candidate) => candidate.slug === slug);
-  return page ? { title: `ঋ - Ree | ${page.title}` } : {};
+  if (!page) notFound();
+  return createPageMetadata({ path: `/legal/${page.slug}`, title: page.title, description: page.body[0] });
 }
 
 export default async function Page({ params }: PageProps<"/legal/[slug]">) {

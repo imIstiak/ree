@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { createPageMetadata } from "../../../lib/seo";
 import { notFound } from "next/navigation";
 import { CollectionPage } from "../../../components/catalog-pages";
 import { collections, getCollection } from "../../../data/collections";
@@ -12,8 +13,12 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/collections/[slug]">): Promise<Metadata> {
   const collection = getCollection((await params).slug);
-  if (!collection) return {};
-  return { title: `ঋ - Ree | ${collection.name}`, description: collection.blurb };
+  if (!collection) notFound();
+  return createPageMetadata({
+    path: `/collections/${collection.slug}`,
+    title: `${collection.name} — Collection Preview`,
+    description: collection.blurb,
+  });
 }
 
 export default async function Page({ params }: PageProps<"/collections/[slug]">) {

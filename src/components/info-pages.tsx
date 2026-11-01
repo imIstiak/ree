@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import { contact, values } from "../data/brand";
+import { socialProfiles } from "../data/site";
 import { campaignPhotos } from "../data/campaign-images";
 import { journalPosts } from "../data/journal";
 import { Icon } from "./landing-icons";
@@ -8,32 +9,33 @@ import { PageButton, PageIntro, SitePage, bodyText, cardPatch, cloths, patchShad
 import { kicker } from "./shop-ui";
 
 // The brand's own pages: /about, /journal, /contact and the legal pages (/legal/[slug]). Server
-// components. Copy is sample content, like the landing page's; the legal pages are placeholders
-// until the real policies are written.
+// components. The journal and legal pages remain previews until their final content is ready.
 
 const making = [
-  { title: "The cloth", body: "Heavy cotton, handloom voile and brushed fleece: cloth that can take the heat, the rain and a hundred washes." },
-  { title: "The hands", body: "Prints pulled by hand, patches whipped on, collars sewn flat by people we know by name, paid by the hour." },
-  { title: "The city", body: "Words from old signboards, motifs from our grandmothers' quilts, cut for a city that never sits still." },
+  { title: "Rural craft", body: "Handloom textures, the rhythm of a running stitch and the character of hand printing inform our design language. Rural craft is a starting point for how we think about cloth, detail and care." },
+  { title: "Living history", body: "From the lettering of old Dhaka to the quilts kept in family homes, everyday objects carry stories. We look to these memories and traditions as references for clothes made for today." },
+  { title: "Modern luxury", body: "For Reé, luxury is found in thoughtful proportions, tactile materials and details worth returning to. Our direction brings Bengali heritage into a contemporary wardrobe." },
 ];
 
 export function AboutPage() {
   return (
     <SitePage>
-      <PageIntro eyebrow="About ঋ - Ree" title="Not everything old belongs in the past">
-        ঋ - Ree is an independent clothing label shaped in Bengal. We bring stories, symbols and heritage forward into clothes made for now.
+      <PageIntro eyebrow="About ঋ - Reé" title="Not everything old belongs in the past">
+        ঋ - Reé is a luxury fashion label from Bangladesh, inspired by Bengali heritage, rural craft and living history. We bring stories, symbols and tradition forward into clothes made for now.
       </PageIntro>
 
       <section className="grid gap-10 border-t border-lp-border px-[3%] py-10 lg:grid-cols-[1.1fr_.9fr] lg:gap-[6%] lg:py-[5%]">
         <div className="space-y-5 lg:pt-[4%]">
-          <h2 className={sectionTitle}>The perfect blend of style and comfort</h2>
+          <h2 className={sectionTitle}>Luxury shaped by Bengali heritage</h2>
           <p className={bodyText}>
-            We grew up with the running stitch of a nakshi kantha, the lettering on old Dhaka signboards and prints pulled by hand in small workshops. ঋ - Ree takes those things out of the past and sews them into what we wear every day.
+            Our inspiration begins close to home: the running stitch of nakshi kantha, handloom textures, the lettering of old Dhaka signboards and the character of prints pulled by hand. These references shape how we think about pattern, colour and the feeling of a garment.
           </p>
           <p className={bodyText}>
-            Everything starts with cloth that can take the long Dhaka day. We cut it with room to move, finish it by hand where hands do it better, and make in small runs so nothing sits unworn.
+            Tradition gives us a language to work with. Our creative direction pairs that language with relaxed proportions, considered details and clothes imagined for everyday life in Bangladesh. The aim is a connection between the stories we inherit and the way we dress now.
           </p>
-          <p className={bodyText}>Our collections bring together modern cuts and Bengali craft for fashion that feels as good as it looks.</p>
+          <h2 className={sectionTitle}>Old is gold</h2>
+          <p className={bodyText}>For Reé, old is gold means recognising the value in what has been passed down: a familiar motif, a well-loved texture, a way of making. We return to these ideas for their character and the memories they carry.</p>
+          <p className={bodyText}>Our first collection is still taking shape. This is the story behind it: contemporary luxury fashion rooted in Bangladesh, with respect for rural craft, tradition and the histories woven into everyday life.</p>
           <div className="flex flex-wrap gap-3 pt-3">
             <PageButton href="/shop">Shop the collection</PageButton>
             <PageButton href="/journal" tone="text">
@@ -50,7 +52,7 @@ export function AboutPage() {
 
       <section aria-labelledby="making-title" className="border-t border-lp-border px-[3%] py-10 lg:py-[4%]">
         <h2 id="making-title" className={sectionTitle}>
-          How we make
+          What shapes our work
         </h2>
         <ol className="mt-8 grid gap-5 sm:grid-cols-3">
           {making.map((step, index) => (
@@ -121,7 +123,7 @@ const ways = [
 export function ContactPage() {
   return (
     <SitePage>
-      <PageIntro eyebrow="Contact · ঋ - Ree" title="Let's stay in touch">
+      <PageIntro eyebrow="Contact · ঋ - Reé" title="Let's stay in touch">
         For the first drop, collaborations, press, or anything else, choose how you&apos;d like to reach us.
       </PageIntro>
       <section className="grid gap-5 border-t border-lp-border px-[3%] py-10 sm:grid-cols-3 lg:py-[4%]">
@@ -143,6 +145,11 @@ export function ContactPage() {
         </div>
       </section>
       <section className="px-[3%]">
+        <nav aria-label="Official Reé social profiles" className="mb-8 flex flex-wrap gap-5 text-[13px] text-lp-text underline underline-offset-4">
+          <a href={socialProfiles.facebook} target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a href={socialProfiles.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href={socialProfiles.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </nav>
         <p className={`${bodyText} max-w-lg`}>Want to hear when the first drop lands? Write to us and we&apos;ll keep you posted.</p>
         <a href={`mailto:${contact.email}?subject=${encodeURIComponent("Keep me posted about the first drop")}`} className={`${smallPatch} mt-5 inline-flex min-h-11 min-w-44 -rotate-1 items-center justify-between gap-6 bg-lp-accent px-4 text-[11px] font-medium tracking-wide text-lp-ink uppercase hover:bg-lp-text hover:text-lp-bg sm:min-h-10`}>
           Join the list <Icon name="arrowRight" />
@@ -152,7 +159,7 @@ export function ContactPage() {
   );
 }
 
-// Placeholders until the real policies are written: they say what the site does today and where to ask.
+// Legal copy also supplies SEO descriptions. Keep its source spelling for SEO; use Reé when rendering it.
 export const legalPages = [
   {
     slug: "privacy",
@@ -191,7 +198,7 @@ export function LegalPage({ page }: { page: (typeof legalPages)[number] }) {
         <div className="max-w-2xl space-y-4">
           {page.body.map((paragraph) => (
             <p key={paragraph} className={bodyText}>
-              {paragraph}
+              {paragraph.replaceAll("Ree", "Reé")}
             </p>
           ))}
         </div>

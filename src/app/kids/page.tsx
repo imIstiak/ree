@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "../../lib/seo";
 import { DepartmentPage } from "../../components/catalog-pages";
 
-export const metadata: Metadata = {
-  title: "ঋ - Ree | Kids",
-  description: "The ঋ - Ree kids' range arrives with a later drop.",
-};
+export const metadata = createPageMetadata({
+  path: "/kids",
+  title: "Kids' Collection: Coming Later",
+  description: "Ree's children's clothing range is planned for a later drop. Follow our Bangladeshi fashion label for future collection updates.",
+});
 
 export default function Page() {
   return <DepartmentPage department="kids" />;

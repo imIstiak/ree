@@ -1,11 +1,12 @@
 {
   "name": "ree",
-  "description": "Ree is a platform for creating and sharing recipes.",
+  "description": "Ree is a Bangladeshi luxury fashion label inspired by Bengali heritage, rural craft and living history.",
   "author": "Ahnaf",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "build:brand-icons": "node scripts/build-brand-icons.mjs",
+    "build:seo-assets": "node scripts/build-seo-assets.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

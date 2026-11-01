@@ -111,6 +111,6 @@ export async function downloadOrderPdf(root: HTMLElement, orderNumber: string) {
     if (index > 0) pdf.addPage();
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.88), "JPEG", 0, 0, 210, 297);
   });
-  pdf.setProperties({ title: `Ree order ${orderNumber}`, subject: "Thank-you letter and order slip", author: "Ree" });
+  pdf.setProperties({ title: `Reé order ${orderNumber}`, subject: "Thank-you letter and order slip", author: "Reé" });
   pdf.save(`ree-order-${orderNumber}.pdf`);
 }

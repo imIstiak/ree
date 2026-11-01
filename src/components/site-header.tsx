@@ -84,7 +84,7 @@ export function SiteHeader({
         </div>
       </HoverDetails>
 
-      <NavLink href={base || "#top"} className={styles.brand} label="REE home">
+      <NavLink href={base || "#top"} className={styles.brand} label="Reé home">
         <BrandLogo decorative />
       </NavLink>
 

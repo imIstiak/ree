@@ -87,6 +87,24 @@
   inset-inline: 2.72%;
 }
 
+/* "ARRIVING SOON", centred between the header and the top of the picture frame (frame-y). */
+.status {
+  position: absolute;
+  top: 14.2%;
+  inset-inline: 0;
+  z-index: 1;
+  margin: 0;
+  font-size: 1.25cqw;
+  font-weight: 500;
+  letter-spacing: .32em;
+  text-indent: .32em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 2px 6px rgb(20 3 0 / 30%);
+  pointer-events: none;
+}
+
 /* Slideshow cards. Every card is laid out on the middle frame and reaches the thumb
    slots through `transform` alone, so the loop runs on the compositor. The keyframes
    (`ree-hero-card-N`) come from landing-hero.tsx; `.at*` is the opening layout, which is
@@ -233,6 +251,7 @@
     --thumb-right-x: 75;
   }
   .navigation { top: 18px; inset-inline: 20px; }
+  .status { top: 13%; font-size: 11px; letter-spacing: .28em; text-indent: .28em; }
   .wordmark { top: 76px; height: 16%; width: 160%; left: -30%; opacity: .46; }
   .shade { background: linear-gradient(180deg, rgb(28 5 0 / 15%) 45%, transparent 58%, rgb(22 4 0 / 65%) 100%); }
   .focusFrame svg { width: 14px; height: 14px; }

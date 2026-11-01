@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import campaignStage from "../../public/landing/campaign-stage.webp";
@@ -27,7 +27,10 @@ const timing = {
 // photograph: it is the hero's background while its card holds the frame, and the card
 // itself only ever shows the cut-out of that photograph that lies under the frame.
 // Add a slide by adding an entry (a 1840 × 1090 image, subject's head under the frame).
-const slides = [
+// `hidden` keeps a slide in the list but out of the show.
+type Slide = { src: StaticImageData; alt: string; href: string; label: string; hidden?: boolean };
+
+const allSlides: Slide[] = [
   {
     src: campaignStage,
     alt: "A model in a tailored herringbone suit and leather gloves, seated in a burgundy lounge chair under a warm spotlight.",
@@ -41,6 +44,7 @@ const slides = [
     alt: "A man in a mustard graphic tee, flat cap and sunglasses, seated on old stone steps under sunlit trees.",
     href: "/shop",
     label: "Shop the everyday tees",
+    hidden: true, // held back for now; the mustard tee is not announced yet
   },
   {
     src: campaignLounge,
@@ -55,6 +59,7 @@ const slides = [
     label: "Explore tailored essentials",
   },
 ];
+const slides = allSlides.filter((slide) => !slide.hidden);
 
 const SCENE_SIZES = "(max-width: 767px) 170vh, 100vw";
 const MOVE_EASE = "cubic-bezier(.7, 0, .2, 1)";
@@ -182,6 +187,9 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
       </svg>
 
       <SiteHeader className={styles.navigation} overMedia settings={themeControls} />
+
+      {/* Pre-launch status, written over the top of the photographs (the user asked for it there). */}
+      <p className={styles.status}>ARRIVING SOON</p>
 
       {slides.map((slide, index) => {
         const role = roleAt(index, 0, slides.length);

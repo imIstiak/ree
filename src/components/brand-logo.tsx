@@ -20,7 +20,7 @@ export function BrandLogo({
       height={height}
       className={`ree-logo ${className}`}
       role={decorative ? undefined : "img"}
-      aria-label={decorative ? undefined : "REE"}
+      aria-label={decorative ? undefined : "Reé"}
       aria-hidden={decorative || undefined}
       focusable="false"
     >

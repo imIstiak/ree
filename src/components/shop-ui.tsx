@@ -140,7 +140,7 @@ export function ShopFooter() {
     <footer className="border-t border-lp-border px-[3%] py-8 text-[11px] tracking-[.1em] text-lp-muted uppercase">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Link href="/landing" aria-label="REE home"><BrandLogo className="w-12" decorative /></Link>
+          <Link href="/landing" aria-label="Reé home"><BrandLogo className="w-12" decorative /></Link>
           <span>Not everything old belongs in the past</span>
         </div>
         <nav aria-label="Shop" className="flex flex-wrap gap-x-5 gap-y-2">
