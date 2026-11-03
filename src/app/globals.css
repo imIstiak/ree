@@ -312,14 +312,14 @@
   .primary-action,
   .contact-dialog
 ) {
-  --ivory: #23120c;
-  --ivory-rgb: 35 18 12;
-  --ivory-muted: rgb(35 18 12 / 76%);
-  --ivory-bright: #3a1f14;
+  --ivory: #06281f;
+  --ivory-rgb: 6 40 31;
+  --ivory-muted: rgb(6 40 31 / 76%);
+  --ivory-bright: #0b4a3a;
   --surface-rgb: 255 252 244;
   --glass: rgb(255 252 244 / 74%);
   --glass-hover-rgb: 255 255 255;
-  --marker-glow: rgb(35 18 12 / 30%);
+  --marker-glow: rgb(6 40 31 / 30%);
   /* Inverse colour for text on the now-dark ivory fills. */
   --stage-dark: #f6f1e4;
 }
@@ -336,20 +336,20 @@
 
 @theme {
   --color-lp-canvas: #d8d3ad;
-  --color-lp-bg: #0a0000;
+  --color-lp-bg: #010d0a;
   --color-lp-surface: #050505;
   --color-lp-accent: #f5ed9e;
   --color-lp-olive: #8c8450;
   --color-lp-text: #fffdf0;
   --color-lp-muted: rgb(216 211 173 / 75%);
   --color-lp-border: rgb(216 211 173 / 25%);
-  --color-lp-stage: #230a04;
-  --color-lp-spotlight: #713124;
+  --color-lp-stage: #02291f;
+  --color-lp-spotlight: #0b6a51;
   --color-lp-signal: #ed2620;
-  --color-lp-ink: #0a0000;
+  --color-lp-ink: #01140f;
   --color-lp-card: #004d3b;
-  --color-lp-deep: #1d0806;
-  --color-lp-deep-top: #3a0f0b;
+  --color-lp-deep: #011f17;
+  --color-lp-deep-top: #004d3b;
   /* The logo's two colours (public/ree-logo.svg): its emerald and the base it sits on. The same in both themes. */
   --color-lp-brand: #00664f;
   --color-lp-brand-base: #ffe7cc;
@@ -379,9 +379,9 @@
   --color-lp-surface: #ebe3cc;
   --color-lp-accent: #e3c64a;
   --color-lp-olive: #a79a56;
-  --color-lp-text: #1c0a06;
-  --color-lp-muted: rgb(60 40 28 / 86%);
-  --color-lp-border: rgb(60 40 28 / 22%);
+  --color-lp-text: #06281f;
+  --color-lp-muted: rgb(14 52 41 / 86%);
+  --color-lp-border: rgb(14 52 41 / 22%);
   --color-lp-stage: #e5d5bb;
   --color-lp-spotlight: #fbf2de;
   --color-lp-card: #fffaf0;
@@ -398,18 +398,18 @@
    instead of turning cream. The tokens are re-declared with their dark values inside the scope, so
    the wash, the text and the buttons all read as they do on the dark theme. Keep in step with @theme. */
 [data-lp-theme="light"] .lp-dark-scope {
-  --color-lp-bg: #0a0000;
+  --color-lp-bg: #010d0a;
   --color-lp-surface: #050505;
   --color-lp-accent: #f5ed9e;
   --color-lp-olive: #8c8450;
   --color-lp-text: #fffdf0;
   --color-lp-muted: rgb(216 211 173 / 75%);
   --color-lp-border: rgb(216 211 173 / 25%);
-  --color-lp-stage: #230a04;
-  --color-lp-spotlight: #713124;
+  --color-lp-stage: #02291f;
+  --color-lp-spotlight: #0b6a51;
   --color-lp-card: #004d3b;
-  --color-lp-deep: #1d0806;
-  --color-lp-deep-top: #3a0f0b;
+  --color-lp-deep: #011f17;
+  --color-lp-deep-top: #004d3b;
   color: var(--color-lp-text);
 }
 
@@ -844,17 +844,19 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
 #ree-product {
   background-image: var(--linen-weft), var(--linen-warp), var(--linen-slub), var(--paper-grain), var(--paper-mottle);
   background-size: 240px 240px, 240px 240px, 600px 600px, 180px 180px, 700px 700px;
-  background-attachment: local;
+  /* The shell is the scroll container: `scroll` pins the cloth to its box, so only the content moves
+     over it (the user asked for a static background). `local` would scroll it with the content. */
+  background-attachment: scroll;
   background-blend-mode: multiply;
 }
 #ree-product[data-lp-theme="dark"] { background-blend-mode: screen; }
 /* The order letter swaps the weave for paper (below); its :has() rules outrank these. */
 
-/* While the letter is on screen the whole page is paper. `local` lets the texture scroll with it. */
+/* While the letter is on screen the whole page is paper, held still like the cloth. */
 #ree-product:has([data-paper-page]) {
   background-image: var(--paper-grain), var(--paper-fibre), var(--paper-mottle);
   background-size: 180px 180px, 520px 260px, 700px 700px;
-  background-attachment: local;
+  background-attachment: scroll;
   background-blend-mode: multiply;
 }
 #ree-product[data-lp-theme="dark"]:has([data-paper-page]) { background-blend-mode: screen; }

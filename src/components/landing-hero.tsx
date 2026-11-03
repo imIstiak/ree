@@ -174,7 +174,7 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
       ))}
       <div className={styles.shade} aria-hidden="true" />
 
-      <svg className={styles.wordmark} viewBox="0 0 200 54" preserveAspectRatio="none" aria-hidden="true">
+      <svg className={styles.wordmark} viewBox="0 -14 200 68" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <filter id="hero-wordmark-grain" x="0" y="0" width="100%" height="100%">
             <feTurbulence type="fractalNoise" baseFrequency=".06 .19" numOctaves="3" stitchTiles="stitch" />

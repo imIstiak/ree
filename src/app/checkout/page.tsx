@@ -5,7 +5,7 @@ import { SitePage } from "../../components/site-page";
 export const metadata = createPageMetadata({
   path: "/checkout",
   title: "Checkout Preview",
-  description: "Ree checkout preview. Orders and payments are not yet available.",
+  description: "Reé checkout preview. Orders and payments are not yet available.",
 });
 
 export default function Page() {

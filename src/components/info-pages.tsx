@@ -165,7 +165,7 @@ export const legalPages = [
     slug: "privacy",
     title: "Privacy policy",
     body: [
-      "ঋ - Ree's full privacy policy will be published here before the shop opens.",
+      "ঋ - Reé's full privacy policy will be published here before the shop opens.",
       "Today the site keeps your bag, your saved pieces and your theme choice in your own browser's local storage. Checkout does not send your details anywhere yet.",
       `Questions about your data: write to ${contact.email}.`,
     ],
@@ -198,7 +198,7 @@ export function LegalPage({ page }: { page: (typeof legalPages)[number] }) {
         <div className="max-w-2xl space-y-4">
           {page.body.map((paragraph) => (
             <p key={paragraph} className={bodyText}>
-              {paragraph.replaceAll("Ree", "Reé")}
+              {paragraph.replaceAll("Reé", "Reé")}
             </p>
           ))}
         </div>

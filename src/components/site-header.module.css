@@ -13,7 +13,13 @@
   --header-hover: #e6d21f;
   /* Patchwork: cloth grain laid over a patch's fill, and the ink its running stitch is sewn in. */
   --header-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 .32'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --header-patch-ink: #2a1408;
+  --header-patch-ink: #063a2d;
+  /* The panels wear the brand too (the user asked for them in the logo's colours): an emerald
+     backing like the tiles, sewn in the logo's cream, with cream and mint patches cut from it. */
+  --header-patch-cream: #ffe7cc;
+  --header-patch-light: #fff4e6;
+  --header-patch-mint: #d3ebdf;
+  --header-patch-sage: #bcdccd;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -96,10 +102,10 @@
   top: calc(100% + 12px);
   width: 260px;
   padding: 16px;
-  color: var(--header-patch-ink);
-  background: #e9dfc4 var(--header-grain) 0 0 / 120px 120px;
+  color: var(--header-tile-ink);
+  background: var(--header-tile) var(--header-grain) 0 0 / 120px 120px;
   background-blend-mode: overlay;
-  outline: 1px dashed rgb(42 20 8 / 55%);
+  outline: 1px dashed rgb(255 231 204 / 60%);
   outline-offset: -6px;
   box-shadow: 0 16px 40px rgb(0 0 0 / 35%);
   font-size: 13px;
@@ -109,33 +115,34 @@
 .menuPanel { --panel-tilt: -1.5deg; --panel-from: -130%; --panel-lean: -9deg; left: 0; transform-origin: top left; }
 .menuPanel ul { display: grid; gap: 7px; }
 .menuPanel a, .cartPanel a {
+  color: var(--header-patch-ink);
   background: var(--patch, var(--header-cream)) var(--header-grain) 0 0 / 120px 120px;
   background-blend-mode: overlay;
-  outline: 1px dashed rgb(42 20 8 / 45%);
+  outline: 1px dashed rgb(6 58 45 / 45%);
   outline-offset: -4px;
-  box-shadow: 0 2px 6px rgb(42 20 8 / 20%);
+  box-shadow: 0 2px 6px rgb(6 58 45 / 20%);
   transform: rotate(var(--tilt, 0deg));
   transition: background-color 180ms ease, transform 220ms ease;
 }
 .menuPanel a { display: block; padding: 13px 16px; }
-.menuPanel li:nth-child(5n + 1) { --i: 0; --patch: #fffdf3; --tilt: -1.2deg; }
-.menuPanel li:nth-child(5n + 2) { --i: 1; --patch: #f5ed9e; --tilt: .9deg; }
-.menuPanel li:nth-child(5n + 3) { --i: 2; --patch: #f1d9bd; --tilt: -.7deg; }
-.menuPanel li:nth-child(5n + 4) { --i: 3; --patch: #dfe3bd; --tilt: 1.3deg; }
-.menuPanel li:nth-child(5n + 5) { --i: 4; --patch: #f6e0d6; --tilt: -1deg; }
+.menuPanel li:nth-child(5n + 1) { --i: 0; --patch: var(--header-patch-cream); --tilt: -1.2deg; }
+.menuPanel li:nth-child(5n + 2) { --i: 1; --patch: var(--header-patch-mint); --tilt: .9deg; }
+.menuPanel li:nth-child(5n + 3) { --i: 2; --patch: var(--header-patch-light); --tilt: -.7deg; }
+.menuPanel li:nth-child(5n + 4) { --i: 3; --patch: var(--header-patch-sage); --tilt: 1.3deg; }
+.menuPanel li:nth-child(5n + 5) { --i: 4; --patch: var(--header-patch-cream); --tilt: -1deg; }
 .menuPanel a:hover, .cartPanel a:hover { background-color: var(--header-hover); transform: translateX(-4px) rotate(0deg); }
-.menuSettings { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 8px 0; border-top: 1px dashed rgb(42 20 8 / 45%); }
+.menuSettings { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 8px 0; border-top: 1px dashed rgb(255 231 204 / 45%); }
 .cartPanel { --panel-tilt: 1.5deg; --panel-from: 130%; --panel-lean: 9deg; right: 0; width: 288px; transform-origin: top right; }
 .empty { margin: 6px 4px 16px; }
-.panelLink { --patch: #f5ed9e; --tilt: -1deg; display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding-inline: 16px; font-size: 12px; }
+.panelLink { --patch: var(--header-patch-mint); --tilt: -1deg; display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding-inline: 16px; font-size: 12px; }
 .panelActions { display: grid; gap: 7px; margin-top: 12px; }
-.panelActions .panelLink:first-child { --patch: #fffdf3; --tilt: .8deg; }
+.panelActions .panelLink:first-child { --patch: var(--header-patch-cream); --tilt: .8deg; }
 
 /* The bag's lines and the saved pieces: one patch per piece, the remove button a small patch beside it. */
 .lines { display: grid; gap: 7px; }
 .lines li { display: flex; align-items: stretch; gap: 7px; }
 .lines li:nth-child(odd) { --tilt: -.8deg; }
-.lines li:nth-child(even) { --tilt: .8deg; --patch: #f5ed9e; }
+.lines li:nth-child(even) { --tilt: .8deg; --patch: var(--header-patch-mint); }
 .line { flex: 1; display: grid; gap: 2px; min-width: 0; padding: 10px 14px; font-size: 12px; }
 .line small { font-size: 11px; opacity: .7; }
 .remove {
@@ -143,18 +150,18 @@
   place-items: center;
   flex: none;
   width: 44px;
-  color: inherit;
+  color: var(--header-patch-ink);
   cursor: pointer;
-  background: #f6e0d6 var(--header-grain) 0 0 / 120px 120px;
+  background: var(--header-patch-light) var(--header-grain) 0 0 / 120px 120px;
   background-blend-mode: overlay;
   border: 0;
-  outline: 1px dashed rgb(42 20 8 / 45%);
+  outline: 1px dashed rgb(6 58 45 / 45%);
   outline-offset: -4px;
-  box-shadow: 0 2px 6px rgb(42 20 8 / 20%);
+  box-shadow: 0 2px 6px rgb(6 58 45 / 20%);
   transition: background-color 180ms ease;
 }
 .remove:hover { background-color: var(--header-hover); }
-.total { display: flex; justify-content: space-between; margin: 14px 4px 0; padding-top: 12px; border-top: 1px dashed rgb(42 20 8 / 45%); }
+.total { display: flex; justify-content: space-between; margin: 14px 4px 0; padding-top: 12px; border-top: 1px dashed rgb(255 231 204 / 45%); }
 .saved { margin: 16px 4px 8px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
 
 @media (prefers-reduced-motion: no-preference) {

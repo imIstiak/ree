@@ -44,7 +44,7 @@ export function PurchasePanel({ product, showPrice = true }: { product: Product;
         <HoverDetails className="group/chart relative">
           <summary className="cursor-pointer list-none text-[10px] tracking-[.12em] text-lp-muted uppercase underline-offset-4 group-open/chart:text-lp-text group-open/chart:underline hover:text-lp-text hover:underline [&::-webkit-details-marker]:hidden">Size chart</summary>
           <div
-            className="ree-pop lp-patch absolute top-[calc(100%+12px)] right-0 z-20 w-60 origin-top-right bg-[#e9dfc4] p-3 text-[11px] text-[#2a1408] shadow-[0_16px_40px_rgb(0_0_0/35%)] [--lp-stitch-inset:6px] [--pop-from:150%] [--pop-lean:9deg] [--pop-tilt:1.5deg] [--row-from:40px] [--row-lean:5deg]"
+            className="ree-pop lp-patch absolute top-[calc(100%+12px)] right-0 z-20 w-60 origin-top-right bg-[#e9dfc4] p-3 text-[11px] text-[#063a2d] shadow-[0_16px_40px_rgb(0_0_0/35%)] [--lp-stitch-inset:6px] [--pop-from:150%] [--pop-lean:9deg] [--pop-tilt:1.5deg] [--row-from:40px] [--row-lean:5deg]"
             style={{ "--last": product.sizes.length + 1 } as CSSProperties}
           >
             <p className="ree-pop-row px-1 pt-1 text-[10px] opacity-70" style={row(0)}>

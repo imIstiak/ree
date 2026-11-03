@@ -1,11 +1,11 @@
 export const site = {
-  name: "ঋ - Ree",
-  shortName: "Ree",
+  name: "ঋ - Reé",
+  shortName: "Reé",
   url: "https://ree.bd",
-  title: "Ree | Luxury Fashion in Bangladesh, Rooted in Heritage",
-  description: "Discover Ree, a luxury fashion label in Bangladesh inspired by Bengali tradition, rural craft and history. Old is gold, reimagined for life today.",
+  title: "Reé | Luxury Fashion in Bangladesh, Rooted in Heritage",
+  description: "Discover Reé, a luxury fashion label in Bangladesh inspired by Bengali tradition, rural craft and history. Old is gold, reimagined for life today.",
   socialImage: "/seo/ree-social.png",
-  socialImageAlt: "Ree — luxury fashion from Bangladesh, rooted in Bengali heritage and rural craft",
+  socialImageAlt: "Reé — luxury fashion from Bangladesh, rooted in Bengali heritage and rural craft",
 } as const;
 
 export const socialProfiles = {

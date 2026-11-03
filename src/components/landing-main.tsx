@@ -412,7 +412,9 @@ export function LandingMain() {
           </div>
 
           <Markers className="top-[54%]" />
-          <Wordmark className="lp-drift absolute inset-x-[3%] bottom-[18%] -z-10 opacity-60 lg:top-[60%] lg:bottom-auto" />
+          {/* -mt lifts the box by the acute's height (14 of 200 units of a 94%-wide box), so the letters
+              sit where they did before the accent and stay inside the section. */}
+          <Wordmark className="lp-drift absolute inset-x-[3%] bottom-[18%] -z-10 opacity-60 lg:top-[60%] lg:bottom-auto lg:-mt-[6.6%]" />
 
           <ul className="lp-drift-x absolute inset-x-0 bottom-[8%] flex justify-between gap-6 overflow-hidden border-y border-lp-border px-[3%] py-2 text-[10px] whitespace-nowrap text-lp-muted uppercase lg:top-[82%] lg:bottom-auto" aria-label="Styles">
             {styleWords.map((word, index) => (
@@ -421,7 +423,7 @@ export function LandingMain() {
           </ul>
 
           <figure className="lp-fade lp-unveil lp-patch group absolute top-[24%] left-1/2 z-10 w-[62%] -translate-x-1/2 bg-lp-patch-terracotta p-2 text-lp-ink shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-2.5 sm:[--lp-stitch-inset:5px] lg:top-[30%] lg:w-[31%]">
-            <div className="relative aspect-[3/4] overflow-hidden bg-[#7a3a20] lg:aspect-[315/450]">
+            <div className="relative aspect-[3/4] overflow-hidden bg-lp-brand lg:aspect-[315/450]">
               <Photo photo={photos.camelCoat} sizes="(min-width: 1024px) 420px, 62vw" className={hoverImage} />
             </div>
             <Link href="/collections/outerwear" className={`${smallPatch} absolute inset-x-[10%] bottom-[7%] flex min-h-10 -rotate-1 items-center justify-between bg-lp-text px-3.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}>
@@ -744,8 +746,13 @@ export function LandingMain() {
             </ul>
           </div>
 
-          <div className="lp-reveal lp-unveil relative mx-auto mt-[4%] aspect-[154/42] w-[94%] overflow-hidden shadow-2xl shadow-black/50 group-data-[lp-theme=light]/theme:shadow-black/15 sm:w-[61%]">
-            <Photo photo={photos.redLips} sizes="(min-width: 640px) 61vw, 94vw" />
+          {/* The photo in an emerald cloth patch, framed and stitched like the other cards. */}
+          <div className="lp-reveal mx-auto mt-[4%] w-[94%] sm:w-[61%]">
+            <div className="lp-patch -rotate-[.6deg] bg-lp-brand p-1.5 text-lp-brand-base shadow-2xl shadow-black/50 [--lp-stitch-inset:3px] group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-2 sm:[--lp-stitch-inset:4px]">
+              <div className="relative aspect-[154/42] overflow-hidden bg-lp-surface">
+                <Photo photo={photos.redLips} sizes="(min-width: 640px) 61vw, 94vw" />
+              </div>
+            </div>
           </div>
 
           <ul className="mx-[3%] mt-6 mb-8 flex flex-wrap justify-center gap-3">

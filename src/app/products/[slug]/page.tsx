@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
   return createPageMetadata({
     path: `/products/${product.slug}`,
     title: `${product.name} — Preview`,
-    description: `${product.tagline} Preview the upcoming Ree collection from Bangladesh.`,
+    description: `${product.tagline} Preview the upcoming Reé collection from Bangladesh.`,
     image: { url: product.images[0].src, alt: product.images[0].alt },
   });
 }

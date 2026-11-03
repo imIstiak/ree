@@ -24,7 +24,7 @@
   width: 100%;
   aspect-ratio: 1840 / 1090;
   overflow: hidden;
-  background: #250a03;
+  background: #01241b;
   color: var(--hero-cream);
   container-type: inline-size;
 }
@@ -63,8 +63,8 @@
   inset: 0;
   z-index: -2;
   pointer-events: none;
-  background: linear-gradient(180deg, rgb(33 6 0 / 12%), transparent 38%, rgb(27 5 0 / 10%)),
-    linear-gradient(90deg, rgb(34 6 0 / 24%), transparent 38% 62%, rgb(34 6 0 / 24%));
+  background: linear-gradient(180deg, rgb(1 26 20 / 12%), transparent 38%, rgb(1 22 17 / 10%)),
+    linear-gradient(90deg, rgb(1 28 21 / 24%), transparent 38% 62%, rgb(1 28 21 / 24%));
 }
 
 .wordmark {
@@ -72,9 +72,9 @@
   inset: 0 0 auto;
   z-index: -1;
   width: 100%;
-  height: 23.9%;
+  height: 30.1%; /* 23.9% for the letters, plus the acute above them (68 / 54) */
   overflow: hidden;
-  color: #493127;
+  color: #0b4a3a;
   opacity: .32;
   pointer-events: none;
 }
@@ -101,7 +101,7 @@
   line-height: 1;
   text-align: center;
   text-transform: uppercase;
-  text-shadow: 0 2px 6px rgb(20 3 0 / 30%);
+  text-shadow: 0 2px 6px rgb(1 16 12 / 30%);
   pointer-events: none;
 }
 
@@ -197,12 +197,12 @@
   place-items: center;
   min-width: 0;
   background: var(--hero-yellow);
-  color: #241b09;
+  color: #06281f;
   font-size: 1.12cqw;
   font-weight: 500;
   line-height: 1.25;
   text-transform: uppercase;
-  outline: 1px dashed rgb(36 27 9 / 50%);
+  outline: 1px dashed rgb(6 40 31 / 50%);
   outline-offset: -3px;
   transition: background-color 180ms ease;
 }
@@ -219,7 +219,7 @@
   letter-spacing: -.012em;
   line-height: 1.19;
   text-transform: uppercase;
-  text-shadow: 0 2px 6px rgb(20 3 0 / 16%);
+  text-shadow: 0 2px 6px rgb(1 16 12 / 16%);
 }
 
 .title span { display: block; }
@@ -252,8 +252,8 @@
   }
   .navigation { top: 18px; inset-inline: 20px; }
   .status { top: 13%; font-size: 11px; letter-spacing: .28em; text-indent: .28em; }
-  .wordmark { top: 76px; height: 16%; width: 160%; left: -30%; opacity: .46; }
-  .shade { background: linear-gradient(180deg, rgb(28 5 0 / 15%) 45%, transparent 58%, rgb(22 4 0 / 65%) 100%); }
+  .wordmark { top: 76px; height: 20.1%; width: 160%; left: -30%; opacity: .46; }
+  .shade { background: linear-gradient(180deg, rgb(1 24 18 / 15%) 45%, transparent 58%, rgb(1 18 14 / 65%) 100%); }
   .focusFrame svg { width: 14px; height: 14px; }
   .markers { top: 57%; inset-inline: 5%; grid-template-columns: auto 1fr auto; gap: 18px; font-size: 11px; }
   .markers > :nth-child(n + 4) { display: none; }

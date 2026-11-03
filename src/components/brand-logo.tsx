@@ -10,12 +10,14 @@ export function BrandLogo({
   variant = "logo",
   decorative = false,
 }: BrandLogoProps) {
-  const height = variant === "mark" ? 200 : variant === "wordmark" ? 54 : 270;
+  // The wordmark's acute (Reé) rises 14 units above its cap line, so that view starts at y = -14.
+  const top = variant === "wordmark" ? -14 : 0;
+  const height = variant === "mark" ? 200 : variant === "wordmark" ? 68 : 270;
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox={`0 0 200 ${height}`}
+      viewBox={`0 ${top} 200 ${height}`}
       width={200}
       height={height}
       className={`ree-logo ${className}`}

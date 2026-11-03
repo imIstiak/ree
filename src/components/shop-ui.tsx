@@ -65,8 +65,8 @@ export function inkOn(hex: string) {
     return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   };
   const lum = 0.2126 * channel(0) + 0.7152 * channel(1) + 0.0722 * channel(2);
-  // #1c0a06 has a luminance of about .005, #fffdf0 about .97.
-  return (lum + 0.05) / 0.055 >= 1.02 / (lum + 0.05) ? "#1c0a06" : "#fffdf0";
+  // #06281f (the dark emerald ink) has a luminance of about .017, #fffdf0 about .97.
+  return (lum + 0.05) / 0.067 >= 1.02 / (lum + 0.05) ? "#06281f" : "#fffdf0";
 }
 
 // Every product card's frame is cut from the colour of the garment in its photo (the user asked for
