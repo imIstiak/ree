@@ -1,5 +1,8 @@
-// The shop's catalogue. There is no backend: every product page is generated from this file.
-// `kind` picks the template. "classic" is the conventional details page (description, price,
+// The shop's starter catalogue and the product types. The live catalogue is the `products` table in
+// Supabase (read through src/lib/catalog.ts, edited in /backroom); this file seeds it ("Import the
+// starter catalogue" in the backroom), stands in for it until Supabase is configured, and keeps
+// what the table does not hold: the story pages' chapters and the photos' tee cut-outs, matched by
+// slug and by photo URL. `kind` picks the template. "classic" is the conventional details page (description, price,
 // sizes, add to cart); "story" is the premium chapter-by-chapter page with a header film and
 // each chapter's tee cut out of its photograph. Copy, prices and quotes are sample content, like the landing page's.
 
@@ -28,10 +31,16 @@ export type Product = {
   // Who the piece is cut for. Unisex pieces are listed on both the Men and the Women pages; there
   // is no kids' range yet, so the Kids page says so.
   department: "women" | "men" | "unisex";
+  // The slugs of the collection and season the piece belongs to, when it does (src/lib/catalog.ts
+  // fills them from the tables; the starter fallback files pieces by category).
+  collection?: string;
+  season?: string;
   price: number;
   wasPrice?: number;
   colour: string;
   sizes: string[];
+  // Pieces left per size; a size missing from the map is not tracked. 0 shows it as sold out.
+  stock?: Record<string, number>;
   description: string;
   details: string[];
   care: string[];
@@ -52,7 +61,7 @@ export type Product = {
   };
 };
 
-export const products: Product[] = [
+export const starterCatalogue: Product[] = [
   {
     slug: "life-is-short-tee",
     kind: "story",
@@ -322,18 +331,21 @@ export const products: Product[] = [
 
 export type Department = "men" | "women" | "kids";
 
-export function productsFor(department: Department) {
+// The helpers take the catalogue as an argument: on the server it comes from src/lib/catalog.ts,
+// in the browser from useCatalog() (catalog-client.ts).
+export function productsFor(products: Product[], department: Department) {
   return products.filter((product) => product.department === department || (department !== "kids" && product.department === "unisex"));
 }
 
-export function getProduct(slug: string) {
-  return products.find((product) => product.slug === slug);
-}
-
 // Same category first, then the rest of the catalogue.
-export function relatedTo(product: Product, count = 4) {
+export function relatedTo(products: Product[], product: Product, count = 4) {
   const others = products.filter((candidate) => candidate.slug !== product.slug);
   return [...others.filter((c) => c.category === product.category), ...others.filter((c) => c.category !== product.category)].slice(0, count);
+}
+
+// Sold out when the size is tracked and none are left.
+export function soldOut(product: Pick<Product, "stock">, size: string) {
+  return product.stock?.[size] === 0;
 }
 
 export function formatPrice(taka: number) {

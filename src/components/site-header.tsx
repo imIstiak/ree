@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { formatPrice, getProduct } from "../data/products";
+import { formatPrice } from "../data/products";
+import { useCatalog } from "./catalog-client";
 import { BrandLogo } from "./brand-logo";
 import { HoverDetails } from "./hover-details";
 import { Icon } from "./landing-icons";
@@ -56,9 +57,10 @@ export function SiteHeader({
   settings?: ReactNode;
 }) {
   const { cart, wishlist, removeLine } = useShop();
+  const catalog = useCatalog(cart.length > 0 || wishlist.length > 0);
   const count = cart.reduce((sum, line) => sum + line.qty, 0);
-  const subtotal = cart.reduce((sum, line) => sum + line.qty * (getProduct(line.slug)?.price ?? 0), 0);
-  const saved = wishlist.flatMap((slug) => getProduct(slug) ?? []);
+  const subtotal = cart.reduce((sum, line) => sum + line.qty * (catalog.find(line.slug)?.price ?? 0), 0);
+  const saved = wishlist.flatMap((slug) => catalog.find(slug) ?? []);
 
   return (
     <nav className={`${styles.bar} ${overMedia ? styles.overMedia : ""} ${className}`} aria-label="Primary">
@@ -107,7 +109,7 @@ export function SiteHeader({
             <>
               <ul className={styles.lines}>
                 {cart.map((line) => {
-                  const name = getProduct(line.slug)?.name ?? line.slug;
+                  const name = catalog.find(line.slug)?.name ?? (catalog.ready ? "No longer available" : "…");
                   return (
                     <li key={`${line.slug}-${line.size}`}>
                       <Link href={`/products/${line.slug}`} className={styles.line}>
@@ -125,7 +127,7 @@ export function SiteHeader({
               </ul>
               <p className={styles.total}>
                 <span>Subtotal</span>
-                <span>{formatPrice(subtotal)}</span>
+                <span>{catalog.ready ? formatPrice(subtotal) : "…"}</span>
               </p>
               <div className={styles.panelActions}>
                 <Link href="/cart" className={styles.panelLink}>

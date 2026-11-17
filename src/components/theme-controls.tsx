@@ -7,6 +7,7 @@ import { preloadSilkTransition, startSilkThemeTransition } from "./silk-theme-tr
 export const LANDING_ROOT_ID = "ree-landing";
 export const COMING_SOON_ROOT_ID = "ree-coming-soon";
 export const PRODUCT_ROOT_ID = "ree-product";
+export const BACKROOM_ROOT_ID = "ree-backroom";
 const STORAGE_KEY = "ree-theme";
 const ATTRIBUTE = "data-lp-theme";
 
@@ -45,8 +46,9 @@ const dockPatch =
 const icon =
   "absolute inset-0 size-full transition-[opacity,transform,color] duration-500 ease-out motion-reduce:transition-none";
 
-// Floating controls pinned to the middle of the right edge.
-export function ThemeControls({ rootId, inline = false }: { rootId: string; inline?: boolean }) {
+// The theme switch on its own: a small cream patch with the sun / moon. The dock below carries it,
+// and the backroom's header (backroom/backroom-header.tsx) wears it on its own.
+export function ThemeToggle({ rootId, className = "-rotate-3" }: { rootId: string; className?: string }) {
   const stopTransition = useRef<(() => void) | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -99,58 +101,65 @@ export function ThemeControls({ rootId, inline = false }: { rootId: string; inli
   }
 
   return (
-    <div className={inline ? "relative" : "lp-dock fixed top-1/2 right-3 z-[110] -translate-y-1/2 sm:right-5"}>
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-disabled={isTransitioning}
+      aria-label="Switch between light and dark theme"
+      title="Switch theme"
+      className={`${dockPatch} group/btn ${className}`}
+    >
+      <span className="relative block size-4">
+        {/* Sun: shown in dark mode, meaning "switch to light". */}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.6}
+          strokeLinecap="round"
+          className={`${icon} opacity-100 group-data-[lp-theme=light]/theme:rotate-90 group-data-[lp-theme=light]/theme:scale-50 group-data-[lp-theme=light]/theme:opacity-0`}
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4.2" />
+          <path d="M12 2.4v2.2M12 19.4v2.2M2.4 12h2.2M19.4 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M5.2 18.8l1.6-1.6M17.2 6.8l1.6-1.6" />
+        </svg>
+        {/* Moon: shown in light mode, meaning "switch back to dark". */}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.6}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`${icon} -rotate-90 scale-50 opacity-0 group-data-[lp-theme=light]/theme:rotate-0 group-data-[lp-theme=light]/theme:scale-100 group-data-[lp-theme=light]/theme:opacity-100`}
+          aria-hidden="true"
+        >
+          <path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6Z" />
+        </svg>
+      </span>
+    </button>
+  );
+}
+
+// Floating controls pinned to the middle of the right edge.
+export function ThemeControls({ rootId }: { rootId: string }) {
+  return (
+    <div className="lp-dock fixed top-1/2 right-3 z-[110] -translate-y-1/2 sm:right-5">
       {/* A cloth patch in the logo's emerald, like the header's menu and bag tiles (the user asked for
           the dock as patchwork too): cream running stitch, a slight tilt, and each button a small cream
           patch sewn on with an emerald stitch that straightens on hover. Fixed colours, as the header's. */}
       <div className="lp-patch flex rotate-2 flex-col items-center gap-1.5 bg-lp-brand p-1.5 text-lp-brand-base shadow-[0_12px_24px_rgb(0_0_0/.38)] [--lp-stitch-inset:3px] group-data-[lp-theme=dark]/theme:bg-lp-brand-deep group-data-[lp-theme=light]/theme:shadow-[0_12px_24px_rgb(60_40_28/.22)]">
-        <button
-          type="button"
-          onClick={toggleTheme}
-          aria-disabled={isTransitioning}
-          aria-label="Switch between light and dark theme"
-          title="Switch theme"
-          className={`${dockPatch} group/btn -rotate-3`}
-        >
-          <span className="relative block size-4">
-            {/* Sun: shown in dark mode, meaning "switch to light". */}
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.6}
-              strokeLinecap="round"
-              className={`${icon} opacity-100 group-data-[lp-theme=light]/theme:rotate-90 group-data-[lp-theme=light]/theme:scale-50 group-data-[lp-theme=light]/theme:opacity-0`}
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="4.2" />
-              <path d="M12 2.4v2.2M12 19.4v2.2M2.4 12h2.2M19.4 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M5.2 18.8l1.6-1.6M17.2 6.8l1.6-1.6" />
-            </svg>
-            {/* Moon: shown in light mode, meaning "switch back to dark". */}
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.6}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={`${icon} -rotate-90 scale-50 opacity-0 group-data-[lp-theme=light]/theme:rotate-0 group-data-[lp-theme=light]/theme:scale-100 group-data-[lp-theme=light]/theme:opacity-100`}
-              aria-hidden="true"
-            >
-              <path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6Z" />
-            </svg>
-          </span>
-        </button>
+        <ThemeToggle rootId={rootId} />
 
         {/* TODO: wire up locale switching; for now this only shows the current language. */}
-        {!inline && <button
+        <button
           type="button"
           aria-label="Switch language"
           title="Switch language"
           className={`${dockPatch} rotate-2 text-[9px] font-medium tracking-[.08em]`}
         >
           EN
-        </button>}
+        </button>
       </div>
     </div>
   );

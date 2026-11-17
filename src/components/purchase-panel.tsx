@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { useState, type CSSProperties } from "react";
-import { formatPrice, type Product } from "../data/products";
+import { formatPrice, soldOut, type Product } from "../data/products";
 import { HoverDetails } from "./hover-details";
 import { Icon } from "./landing-icons";
 import { useShop } from "./shop-store";
@@ -21,12 +21,16 @@ const patch = "lp-patch shadow-sm shadow-black/25 [--lp-stitch-inset:3px] transi
 // Size choice, add to bag and wishlist, shared by both product page templates.
 export function PurchasePanel({ product, showPrice = true }: { product: Product; showPrice?: boolean }) {
   const { addToCart, toggleWishlist, wishlist } = useShop();
-  const [size, setSize] = useState<string | null>(product.sizes.length === 1 ? product.sizes[0] : null);
+  // Sizes with tracked stock at 0 (set in the backroom) show as sold out and cannot be picked.
+  const available = product.sizes.filter((label) => !soldOut(product, label));
+  const allGone = product.sizes.length > 0 && available.length === 0;
+  const [size, setSize] = useState<string | null>(available.length === 1 && product.sizes.length === 1 ? available[0] : null);
   const [added, setAdded] = useState(false);
   const [nudge, setNudge] = useState(false);
   const saved = wishlist.includes(product.slug);
 
   function add() {
+    if (allGone) return;
     if (!size) {
       setNudge(true);
       setTimeout(() => setNudge(false), 500);
@@ -73,13 +77,16 @@ export function PurchasePanel({ product, showPrice = true }: { product: Product;
       <motion.ul animate={nudge ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }} transition={{ duration: 0.45 }} className="mt-3 flex flex-wrap gap-2.5" aria-label="Sizes">
         {product.sizes.map((label, index) => {
           const selected = size === label;
+          const gone = soldOut(product, label);
           return (
             <li key={label}>
               <button
                 type="button"
                 onClick={() => setSize(label)}
                 aria-pressed={selected}
-                className={`${patch} grid h-11 min-w-11 cursor-pointer place-items-center px-3 text-[11px] leading-none ${index % 2 ? "rotate-2" : "-rotate-2"} ${selected ? "rotate-0 bg-lp-text text-lp-bg" : "bg-lp-text/10 text-lp-muted hover:text-lp-text"}`}
+                disabled={gone}
+                aria-label={gone ? `${label}, sold out` : undefined}
+                className={`${patch} grid h-11 min-w-11 cursor-pointer place-items-center px-3 text-[11px] leading-none disabled:cursor-not-allowed disabled:line-through disabled:opacity-45 ${index % 2 ? "rotate-2" : "-rotate-2"} ${selected ? "rotate-0 bg-lp-text text-lp-bg" : "bg-lp-text/10 text-lp-muted hover:text-lp-text"}`}
               >
                 {label}
               </button>
@@ -88,16 +95,17 @@ export function PurchasePanel({ product, showPrice = true }: { product: Product;
         })}
       </motion.ul>
       <p className="mt-2 min-h-4 text-[11px] text-lp-muted" aria-live="polite">
-        {size ? `Size ${size}` : "Pick a size to continue"}
+        {allGone ? "Sold out in every size for now" : size ? `Size ${size}` : "Pick a size to continue"}
       </p>
 
       <button
         type="button"
         onClick={add}
-        className={`${patch} mt-4 flex min-h-12 w-full -rotate-[.5deg] cursor-pointer items-center justify-center gap-3 px-4 text-[11px] font-medium tracking-[.1em] uppercase [--lp-stitch-inset:5px] ${added ? "bg-lp-accent text-lp-ink" : "bg-lp-text text-lp-bg hover:bg-lp-accent hover:text-lp-ink"}`}
+        disabled={allGone}
+        className={`${patch} mt-4 flex disabled:cursor-not-allowed disabled:opacity-50 min-h-12 w-full -rotate-[.5deg] cursor-pointer items-center justify-center gap-3 px-4 text-[11px] font-medium tracking-[.1em] uppercase [--lp-stitch-inset:5px] ${added ? "bg-lp-accent text-lp-ink" : "bg-lp-text text-lp-bg hover:bg-lp-accent hover:text-lp-ink"}`}
       >
         <Icon name={added ? "check" : "plus"} />
-        {added ? "Added to your bag" : showPrice ? `Add to cart · ${formatPrice(product.price)}` : "Add to bag"}
+        {allGone ? "Sold out" : added ? "Added to your bag" : showPrice ? `Add to cart · ${formatPrice(product.price)}` : "Add to bag"}
       </button>
       <button
         type="button"

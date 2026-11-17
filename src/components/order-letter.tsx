@@ -16,9 +16,13 @@ import { PageButton, smallPatch } from "./site-page";
 // section carries `data-paper-page`, which turns the whole page into paper (globals.css); on it lie
 // the folded letter with a stamp and postmark, a taped photograph of the first piece and the totals
 // on a slip torn from a ring-bound pad. The paper keeps fixed colours in both themes, like the
-// header's panels. The P.S. says plainly that nothing has been sent.
+// header's panels. The P.S. says the studio will call to confirm, or, for a preview letter
+// (`sent` false, no Supabase yet), plainly that nothing has been sent.
 
 export type PlacedOrder = {
+  // True when the order reached the database (checkout's placeOrder action); false for the preview
+  // letter shown before Supabase is configured.
+  sent: boolean;
   number: string;
   date: string;
   dateShort: string;
@@ -154,7 +158,9 @@ function Letter({ order, forPdf = false }: { order: PlacedOrder; forPdf?: boolea
       </div>
 
       <p className={`${hand.className} mt-12 max-w-[46ch] -rotate-1 text-[22px] leading-snug text-[#6b3f22] sm:text-[24px]`}>
-        P.S. This is a preview of the shop: your order hasn&apos;t been sent anywhere, and nothing will be delivered or charged yet.
+        {order.sent
+          ? "P.S. We'll ring you on the number above to confirm before anything is packed. Keep this letter: your order number is at the top."
+          : "P.S. This is a preview of the shop: your order hasn't been sent anywhere, and nothing will be delivered or charged yet."}
       </p>
     </article>
   );

@@ -32,6 +32,9 @@ export const iconPaths = {
   pin: "M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11Zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z",
   needle: "M3 21 15.5 8.5m1.4-1.4 2.1 2.1m-2.1-2.1a1.5 1.5 0 1 1 2.1 2.1 1.5 1.5 0 0 1-2.1-2.1Z",
   tag: "M3 12V4h8l10 10-8 8-10-10Zm4-4h.01",
+  // The backroom's sections: collections (stacked cloth), banners (a framed photograph).
+  layers: "M12 3.5 3 8l9 4.5L21 8l-9-4.5ZM3 12l9 4.5 9-4.5M3 16l9 4.5 9-4.5",
+  image: "M3.5 5h17v14h-17ZM3.5 16l5-5 4 4 2.5-2.5 5.5 5.5M15.5 9h.01",
 };
 
 export type IconName = keyof typeof iconPaths;

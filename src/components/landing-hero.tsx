@@ -1,10 +1,7 @@
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import campaignStage from "../../public/landing/campaign-stage.webp";
-import campaignLounge from "../../public/landing/campaign-lounge-wide.webp";
-import campaignStairs from "../../public/landing/campaign-stairs-wide.webp";
-import campaignAhnaf from "../../public/landing/campaign-ahnaf-wide.webp";
+import { getHeroSlides } from "../lib/catalog";
 import styles from "./landing-hero.module.css";
 import { SiteHeader } from "./site-header";
 
@@ -22,44 +19,12 @@ const timing = {
   fade: 500, // afterwards, the card that left fades back in on the right
 };
 
-// The slides, in the order they take the middle frame; the first is there on load, the
-// second starts on the right and the last on the left. Every slide is one full-screen
-// photograph: it is the hero's background while its card holds the frame, and the card
-// itself only ever shows the cut-out of that photograph that lies under the frame.
-// Add a slide by adding an entry (a 1840 × 1090 image, subject's head under the frame).
-// `hidden` keeps a slide in the list but out of the show.
-type Slide = { src: StaticImageData; alt: string; href: string; label: string; hidden?: boolean };
-
-const allSlides: Slide[] = [
-  {
-    src: campaignStage,
-    alt: "A model in a tailored herringbone suit and leather gloves, seated in a burgundy lounge chair under a warm spotlight.",
-    href: "/collections",
-    label: "Shop the curated collections",
-  },
-  {
-    // The user's own photograph (assets/hero/ahnaf-2-original.png), scaled and cropped to the
-    // hero's canvas with the subject under the frame; see docs/landing-hero-assets.md.
-    src: campaignAhnaf,
-    alt: "A man in a mustard graphic tee, flat cap and sunglasses, seated on old stone steps under sunlit trees.",
-    href: "/shop",
-    label: "Shop the everyday tees",
-    hidden: true, // held back for now; the mustard tee is not announced yet
-  },
-  {
-    src: campaignLounge,
-    alt: "A model in a textured trench coat and burgundy boots on a green velvet bench.",
-    href: "/shop",
-    label: "Discover the new season edit",
-  },
-  {
-    src: campaignStairs,
-    alt: "A model in a beige suit walking down sunlit terracotta stairs.",
-    href: "/collections/formal-wear",
-    label: "Explore tailored essentials",
-  },
-];
-const slides = allSlides.filter((slide) => !slide.hidden);
+// The slides come from the backroom (/backroom/banners, the `hero_slides` table; the starter set in
+// src/data/hero-slides.ts until Supabase is configured), in the order they take the middle frame:
+// the first is there on load, the second starts on the right and the last on the left. Every slide
+// is one full-screen photograph: it is the hero's background while its card holds the frame, and
+// the card itself only ever shows the cut-out of that photograph that lies under the frame. The
+// show needs three or more slides to move; with fewer they stand still.
 
 const SCENE_SIZES = "(max-width: 767px) 170vh, 100vw";
 const MOVE_EASE = "cubic-bezier(.7, 0, .2, 1)";
@@ -144,7 +109,9 @@ function CornerArrow({ className }: { className: string }) {
   );
 }
 
-export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
+export async function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
+  const slides = await getHeroSlides();
+  const moving = slides.length >= 3;
   return (
     <header
       id="top"
@@ -152,12 +119,12 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
       aria-labelledby="hero-title"
       style={{ "--hero-beat": `${timing.beat}ms`, "--hero-loop": `${timing.beat * slides.length}ms` } as CSSProperties}
     >
-      <style dangerouslySetInnerHTML={{ __html: slideshowCss(slides.length) }} />
+      {moving && <style dangerouslySetInnerHTML={{ __html: slideshowCss(slides.length) }} />}
       {slides.map((slide, index) => (
         <div
-          key={slide.src.src}
+          key={`${slide.src}-${index}`}
           className={`${styles.backdrop} ${index === 0 ? "" : styles.backdropWaiting}`}
-          style={{ animationName: `ree-hero-scene-${index}` }}
+          style={{ animationName: moving ? `ree-hero-scene-${index}` : "none" }}
         >
           <div className={styles.scene}>
             <Image
@@ -196,10 +163,10 @@ export function LandingHero({ themeControls }: { themeControls?: ReactNode }) {
         const slot = role === 0 ? styles.atMiddle : role === slides.length - 1 ? styles.atLeft : role === 1 ? styles.atRight : styles.waiting;
         return (
           <Link
-            key={slide.src.src}
+            key={`${slide.src}-${index}`}
             href={slide.href}
             className={`${styles.slide} ${slot}`}
-            style={{ animationName: `ree-hero-card-${index}` }}
+            style={{ animationName: moving ? `ree-hero-card-${index}` : "none" }}
             aria-label={slide.label}
           >
             {/* A brightened copy of the slide's backdrop in a hero-sized box, so that in the

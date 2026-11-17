@@ -3,43 +3,48 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FREE_DELIVERY_FROM, deliveryAreas } from "../data/checkout";
-import { formatPrice, getProduct, type Product } from "../data/products";
+import { formatPrice, type Product } from "../data/products";
+import { useCatalog } from "./catalog-client";
 import { Icon } from "./landing-icons";
 import { useHydrated, useShop, type CartLine } from "./shop-store";
 import { garmentCloth } from "./shop-ui";
 import { EmptyNote, PageButton, PageIntro, ShopGrid, bodyText, cloths, patchShadow, sectionTitle } from "./site-page";
 
 // The bag (/cart): every line as a cloth patch with a quantity stepper, a summary with the delivery
-// promise, and the saved pieces underneath. It reads the localStorage store, so it renders after
-// hydration; there is no backend.
+// promise, and the saved pieces underneath. The bag lives in the localStorage store and the pieces
+// come from the catalogue (useCatalog), so it renders once both are in.
 
 const MAX_QTY = 10;
 
 export type BagLine = CartLine & { product: Product };
 
+// `ready` is false until the catalogue has arrived; a line whose piece is no longer published is
+// left out (and so never reaches checkout).
 export function useBag() {
   const shop = useShop();
+  const catalog = useCatalog();
   const lines: BagLine[] = shop.cart.flatMap((line) => {
-    const product = getProduct(line.slug);
+    const product = catalog.find(line.slug);
     return product ? [{ ...line, product }] : [];
   });
   const count = lines.reduce((sum, line) => sum + line.qty, 0);
   const subtotal = lines.reduce((sum, line) => sum + line.qty * line.product.price, 0);
-  return { ...shop, lines, count, subtotal };
+  return { ...shop, lines, count, subtotal, ready: catalog.ready, find: catalog.find };
 }
 
 export function CartView() {
   const hydrated = useHydrated();
-  const { lines, count, subtotal, wishlist, setQty, removeLine } = useBag();
-  const saved = wishlist.flatMap((slug) => getProduct(slug) ?? []);
+  const { lines, count, subtotal, wishlist, setQty, removeLine, ready: catalogReady, find } = useBag();
+  const ready = hydrated && catalogReady;
+  const saved = wishlist.flatMap((slug) => find(slug) ?? []);
   const toFree = Math.max(0, FREE_DELIVERY_FROM - subtotal);
   const cheapest = Math.min(...deliveryAreas.map((area) => area.fee));
 
   return (
     <>
-      <PageIntro eyebrow={hydrated ? `Your bag · ${count} ${count === 1 ? "item" : "items"}` : "Your bag"} title="Your bag" />
+      <PageIntro eyebrow={ready ? `Your bag · ${count} ${count === 1 ? "item" : "items"}` : "Your bag"} title="Your bag" />
 
-      {!hydrated ? (
+      {!ready ? (
         <div className="min-h-[40vh] border-t border-lp-border" aria-hidden="true" />
       ) : lines.length === 0 ? (
         <EmptyNote
@@ -152,7 +157,7 @@ export function CartView() {
         </div>
       )}
 
-      {hydrated && saved.length > 0 && (
+      {ready && saved.length > 0 && (
         <section aria-labelledby="saved-title" className="border-t border-lp-border pt-8">
           <h2 id="saved-title" className={`${sectionTitle} px-[3%]`}>
             Saved for later

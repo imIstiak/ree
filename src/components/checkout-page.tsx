@@ -5,6 +5,7 @@ import { MotionConfig, motion } from "motion/react";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { FREE_DELIVERY_FROM, deliveryAreas, deliveryFee, type DeliveryArea } from "../data/checkout";
 import { formatPrice } from "../data/products";
+import { placeOrder, type PlaceOrderResult } from "../app/checkout/actions";
 import { BrandLogo } from "./brand-logo";
 import { useBag } from "./cart-page";
 import { Icon } from "./landing-icons";
@@ -19,8 +20,10 @@ import { PRODUCT_ROOT_ID } from "./theme-controls";
 // off its pad, numbered sections, answers written in blue ballpoint on the lines, printed tick
 // boxes, and a declaration signed with the name as it is typed, closed by a stamp. The bag rides
 // beside it on a paper-clipped slip. The section's `data-paper-page` turns the page into paper
-// (globals.css). There is no backend, so placing the order empties the bag and shows the letter
-// (order-letter.tsx), whose P.S. says nothing was sent; no payment details are ever asked for.
+// (globals.css). Placing the order sends it to Supabase through the placeOrder server action
+// (app/checkout/actions.ts), which prices it from the database, then empties the bag and shows the
+// letter (order-letter.tsx). Until Supabase is configured the action answers `offline` and the
+// letter's P.S. says nothing was sent. No payment details are ever asked for.
 // Delivery fees come from src/data/checkout.ts.
 
 const payments = [
@@ -93,7 +96,10 @@ function Paperclip({ className = "" }: { className?: string }) {
 
 export function CheckoutView() {
   const hydrated = useHydrated();
-  const { lines, subtotal, clearCart } = useBag();
+  const { lines, subtotal, clearCart, ready: catalogReady } = useBag();
+  const ready = hydrated && catalogReady;
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [area, setArea] = useState<DeliveryArea>("dhaka");
   const [payment, setPayment] = useState<(typeof payments)[number]["id"]>("cod");
   const [signature, setSignature] = useState("");
@@ -102,25 +108,53 @@ export function CheckoutView() {
   const free = subtotal >= FREE_DELIVERY_FROM;
   const areaLabel = deliveryAreas.find((option) => option.id === area)?.label ?? "";
 
-  function placeOrder(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending) return;
     const form = new FormData(event.currentTarget);
     const text = (key: string) => String(form.get(key) ?? "").trim();
-    const now = new Date();
     const chosen = payments.find((option) => option.id === payment) ?? payments[0];
+    setPending(true);
+    setError(null);
+    let result: PlaceOrderResult;
+    try {
+      result = await placeOrder({
+        name: text("name"),
+        phone: text("phone"),
+        email: text("email"),
+        area,
+        address: text("address"),
+        city: text("city"),
+        note: text("note"),
+        payment,
+        lines: lines.map(({ slug, size, qty }) => ({ slug, size, qty })),
+      });
+    } catch {
+      result = { ok: false, error: "We couldn't reach the shop. Please check your connection and try again." };
+    }
+    setPending(false);
+    if (!result.ok && !result.offline) {
+      setError(result.error);
+      return;
+    }
+
+    // Sent: the number, date and prices are the database's. Offline: a preview letter as before.
+    const sent = result.ok ? result : null;
+    const when = sent ? new Date(sent.createdAt) : new Date();
     setPlaced({
-      number: `REE-${now.getTime().toString(36).slice(-6).toUpperCase()}`,
-      date: new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(now),
-      dateShort: new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(now).toUpperCase(),
+      sent: Boolean(sent),
+      number: sent ? sent.number : `REE-${when.getTime().toString(36).slice(-6).toUpperCase()}`,
+      date: new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(when),
+      dateShort: new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(when).toUpperCase(),
       name: text("name"),
       phone: text("phone"),
       address: [text("address"), text("city")].filter(Boolean).join(", "),
       areaLabel,
       payment: chosen.label,
       paymentNote: chosen.phrase,
-      lines,
-      subtotal,
-      delivery,
+      lines: sent ? lines.map((line) => ({ ...line, product: { ...line.product, price: sent.prices[line.slug] ?? line.product.price } })) : lines,
+      subtotal: sent ? sent.subtotal : subtotal,
+      delivery: sent ? sent.delivery : delivery,
     });
     clearCart();
     document.getElementById(PRODUCT_ROOT_ID)?.scrollTo({ top: 0 });
@@ -131,14 +165,14 @@ export function CheckoutView() {
   return (
     <MotionConfig reducedMotion="user">
       <section data-paper-page aria-label="Checkout" className="px-[3%] pt-4 pb-16 lg:pt-[2%] lg:pb-[5%]">
-        {!hydrated ? (
+        {!ready ? (
           <div className="min-h-[60vh]" aria-hidden="true" />
         ) : lines.length === 0 ? (
           <EmptyNote tone="brand" title="Nothing to check out" actions={<PageButton href="/shop">Shop everything</PageButton>}>
             Your bag is empty. Add a piece or two and come back.
           </EmptyNote>
         ) : (
-          <form onSubmit={placeOrder} className="mx-auto grid max-w-6xl items-start gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(260px,330px)]">
+          <form onSubmit={submit} aria-busy={pending} className="mx-auto grid max-w-6xl items-start gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(260px,330px)]">
             <motion.div
               initial={{ opacity: 0, y: 48, rotate: -2 }}
               animate={{ opacity: 1, y: 0, rotate: -0.4 }}
@@ -250,11 +284,17 @@ export function CheckoutView() {
                     </div>
                     <button
                       type="submit"
-                      className="inline-flex -rotate-2 cursor-pointer items-center gap-3 border-[3px] border-double border-[#00664f] px-5 py-3 font-lp-display text-[15px] tracking-[.05em] text-[#00664f] uppercase transition-[rotate,background-color,color] duration-300 hover:rotate-0 hover:bg-[#00664f] hover:text-[#fbf6ea] focus-visible:rotate-0 motion-reduce:transition-none"
+                      disabled={pending}
+                      className="inline-flex -rotate-2 cursor-pointer items-center gap-3 disabled:cursor-wait disabled:opacity-60 border-[3px] border-double border-[#00664f] px-5 py-3 font-lp-display text-[15px] tracking-[.05em] text-[#00664f] uppercase transition-[rotate,background-color,color] duration-300 hover:rotate-0 hover:bg-[#00664f] hover:text-[#fbf6ea] focus-visible:rotate-0 motion-reduce:transition-none"
                     >
-                      Place order · {formatPrice(subtotal + delivery)} <Icon name="arrowRight" />
+                      {pending ? "Placing your order…" : `Place order · ${formatPrice(subtotal + delivery)}`} <Icon name="arrowRight" />
                     </button>
                   </div>
+                  {error && (
+                    <p role="alert" className="mt-5 border-l-[3px] border-[#b4402c] pl-3 font-lp-serif text-[16px] leading-snug text-[#b4402c]">
+                      {error}
+                    </p>
+                  )}
                 </Section>
 
                 <div aria-hidden="true" className={`mt-12 ml-auto grid max-w-sm grid-cols-3 border border-dashed border-[#2b1d15]/40 text-[9px] tracking-[.16em] uppercase ${faded}`}>

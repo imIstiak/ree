@@ -1,4 +1,5 @@
 import { MossWordmark } from "./moss-wordmark";
+import { getCollections } from "../lib/catalog";
 import Image from "next/image";
 import { BrandLogo } from "./brand-logo";
 import { LandingHero } from "./landing-hero";
@@ -81,15 +82,6 @@ const patchwork = [
   { text: "with everyday comfort.", className: "-mt-1 ml-5 bg-lp-deep text-lp-text rotate-1" },
 ];
 
-// Every tab opens its collection's page; Street style, home of the story tee, wears the accent patch.
-const collectionTabs = [
-  { label: "Casual wear", href: "/collections/casual-wear" },
-  { label: "Loungewear", href: "/collections/loungewear" },
-  { label: "Street style", href: "/collections/street-style" },
-  { label: "Outerwear", href: "/collections/outerwear" },
-  { label: "Handloom", href: "/collections/handloom" },
-  { label: "Formal wear", href: "/collections/formal-wear" },
-];
 
 // The collection is a brick wall in running bond. Desktop: six-column base, bricks two columns wide;
 // row 2 shifts by one column and is closed with cloth half-bricks (c1, c4); the featured edit is a
@@ -351,7 +343,10 @@ function Patchwork() {
   );
 }
 
-export function LandingMain() {
+export async function LandingMain() {
+  // Every tab opens its collection's page (the published collections, in the backroom's order);
+  // the third wears the accent patch.
+  const collectionTabs = (await getCollections()).map((collection) => ({ label: collection.name, href: `/collections/${collection.slug}` }));
   return (
     // globals.css locks body scrolling for the coming-soon page, so this wrapper is the scroll container.
     // It also carries the landing theme (data-lp-theme); see landing-theme-toggle.tsx.
