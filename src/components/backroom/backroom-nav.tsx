@@ -11,7 +11,8 @@ const links: { href: string; label: string; icon: IconName }[] = [
   { href: "/backroom/banners", label: "Banners", icon: "image" },
 ];
 
-// The sidebar's sections; the current one is a cream patch on the emerald.
+// The sidebar's sections; the current one is a cream patch on the emerald, the others only their
+// running stitch on the bare sidebar (the user asked for outlined, see-through tabs).
 export function BackroomNav() {
   const pathname = usePathname();
   return (
@@ -23,7 +24,7 @@ export function BackroomNav() {
             key={link.href}
             href={link.href}
             aria-current={current ? "page" : undefined}
-            className={`lp-patch flex min-h-11 flex-1 items-center gap-3 px-4 text-[12px] tracking-[.1em] uppercase [--lp-stitch-inset:3px] transition-[background-color,rotate] motion-reduce:transition-none ${index % 2 ? "rotate-[.6deg]" : "-rotate-[.6deg]"} ${current ? "rotate-0 bg-lp-brand-base text-lp-brand" : "hover:bg-lp-brand-deep"}`}
+            className={`flex min-h-11 flex-1 items-center gap-3 px-4 text-[12px] tracking-[.1em] uppercase transition-[background-color,rotate] motion-reduce:transition-none ${index % 2 ? "rotate-[.6deg]" : "-rotate-[.6deg]"} ${current ? "lp-patch rotate-0 bg-lp-brand-base text-lp-brand [--lp-stitch-inset:3px]" : "bg-transparent [outline:1px_dashed_color-mix(in_oklab,currentColor_60%,transparent)] [outline-offset:-3px] hover:bg-lp-brand-base/10"}`}
           >
             <Icon name={link.icon} className="size-4" />
             {link.label}

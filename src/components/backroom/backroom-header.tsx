@@ -9,7 +9,7 @@ import { ProfileMenu } from "./profile-menu";
 export function BackroomHeader({ name, email }: { name: string; email: string }) {
   return (
     <div className="sticky top-0 z-30 bg-lp-bg pt-3 pb-4 lg:pt-5 lg:pb-6">
-      <header className="lp-patch flex h-16 items-center justify-between gap-4 bg-lp-brand px-4 text-lp-brand-base shadow-[0_10px_24px_rgb(0_0_0/.18)] [--lp-stitch-inset:6px] sm:px-6">
+      <header className="lp-patch flex h-16 items-center justify-between gap-4 bg-lp-brand-cloth px-4 text-lp-brand-base shadow-[0_10px_24px_rgb(0_0_0/.18)] [--lp-stitch-inset:6px] sm:px-6">
         <Breadcrumbs />
         <div className="flex flex-none items-center gap-4">
           <ThemeToggle rootId={BACKROOM_ROOT_ID} className="size-9 -rotate-3" />

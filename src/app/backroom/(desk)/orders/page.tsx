@@ -33,7 +33,7 @@ export default async function OrdersPage({ searchParams }: PageProps<"/backroom/
                 key={tab.label}
                 href={href(tab.value)}
                 aria-current={current ? "page" : undefined}
-                className={`lp-patch inline-flex min-h-10 items-center gap-2 px-3 text-[11px] tracking-[.1em] uppercase [--lp-stitch-inset:3px] ${index % 2 ? "rotate-[.5deg]" : "-rotate-[.5deg]"} ${current ? "rotate-0 bg-lp-brand text-lp-brand-base" : "bg-lp-card hover:bg-lp-accent hover:text-lp-ink"}`}
+                className={`lp-patch inline-flex min-h-10 items-center gap-2 px-3 text-[11px] tracking-[.1em] uppercase [--lp-stitch-inset:3px] ${index % 2 ? "rotate-[.5deg]" : "-rotate-[.5deg]"} ${current ? "rotate-0 bg-lp-brand-cloth text-lp-brand-base" : "bg-lp-card hover:bg-lp-accent hover:text-lp-ink"}`}
               >
                 {tab.label}
                 <span className="opacity-60">{tab.count}</span>

@@ -6,7 +6,7 @@ import { listCollections } from "../../../../lib/backroom-data";
 import { supabaseConfigured } from "../../../../lib/supabase";
 
 const statusCloth = {
-  published: "bg-lp-brand text-lp-brand-base",
+  published: "bg-lp-brand-cloth text-lp-brand-base",
   draft: "bg-lp-accent text-lp-ink",
   archived: "bg-lp-text/10 text-lp-muted",
 } as const;

@@ -355,6 +355,12 @@
   --color-lp-brand-base: #ffe7cc;
   /* The logo's emerald, deepened for the dark theme so it reads as dark as the logo does there. */
   --color-lp-brand-deep: #004d3b;
+  /* The same two emeralds as a fill under `lp-patch`: the grain's overlay lifts a dark fill by about
+     15% (#00664f comes out #00755b), so these deeper fills read as the logo's colours once the grain
+     is on them. The backroom's header, sidebar and emerald buttons use them (the user saw them come
+     out lighter than the logo). */
+  --color-lp-brand-cloth: #005945;
+  --color-lp-brand-deep-cloth: #004333;
   /* Cloth colours for the story-tile patches (kantha palette); the same in both themes. */
   --color-lp-patch-mustard: #d4a52a;
   --color-lp-patch-madder: #b4402c;

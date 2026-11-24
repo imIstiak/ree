@@ -13,7 +13,7 @@ export const fieldLabel = "block text-[10px] tracking-[.14em] text-lp-muted uppe
 export const input =
   "mt-1.5 block w-full border border-lp-border bg-white/70 px-3 py-2.5 text-[13px] text-lp-text outline-none transition-colors placeholder:text-lp-muted/60 focus:border-lp-brand focus:bg-white motion-reduce:transition-none group-data-[lp-theme=dark]/theme:bg-black/25 group-data-[lp-theme=dark]/theme:focus:border-lp-accent group-data-[lp-theme=dark]/theme:focus:bg-black/40";
 export const primaryButton =
-  "lp-patch inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 bg-lp-brand px-5 text-[11px] font-medium tracking-[.12em] text-lp-brand-base uppercase shadow-sm shadow-black/20 [--lp-stitch-inset:4px] transition-colors hover:bg-lp-brand-deep disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none";
+  "lp-patch inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 bg-lp-brand-cloth px-5 text-[11px] font-medium tracking-[.12em] text-lp-brand-base uppercase shadow-sm shadow-black/20 [--lp-stitch-inset:4px] transition-colors hover:bg-lp-brand-deep-cloth disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none";
 export const quietButton =
   "lp-patch inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 bg-lp-card px-5 text-[11px] tracking-[.12em] text-lp-text uppercase shadow-sm shadow-black/10 [--lp-stitch-inset:4px] transition-colors hover:bg-lp-accent hover:text-lp-ink motion-reduce:transition-none";
 
@@ -35,12 +35,12 @@ const statusCloth: Record<OrderStatus, string> = {
   confirmed: "bg-lp-patch-indigo text-lp-canvas",
   packed: "bg-lp-patch-olive text-lp-canvas",
   shipped: "bg-lp-patch-terracotta text-lp-ink",
-  delivered: "bg-lp-brand text-lp-brand-base",
+  delivered: "bg-lp-brand-cloth text-lp-brand-base",
   cancelled: "bg-lp-text/10 text-lp-muted line-through",
 };
 const paymentCloth: Record<PaymentStatus, string> = {
   unpaid: "bg-lp-text/10 text-lp-text",
-  paid: "bg-lp-brand text-lp-brand-base",
+  paid: "bg-lp-brand-cloth text-lp-brand-base",
   refunded: "bg-lp-patch-madder text-lp-canvas",
 };
 

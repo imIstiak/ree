@@ -16,7 +16,7 @@ export default async function DeskLayout({ children }: { children: ReactNode }) 
   return (
     <CrumbsProvider>
       <div className="min-h-full lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
-        <aside className="lp-patch bg-lp-brand text-lp-brand-base [--lp-stitch-inset:8px] group-data-[lp-theme=dark]/theme:bg-lp-brand-deep lg:sticky lg:top-0 lg:h-svh">
+        <aside className="lp-patch bg-lp-brand-cloth text-lp-brand-base [--lp-stitch-inset:8px] group-data-[lp-theme=dark]/theme:bg-lp-brand-deep-cloth lg:sticky lg:top-0 lg:h-svh">
           <Link href="/backroom/orders" className="flex items-center gap-3 px-6 py-5 lg:block lg:py-8">
             <BrandLogo variant="mark" className="w-9 lg:w-12" decorative />
             <span className="block lg:mt-3">
