@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCollectionSummary, getSeasonRow } from "../../lib/backroom-data";
-import { isUuid, needsSupabase, readBanner, removePhotos, repointSlides, slugify, text, type FormState } from "../../lib/backroom-forms";
+import { cleaningUploads, isUuid, needsSupabase, readBanner, removePhotos, repointSlides, slugify, text, type FormState } from "../../lib/backroom-forms";
 import { requireAdmin } from "../../lib/backroom-session";
 import { supabase, supabaseConfigured, type HeroSlideRow } from "../../lib/supabase";
 
@@ -21,6 +21,11 @@ function done(path: string): never {
 
 // ── Collections ──────────────────────────────────────────────────────────────────────────────
 export async function saveCollection(_: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  return cleaningUploads(form, ["banner_uploaded"], () => writeCollection(form));
+}
+
+async function writeCollection(form: FormData): Promise<FormState> {
   await requireAdmin();
   const missing = needsSupabase();
   if (missing) return missing;
@@ -78,6 +83,11 @@ export async function deleteCollection(form: FormData) {
 
 // ── Seasons ──────────────────────────────────────────────────────────────────────────────────
 export async function saveSeason(_: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  return cleaningUploads(form, ["banner_uploaded"], () => writeSeason(form));
+}
+
+async function writeSeason(form: FormData): Promise<FormState> {
   await requireAdmin();
   const missing = needsSupabase();
   if (missing) return missing;
@@ -144,7 +154,7 @@ export async function saveSeason(_: FormState, form: FormData): Promise<FormStat
   if (leaving.length) await db.from("products").update({ season_id: null }).in("id", leaving);
   if (picked.length) {
     const { error } = await db.from("products").update({ season_id: seasonId }).in("id", picked);
-    if (error) return { error: `Saved the season, but could not file its products: ${error.message}` };
+    if (error) return { error: `Saved the season, but could not file its products: ${error.message}`, keepUploads: true };
   }
 
   done(`/backroom/collections/${collection.id}/seasons/${seasonId}?saved=${existing ? "1" : "new"}`);
@@ -164,6 +174,11 @@ export async function deleteSeason(form: FormData) {
 
 // ── Hero slides ──────────────────────────────────────────────────────────────────────────────
 export async function saveSlide(_: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  return cleaningUploads(form, ["image_uploaded"], () => writeSlide(form));
+}
+
+async function writeSlide(form: FormData): Promise<FormState> {
   await requireAdmin();
   const missing = needsSupabase();
   if (missing) return missing;

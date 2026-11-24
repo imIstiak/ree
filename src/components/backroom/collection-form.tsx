@@ -14,7 +14,7 @@ import { useBackroomForm } from "./use-backroom-form";
 // A collection: its name, address, copy, banner, its card's colour on /collections (picked from the
 // banner, or from its first piece's photo) and whether it is on the shop.
 export function CollectionForm({ collection, pieceCover, readOnly = false }: { collection?: CollectionRow; pieceCover?: string; readOnly?: boolean }) {
-  const { state, pending, onSubmit } = useBackroomForm(saveCollection, readOnly);
+  const { state, pending, busy, onSubmit } = useBackroomForm(saveCollection, readOnly);
   const [name, setName] = useState(collection?.name ?? "");
   const [cardColor, setCardColor] = useState<string | undefined>(collection?.card_color ?? undefined);
   const [bannerSrc, setBannerSrc] = useState<string | null>(collection?.banner?.src ?? null);
@@ -39,6 +39,7 @@ export function CollectionForm({ collection, pieceCover, readOnly = false }: { c
         </label>
         <BannerField
           name="banner"
+          folder="collections/{slug}"
           current={collection?.banner ?? null}
           onPhoto={onBanner}
           label="Banner"
@@ -68,7 +69,7 @@ export function CollectionForm({ collection, pieceCover, readOnly = false }: { c
         <FormError message={state?.error} />
         {!readOnly && (
           <button type="submit" disabled={pending} className={`${primaryButton} w-full`}>
-            {pending ? "Saving…" : collection ? "Save collection" : "Create collection"}
+            {busy ?? (collection ? "Save collection" : "Create collection")}
           </button>
         )}
       </fieldset>

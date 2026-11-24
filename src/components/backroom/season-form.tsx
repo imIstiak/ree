@@ -32,7 +32,7 @@ export function SeasonForm({
   products: SeasonProduct[];
   readOnly?: boolean;
 }) {
-  const { state, pending, onSubmit } = useBackroomForm(saveSeason, readOnly);
+  const { state, pending, busy, onSubmit } = useBackroomForm(saveSeason, readOnly);
   const [number, setNumber] = useState(String(season?.number ?? nextNumber));
   const groups = [
     { key: "this", title: "In this season" },
@@ -66,7 +66,7 @@ export function SeasonForm({
             <span className={fieldLabel}>About the season</span>
             <textarea name="blurb" defaultValue={season?.blurb} rows={4} className={input} />
           </label>
-          <BannerField name="banner" current={season?.banner ?? null} label="Banner" hint="A wide photograph across the top of the season's page (about 21 : 8). Optional." />
+          <BannerField folder={`collections/${collectionSlug}/{slug}`} name="banner" current={season?.banner ?? null} label="Banner" hint="A wide photograph across the top of the season's page (about 21 : 8). Optional." />
         </fieldset>
 
         <fieldset disabled={readOnly} className={`${panel} px-6 py-6`}>
@@ -121,7 +121,7 @@ export function SeasonForm({
         <FormError message={state?.error} />
         {!readOnly && (
           <button type="submit" disabled={pending} className={`${primaryButton} w-full`}>
-            {pending ? "Saving…" : season ? "Save season" : "Create season"}
+            {busy ?? (season ? "Save season" : "Create season")}
           </button>
         )}
       </fieldset>

@@ -716,8 +716,8 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
   [open] .ree-pop-row { animation: ree-row-in 440ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(160ms + var(--i, 0) * 50ms); }
   [data-closing] > .ree-pop { animation: ree-pop-out 560ms cubic-bezier(.8, 0, .8, .2) both; animation-delay: calc(40ms + var(--last, 0) * 50ms); }
   [data-closing] .ree-pop-row { animation: ree-row-out 440ms cubic-bezier(.8, 0, .8, .2) both; animation-delay: calc((var(--last, 0) - var(--i, 0)) * 50ms); }
-  .contact-dialog[open]::backdrop { animation: ree-veil 400ms ease both; }
-  .contact-dialog[data-closing]::backdrop { animation: ree-veil-out 400ms ease 400ms both; }
+  .contact-dialog[open]::backdrop, .ree-modal[open]::backdrop { animation: ree-veil 400ms ease both; }
+  .contact-dialog[data-closing]::backdrop, .ree-modal[data-closing]::backdrop { animation: ree-veil-out 400ms ease 400ms both; }
 }
 
 @keyframes ree-pop-in {

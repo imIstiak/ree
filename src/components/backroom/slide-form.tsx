@@ -10,13 +10,13 @@ import { useBackroomForm } from "./use-backroom-form";
 // One hero slide (or a new one): the photograph, where its card leads, its label for screen
 // readers, whether it is shown and where it falls in the order.
 export function SlideForm({ slide, readOnly = false, saved = false, children }: { slide?: HeroSlideRow; readOnly?: boolean; saved?: boolean; children?: React.ReactNode }) {
-  const { state, pending, onSubmit } = useBackroomForm(saveSlide, readOnly);
+  const { state, pending, busy, onSubmit } = useBackroomForm(saveSlide, readOnly);
   return (
     <div className={`${panel} px-5 py-5`}>
       <form onSubmit={onSubmit} encType="multipart/form-data" className="grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <input type="hidden" name="id" value={slide?.id ?? ""} />
         <fieldset disabled={readOnly} className="min-w-0">
-          <BannerField name="image" current={slide?.image ?? null} wide={false} label={slide ? "Photograph" : "New slide's photograph"} hint="Landscape, about 1840 × 1090, with the subject's head in the middle (the frame in the hero's centre shows that part)." />
+          <BannerField folder="hero" name="image" current={slide?.image ?? null} wide={false} label={slide ? "Photograph" : "New slide's photograph"} hint="Landscape, about 1840 × 1090, with the subject's head in the middle (the frame in the hero's centre shows that part)." />
         </fieldset>
         <fieldset disabled={readOnly} className="min-w-0 space-y-4">
           <label className="block">
@@ -48,7 +48,7 @@ export function SlideForm({ slide, readOnly = false, saved = false, children }: 
           )}
           {!readOnly && (
             <button type="submit" disabled={pending} className={`${primaryButton} w-full`}>
-              {pending ? "Saving…" : slide ? "Save slide" : "Add slide"}
+              {busy ?? (slide ? "Save slide" : "Add slide")}
             </button>
           )}
         </fieldset>

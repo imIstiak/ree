@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { importStarterCatalogue } from "../../actions";
+import { CreateModal } from "../../../../components/backroom/create-modal";
+import { ProductForm } from "../../../../components/backroom/product-form";
 import { Notice, PageHead, panel, primaryButton } from "../../../../components/backroom/ui";
 import { formatPrice } from "../../../../data/products";
-import { listProducts } from "../../../../lib/backroom-data";
+import { productCategories } from "../../../../data/collections";
+import { collectionOptions, listProducts } from "../../../../lib/backroom-data";
 import { supabaseConfigured } from "../../../../lib/supabase";
 
 const statusCloth = {
@@ -19,15 +22,17 @@ export default async function ProductsPage({ searchParams }: PageProps<"/backroo
   const products = await listProducts();
   const live = supabaseConfigured();
   const published = products.filter((product) => product.status === "published").length;
+  // The new product's form opens in a window from either button.
+  const newProduct = live && (
+    <CreateModal label="New product" title="New product">
+      <ProductForm categories={productCategories} collections={await collectionOptions()} />
+    </CreateModal>
+  );
 
   return (
     <>
       <PageHead kicker={`${published} on the shop · ${products.length} in all`} title="Products">
-        {live && (
-          <Link href="/backroom/products/new" className={primaryButton}>
-            + New product
-          </Link>
-        )}
+        {newProduct}
       </PageHead>
 
       {params.deleted && (
@@ -46,9 +51,7 @@ export default async function ProductsPage({ searchParams }: PageProps<"/backroo
             <form action={importStarterCatalogue}>
               <button className={primaryButton}>Import the starter catalogue</button>
             </form>
-            <Link href="/backroom/products/new" className={primaryButton}>
-              + New product
-            </Link>
+            {newProduct}
           </div>
         </div>
       ) : (

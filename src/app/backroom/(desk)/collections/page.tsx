@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Notice, PageHead, panel, primaryButton } from "../../../../components/backroom/ui";
+import { CollectionForm } from "../../../../components/backroom/collection-form";
+import { CreateModal } from "../../../../components/backroom/create-modal";
+import { Notice, PageHead, panel } from "../../../../components/backroom/ui";
 import { seasonLabel } from "../../../../data/collections";
 import { listCollections } from "../../../../lib/backroom-data";
 import { supabaseConfigured } from "../../../../lib/supabase";
@@ -20,9 +22,9 @@ export default async function CollectionsPage({ searchParams }: PageProps<"/back
     <>
       <PageHead kicker={`${collections.filter((collection) => collection.status === "published").length} on the shop · ${collections.length} in all`} title="Collections">
         {live && (
-          <Link href="/backroom/collections/new" className={primaryButton}>
-            + New collection
-          </Link>
+          <CreateModal label="New collection" title="New collection">
+            <CollectionForm />
+          </CreateModal>
         )}
       </PageHead>
       {params.deleted && (

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { productCategories } from "../../data/collections";
 import { getProductRow } from "../../lib/backroom-data";
-import { isUuid, lines, needsSupabase, pickedFiles, readPhotos, removePhotos, repointSlides, slugify, text, uploadPhotos, type FormState } from "../../lib/backroom-forms";
+import { cleaningUploads, isUuid, lines, needsSupabase, pickedFiles, readPhotos, removePhotos, repointSlides, slugify, text, uploadedPhotos, uploadPhotos, type FormState } from "../../lib/backroom-forms";
 import { backroomSetup, checkCredentials, endSession, requireAdmin, startSession } from "../../lib/backroom-session";
 import { starterRows } from "../../lib/starter-rows";
 import { orderStatuses, paymentStatuses, supabase, supabaseConfigured, type SeasonRow } from "../../lib/supabase";
@@ -69,6 +69,11 @@ const categories = new Set(productCategories);
 
 export async function saveProduct(_: FormState, form: FormData): Promise<FormState> {
   await requireAdmin();
+  return cleaningUploads(form, ["photos_uploaded"], () => writeProduct(form));
+}
+
+async function writeProduct(form: FormData): Promise<FormState> {
+  await requireAdmin();
   const missing = needsSupabase();
   if (missing) return missing;
 
@@ -122,7 +127,11 @@ export async function saveProduct(_: FormState, form: FormData): Promise<FormSta
     if (!season || (season as Pick<SeasonRow, "collection_id">).collection_id !== collectionId) return { error: "That season belongs to another collection; pick the collection first." };
   }
 
-  const files = pickedFiles(form, "photos", 8);
+  // New photos: normally already in the bucket (uploaded by the browser, direct-upload.ts), else
+  // posted as files with the form.
+  const sent = uploadedPhotos(form, "photos_uploaded", 8, name);
+  if (typeof sent === "string") return { error: sent };
+  const files = pickedFiles(form, "photos", 8 - sent.length);
   if (typeof files === "string") return { error: files };
   let uploaded: Awaited<ReturnType<typeof uploadPhotos>> = [];
   try {
@@ -130,7 +139,7 @@ export async function saveProduct(_: FormState, form: FormData): Promise<FormSta
   } catch (error) {
     return { error: (error as Error).message };
   }
-  const images = [...kept, ...uploaded];
+  const images = [...kept, ...sent, ...uploaded];
   if (status === "published" && images.length === 0) {
     return { error: "A published product needs at least one photo." };
   }

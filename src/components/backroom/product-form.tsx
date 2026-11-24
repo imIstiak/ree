@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { startTransition, useActionState, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { saveProduct } from "../../app/backroom/actions";
 import type { CollectionOption } from "../../lib/backroom-data";
 import type { ProductRow } from "../../lib/supabase";
@@ -10,6 +10,7 @@ import { CardPreview } from "./card-preview";
 import { SlugField } from "./slug-field";
 import { SwatchPicker } from "./swatch-picker";
 import { fieldLabel, input, panel, primaryButton, quietButton } from "./ui";
+import { useBackroomForm } from "./use-backroom-form";
 
 type Photo = ProductRow["images"][number];
 
@@ -20,7 +21,7 @@ const splitSizes = (value: string) => [...new Set(value.split(/[,\s]+/).map((siz
 // place instead of resetting the form. The saved product's page reloads with fresh data
 // (saveProduct redirects, and the page keys this form on updated_at).
 export function ProductForm({ product, categories, collections, readOnly = false }: { product?: ProductRow; categories: string[]; collections: CollectionOption[]; readOnly?: boolean }) {
-  const [state, formAction, pending] = useActionState(saveProduct, undefined);
+  const { state, pending, busy, onSubmit } = useBackroomForm(saveProduct, readOnly);
   const [name, setName] = useState(product?.name ?? "");
   const [sizesText, setSizesText] = useState(product?.sizes.join(", ") ?? "S, M, L, XL");
   const [stock, setStock] = useState<Record<string, string>>(() => Object.fromEntries(Object.entries(product?.stock ?? {}).map(([size, count]) => [size, String(count)])));
@@ -57,15 +58,8 @@ export function ProductForm({ product, categories, collections, readOnly = false
     setPhotos((current) => current.map((photo, i) => (i === index ? { ...photo, ...change } : photo)));
   }
 
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (readOnly || pending) return;
-    const data = new FormData(event.currentTarget);
-    startTransition(() => formAction(data));
-  }
-
   return (
-    <form onSubmit={submit} encType="multipart/form-data" className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+    <form onSubmit={onSubmit} encType="multipart/form-data" className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
       <input type="hidden" name="id" value={product?.id ?? ""} />
       <input type="hidden" name="images" value={JSON.stringify(photos)} />
 
@@ -157,6 +151,8 @@ export function ProductForm({ product, categories, collections, readOnly = false
               ref={fileInput}
               type="file"
               name="photos"
+              data-upload-folder="{slug}"
+              data-upload-as="photos_uploaded"
               multiple
               accept="image/jpeg,image/png,image/webp,image/avif"
               onChange={(event) => syncFileInput([...files, ...Array.from(event.target.files ?? [])].slice(0, 8))}
@@ -306,7 +302,7 @@ export function ProductForm({ product, categories, collections, readOnly = false
         )}
         {!readOnly && (
           <button type="submit" disabled={pending} className={`${primaryButton} w-full`}>
-            {pending ? (files.length ? "Uploading and saving…" : "Saving…") : product ? "Save changes" : "Create product"}
+            {busy ?? (product ? "Save changes" : "Create product")}
           </button>
         )}
       </fieldset>

@@ -1,4 +1,5 @@
 import { deleteSlide } from "../../catalog-actions";
+import { CreateModal } from "../../../../components/backroom/create-modal";
 import { DeleteButton } from "../../../../components/backroom/delete-button";
 import { SlideForm } from "../../../../components/backroom/slide-form";
 import { Notice, PageHead } from "../../../../components/backroom/ui";
@@ -14,7 +15,14 @@ export default async function BannersPage({ searchParams }: PageProps<"/backroom
   const shown = slides.filter((slide) => slide.status === "published").length;
   return (
     <>
-      <PageHead kicker={`Landing hero · ${shown} shown · ${slides.length} in all`} title="Banners" />
+      <PageHead kicker={`Landing hero · ${shown} shown · ${slides.length} in all`} title="Banners">
+        {live && (
+          // Keyed on the count, so it comes back closed and empty once a slide has been added.
+          <CreateModal key={`new-${slides.length}`} label="Add slide" title="New slide">
+            <SlideForm />
+          </CreateModal>
+        )}
+      </PageHead>
       <div className="mb-6 space-y-3">
         {shown < 3 && <Notice tone="warn">The hero slideshow needs at least three shown slides to move; with fewer it stands still on the first.</Notice>}
         {deleted && <Notice tone="good">The slide was deleted.</Notice>}
@@ -37,12 +45,6 @@ export default async function BannersPage({ searchParams }: PageProps<"/backroom
             </SlideForm>
           </li>
         ))}
-        {live && (
-          <li>
-            <p className="pb-2 text-[10px] tracking-[.16em] text-lp-muted uppercase">Add a slide</p>
-            <SlideForm />
-          </li>
-        )}
       </ul>
     </>
   );

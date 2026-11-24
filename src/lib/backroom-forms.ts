@@ -6,7 +6,9 @@ import { PHOTO_BUCKET, photoPath, photoUrl, supabase, supabaseConfigured, type H
 // untrusted form fields, and uploading and removing photos in the `ree-products` bucket.
 
 // `email` comes back from a failed sign-in so the form can put it back (React resets it).
-export type FormState = { error?: string; notice?: string; email?: string } | undefined;
+// `keepUploads` marks an error returned after the row was saved with the uploaded photos, so
+// cleaningUploads leaves them.
+export type FormState = { error?: string; notice?: string; email?: string; keepUploads?: boolean } | undefined;
 
 export const text = (form: FormData, key: string, max = 2000) => String(form.get(key) ?? "").trim().slice(0, max);
 
@@ -103,21 +105,41 @@ export async function removePhotos(srcs: (string | undefined)[]) {
   if (paths.length) await supabase().storage.from(PHOTO_BUCKET).remove(paths);
 }
 
-// A banner field (banner-field.tsx): the kept photo as JSON in `<key>`, a replacement file in
-// `<key>_file`, and `<key>_alt`. Returns the banner to store (or null), the photo it replaces (to
-// delete after the save), and an error when something is wrong.
+// Photos the browser already put in the bucket before the save (direct-upload.ts), posted as their
+// addresses under `key`. Only addresses inside this site's bucket are accepted.
+export function uploadedPhotos(form: FormData, key: string, max: number, alt: string): Photo[] | string {
+  const srcs = form.getAll(key).map(String).filter(Boolean);
+  if (srcs.length > max) return `Upload at most ${max} photo${max === 1 ? "" : "s"} at a time.`;
+  if (srcs.some((src) => !photoPath(src))) return "A photo's upload could not be read; please pick it again.";
+  return srcs.map((src) => ({ src, alt }));
+}
+
+// Runs a save that may have been sent photos the browser uploaded beforehand (under `keys`). If it
+// ends in an error, those photos are deleted, so a failed save leaves nothing in the bucket (the
+// next attempt uploads afresh). A successful save redirects, which throws, so it never gets here.
+export async function cleaningUploads(form: FormData, keys: string[], save: () => Promise<FormState>): Promise<FormState> {
+  const result = await save();
+  if (result?.error && !result.keepUploads) await removePhotos(keys.flatMap((key) => form.getAll(key).map(String)));
+  return result;
+}
+
+// A banner field (banner-field.tsx): the kept photo as JSON in `<key>`, its description in
+// `<key>_alt`, and a replacement either already uploaded by the browser (its address in
+// `<key>_uploaded`, the normal way) or posted as a file in `<key>_file`. Returns the banner to
+// store (or null), the photo it replaces (to delete after the save), and an error when something
+// is wrong.
 export async function readBanner(form: FormData, key: string, folder: string, fallbackAlt: string, previous: Photo | null) {
   const kept = readPhoto(text(form, key, 2000));
   if (kept === undefined) return { error: "The banner could not be read; reload the page and try again." } as const;
+  const alt = text(form, `${key}_alt`, 200) || fallbackAlt;
+  const sent = uploadedPhotos(form, `${key}_uploaded`, 1, alt);
+  if (typeof sent === "string") return { error: sent } as const;
   const files = pickedFiles(form, `${key}_file`, 1);
   if (typeof files === "string") return { error: files } as const;
-  const alt = text(form, `${key}_alt`, 200) || fallbackAlt;
   let banner: Photo | null = kept ? { ...kept, alt } : null;
-  let uploaded: Photo | null = null;
-  if (files.length) {
-    [uploaded] = await uploadPhotos(files, folder, alt);
-    banner = uploaded;
-  }
+  let uploaded: Photo | null = sent[0] ?? null;
+  if (!uploaded && files.length) [uploaded] = await uploadPhotos(files, folder, alt);
+  if (uploaded) banner = uploaded;
   const replaced = previous && previous.src !== banner?.src ? previous : null;
   return { banner, uploaded, replaced } as const;
 }
