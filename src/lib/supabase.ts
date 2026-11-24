@@ -34,6 +34,7 @@ export function supabase() {
 export type ProductRow = {
   id: string;
   slug: string;
+  previous_slugs: string[];
   kind: "classic" | "story";
   name: string;
   tagline: string;
@@ -61,6 +62,7 @@ export type Photo = { src: string; alt: string; position?: string };
 export type CollectionRow = {
   id: string;
   slug: string;
+  previous_slugs: string[];
   name: string;
   tagline: string;
   blurb: string;
@@ -79,6 +81,7 @@ export type SeasonRow = {
   number: number;
   name: string;
   slug: string;
+  previous_slugs: string[];
   tagline: string;
   blurb: string;
   banner: Photo | null;

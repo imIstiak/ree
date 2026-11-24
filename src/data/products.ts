@@ -24,6 +24,8 @@ export type StoryChapter = {
 
 export type Product = {
   slug: string;
+  // Addresses it had before a rename in the backroom: old links redirect, old bag lines still find it.
+  previousSlugs?: string[];
   kind: "classic" | "story";
   name: string;
   tagline: string;

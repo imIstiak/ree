@@ -6,18 +6,12 @@ import { saveSeason } from "../../app/backroom/catalog-actions";
 import type { SeasonRow } from "../../lib/supabase";
 import { BannerField } from "./banner-field";
 import { FormError, StatusSelect } from "./form-bits";
+import { SlugField } from "./slug-field";
 import { fieldLabel, input, panel, primaryButton } from "./ui";
 import { useBackroomForm } from "./use-backroom-form";
 
 export type SeasonProduct = { id: string; name: string; image?: string; status: string; where: "this" | "collection" | "elsewhere"; note: string };
 
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
 
 // A season of a collection: its number and title, address, copy, banner, dates, status, and the
 // products in it (ticked). Ticking a product that is elsewhere moves it into this season.
@@ -40,8 +34,6 @@ export function SeasonForm({
 }) {
   const { state, pending, onSubmit } = useBackroomForm(saveSeason, readOnly);
   const [number, setNumber] = useState(String(season?.number ?? nextNumber));
-  const [slug, setSlug] = useState<string | null>(null);
-  const address = season ? season.slug : slugify(slug ?? `s-${number}`);
   const groups = [
     { key: "this", title: "In this season" },
     { key: "collection", title: `In ${collectionName}, no season yet` },
@@ -65,22 +57,7 @@ export function SeasonForm({
               <input name="name" defaultValue={season?.name} placeholder="Dhaka" className={input} />
             </label>
           </div>
-          <label className="block">
-            <span className={fieldLabel}>Web address</span>
-            {season ? (
-              <span className="mt-1.5 block text-[13px]">
-                /collections/{collectionSlug}/<strong className="font-medium">{season.slug}</strong>
-                <span className="ml-2 text-[11px] text-lp-muted">(fixed once created)</span>
-              </span>
-            ) : (
-              <>
-                <input name="slug" value={slug ?? address} onChange={(event) => setSlug(event.target.value)} className={input} />
-                <span className="mt-1 block text-[11px] text-lp-muted">
-                  /collections/{collectionSlug}/{address || "…"} · can&apos;t be changed later
-                </span>
-              </>
-            )}
-          </label>
+          <SlugField prefix={`/collections/${collectionSlug}/`} current={season?.slug} suggested={`s-${number}`} />
           <label className="block">
             <span className={fieldLabel}>Tagline</span>
             <input name="tagline" defaultValue={season?.tagline} placeholder="Old Dhaka, worn close." className={input} />

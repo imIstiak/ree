@@ -25,6 +25,7 @@ function read<T>(result: { data: unknown; error: { message: string } | null }, w
 function rowToSeason(row: SeasonRow): Season {
   return {
     slug: row.slug,
+    previousSlugs: row.previous_slugs,
     number: row.number,
     name: row.name,
     tagline: row.tagline,
@@ -48,6 +49,7 @@ const getCollectionData = cache(async () => {
     collections: collectionRows.map(
       (row): Collection => ({
         slug: row.slug,
+        previousSlugs: row.previous_slugs,
         name: row.name,
         tagline: row.tagline,
         blurb: row.blurb,
@@ -70,17 +72,24 @@ export async function getCollection(slug: string) {
   return (await getCollections()).find((collection) => collection.slug === slug);
 }
 
+// The published collection that had this address before a rename (its page redirects there).
+export async function getMovedCollection(slug: string) {
+  return (await getCollections()).find((collection) => collection.previousSlugs?.includes(slug));
+}
+
 // ── Products ─────────────────────────────────────────────────────────────────────────────────
 // A table row as the Product the components already render. What the table does not hold comes
-// from the starter file: a story page's chapters (by slug) and a photo's tee cut-out (by URL).
+// from the starter file: a story page's chapters (by slug, the current one or an earlier one, so a
+// renamed story piece keeps them) and a photo's tee cut-out (by URL).
 export function rowToProduct(row: ProductRow, links?: { collection?: string; season?: string }): Product {
-  const story = starterBySlug.get(row.slug)?.story;
+  const story = [row.slug, ...(row.previous_slugs ?? [])].map((slug) => starterBySlug.get(slug)?.story).find(Boolean);
   const images: ProductImage[] = row.images.map((image) => {
     const known = starterImages.get(image.src);
     return { ...image, cutout: known?.cutout, swatch: image.swatch || known?.swatch };
   });
   return {
     slug: row.slug,
+    previousSlugs: row.previous_slugs,
     kind: row.kind === "story" && story ? "story" : "classic",
     name: row.name,
     tagline: row.tagline,
@@ -122,6 +131,11 @@ export const getCatalog = cache(async (): Promise<Product[]> => {
 
 export async function getCatalogProduct(slug: string) {
   return (await getCatalog()).find((product) => product.slug === slug);
+}
+
+// The published product that had this address before a rename (its page redirects there).
+export async function getMovedProduct(slug: string) {
+  return (await getCatalog()).find((product) => product.previousSlugs?.includes(slug));
 }
 
 // ── The landing hero ─────────────────────────────────────────────────────────────────────────

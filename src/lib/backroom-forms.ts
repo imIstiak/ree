@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { PHOTO_BUCKET, photoPath, photoUrl, supabase, supabaseConfigured, type Photo, type ProductRow } from "./supabase";
+import { PHOTO_BUCKET, photoPath, photoUrl, supabase, supabaseConfigured, type HeroSlideRow, type Photo, type ProductRow } from "./supabase";
 
 // Shared by the backroom's server actions (app/backroom/actions.ts, catalog-actions.ts): reading
 // untrusted form fields, and uploading and removing photos in the `ree-products` bucket.
@@ -120,4 +120,18 @@ export async function readBanner(form: FormData, key: string, folder: string, fa
   }
   const replaced = previous && previous.src !== banner?.src ? previous : null;
   return { banner, uploaded, replaced } as const;
+}
+
+// ── Renamed addresses ────────────────────────────────────────────────────────────────────────
+// After a page's address changes, the hero slides that linked to it (or to a page under it, such
+// as a renamed collection's seasons) point at the new one. The old address would redirect anyway;
+// this saves the hop and stops a slide following the old slug if another record takes it later.
+export async function repointSlides(from: string, to: string) {
+  if (from === to) return;
+  const db = supabase();
+  const { data } = await db.from("hero_slides").select("id, href");
+  for (const slide of (data ?? []) as Pick<HeroSlideRow, "id" | "href">[]) {
+    const rest = slide.href.slice(from.length);
+    if (slide.href.startsWith(from) && (rest === "" || /^[/?#]/.test(rest))) await db.from("hero_slides").update({ href: to + rest }).eq("id", slide.id);
+  }
 }

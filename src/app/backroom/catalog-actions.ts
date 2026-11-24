@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCollectionSummary, getSeasonRow } from "../../lib/backroom-data";
-import { isUuid, needsSupabase, readBanner, removePhotos, slugify, text, type FormState } from "../../lib/backroom-forms";
+import { isUuid, needsSupabase, readBanner, removePhotos, repointSlides, slugify, text, type FormState } from "../../lib/backroom-forms";
 import { requireAdmin } from "../../lib/backroom-session";
 import { supabase, supabaseConfigured, type HeroSlideRow } from "../../lib/supabase";
 
@@ -30,7 +30,8 @@ export async function saveCollection(_: FormState, form: FormData): Promise<Form
   if (id && !existing) return { error: "This collection no longer exists." };
 
   const name = text(form, "name", 80);
-  const slug = existing ? existing.slug : slugify(text(form, "slug", 80) || name);
+  // Editable at any time: the database remembers the old slug, so its links redirect here.
+  const slug = slugify(text(form, "slug", 80) || name);
   const status = text(form, "status", 10);
   const sortOrder = Number(text(form, "sort_order", 6) || "0");
   if (!name) return { error: "Give the collection a name." };
@@ -59,6 +60,7 @@ export async function saveCollection(_: FormState, form: FormData): Promise<Form
     return { error: saved.error.code === "23505" ? `Another collection already uses /collections/${slug}. Change the web address.` : `Could not save: ${saved.error.message}` };
   }
   await removePhotos([banner.replaced?.src]);
+  if (existing) await repointSlides(`/collections/${existing.slug}`, `/collections/${slug}`);
   done(`/backroom/collections/${saved.data.id}?saved=${existing ? "1" : "new"}`);
 }
 
@@ -88,7 +90,7 @@ export async function saveSeason(_: FormState, form: FormData): Promise<FormStat
 
   const number = Number(text(form, "number", 4));
   const name = text(form, "name", 80);
-  const slug = existing ? existing.slug : slugify(text(form, "slug", 80)) || `s-${number}`;
+  const slug = slugify(text(form, "slug", 80)) || `s-${number}`;
   const startsOn = text(form, "starts_on", 10) || null;
   const endsOn = text(form, "ends_on", 10) || null;
   const status = text(form, "status", 10);
@@ -131,6 +133,7 @@ export async function saveSeason(_: FormState, form: FormData): Promise<FormStat
     };
   }
   await removePhotos([banner.replaced?.src]);
+  if (existing) await repointSlides(`/collections/${collection.slug}/${existing.slug}`, `/collections/${collection.slug}/${slug}`);
 
   // The ticked products join this season (and so its collection); untick to take one out (it
   // stays in the collection).

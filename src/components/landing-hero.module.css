@@ -213,7 +213,9 @@
 
 .title {
   margin: 0;
-  font-family: var(--font-alfa-slab), Georgia, serif;
+  font-family: var(--font-alfa-slab), var(--font-bangla), Georgia, serif;
+  /* Bangla in the title as heavy as the slab (see the display stack in globals.css). */
+  font-variation-settings: "wght" 800, "wdth" 125;
   font-size: 2.86cqw;
   font-weight: 400;
   letter-spacing: -.012em;

@@ -40,6 +40,11 @@ export function useCatalog(enabled = true) {
   useEffect(() => {
     if (enabled) load();
   }, [enabled]);
-  const bySlug = useMemo(() => new Map(current.products.map((product) => [product.slug, product])), [current.products]);
+  // A piece renamed in the backroom is still found under its old slugs (bags saved before the
+  // rename); old slugs go in first, so a current slug always wins over another piece's old one.
+  const bySlug = useMemo(
+    () => new Map([...current.products.flatMap((product) => (product.previousSlugs ?? []).map((slug) => [slug, product] as const)), ...current.products.map((product) => [product.slug, product] as const)]),
+    [current.products],
+  );
   return { ready: current.ready, products: current.products, find: (slug: string) => bySlug.get(slug) };
 }

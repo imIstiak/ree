@@ -7,18 +7,11 @@ import type { CollectionOption } from "../../lib/backroom-data";
 import type { ProductRow } from "../../lib/supabase";
 import { Icon } from "../landing-icons";
 import { CardPreview } from "./card-preview";
+import { SlugField } from "./slug-field";
 import { SwatchPicker } from "./swatch-picker";
 import { fieldLabel, input, panel, primaryButton, quietButton } from "./ui";
 
 type Photo = ProductRow["images"][number];
-
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
 
 const splitSizes = (value: string) => [...new Set(value.split(/[,\s]+/).map((size) => size.trim()).filter(Boolean))];
 
@@ -29,8 +22,6 @@ const splitSizes = (value: string) => [...new Set(value.split(/[,\s]+/).map((siz
 export function ProductForm({ product, categories, collections, readOnly = false }: { product?: ProductRow; categories: string[]; collections: CollectionOption[]; readOnly?: boolean }) {
   const [state, formAction, pending] = useActionState(saveProduct, undefined);
   const [name, setName] = useState(product?.name ?? "");
-  const [slug, setSlug] = useState(product?.slug ?? "");
-  const [slugTouched, setSlugTouched] = useState(Boolean(product));
   const [sizesText, setSizesText] = useState(product?.sizes.join(", ") ?? "S, M, L, XL");
   const [stock, setStock] = useState<Record<string, string>>(() => Object.fromEntries(Object.entries(product?.stock ?? {}).map(([size, count]) => [size, String(count)])));
   const [photos, setPhotos] = useState<Photo[]>(product?.images ?? []);
@@ -40,7 +31,6 @@ export function ProductForm({ product, categories, collections, readOnly = false
   const seasons = collections.find((collection) => collection.id === collectionId)?.seasons ?? [];
   const fileInput = useRef<HTMLInputElement>(null);
   const sizes = splitSizes(sizesText);
-  const address = product ? product.slug : slugTouched ? slugify(slug) : slugify(name);
 
   // Previews of the photos picked but not uploaded yet.
   const previews = useMemo(() => files.map((file) => ({ file, url: URL.createObjectURL(file) })), [files]);
@@ -88,29 +78,7 @@ export function ProductForm({ product, categories, collections, readOnly = false
             <span className={fieldLabel}>Name</span>
             <input name="name" required value={name} onChange={(event) => setName(event.target.value)} placeholder="Heavy cotton tee" className={input} />
           </label>
-          <label className="block">
-            <span className={fieldLabel}>Web address</span>
-            {product ? (
-              <span className="mt-1.5 block text-[13px]">
-                /products/<strong className="font-medium">{product.slug}</strong>
-                <span className="ml-2 text-[11px] text-lp-muted">(fixed once created, so links and bags keep working)</span>
-              </span>
-            ) : (
-              <>
-                <input
-                  name="slug"
-                  value={slugTouched ? slug : address}
-                  onChange={(event) => {
-                    setSlugTouched(true);
-                    setSlug(event.target.value);
-                  }}
-                  placeholder="heavy-cotton-tee"
-                  className={input}
-                />
-                <span className="mt-1 block text-[11px] text-lp-muted">/products/{address || "…"} · can&apos;t be changed later</span>
-              </>
-            )}
-          </label>
+          <SlugField prefix="/products/" current={product?.slug} suggested={name} placeholder="heavy-cotton-tee" />
           <label className="block">
             <span className={fieldLabel}>Tagline</span>
             <input name="tagline" defaultValue={product?.tagline} placeholder="One line under the name" className={input} />

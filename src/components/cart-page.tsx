@@ -69,13 +69,13 @@ export function CartView() {
                 style={garmentCloth(line.product.images[0])}
                 className={`lp-patch ${patchShadow} grid grid-cols-[84px_1fr] gap-4 p-3 [--lp-stitch-inset:5px] sm:grid-cols-[108px_1fr] sm:p-4 ${line.product.images[0].swatch ? "" : cloths[index % cloths.length]} ${index % 2 ? "rotate-[.4deg]" : "-rotate-[.4deg]"}`}
               >
-                <Link href={`/products/${line.slug}`} className="relative block aspect-[3/4] overflow-hidden bg-lp-surface" tabIndex={-1} aria-hidden="true">
+                <Link href={`/products/${line.product.slug}`} className="relative block aspect-[3/4] overflow-hidden bg-lp-surface" tabIndex={-1} aria-hidden="true">
                   <Image src={line.product.images[0].src} alt="" fill sizes="108px" className="object-cover" style={{ objectPosition: line.product.images[0].position }} />
                 </Link>
                 <div className="flex min-w-0 flex-col justify-between gap-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <Link href={`/products/${line.slug}`} className="font-lp-display text-[15px] leading-tight uppercase hover:underline sm:text-base">
+                      <Link href={`/products/${line.product.slug}`} className="font-lp-display text-[15px] leading-tight uppercase hover:underline sm:text-base">
                         {line.product.name}
                       </Link>
                       <p className="mt-1 text-[11px] uppercase opacity-75">

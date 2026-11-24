@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { productCategories } from "../../data/collections";
 import { getProductRow } from "../../lib/backroom-data";
-import { isUuid, lines, needsSupabase, pickedFiles, readPhotos, removePhotos, slugify, text, uploadPhotos, type FormState } from "../../lib/backroom-forms";
+import { isUuid, lines, needsSupabase, pickedFiles, readPhotos, removePhotos, repointSlides, slugify, text, uploadPhotos, type FormState } from "../../lib/backroom-forms";
 import { backroomSetup, checkCredentials, endSession, requireAdmin, startSession } from "../../lib/backroom-session";
 import { starterRows } from "../../lib/starter-rows";
 import { orderStatuses, paymentStatuses, supabase, supabaseConfigured, type SeasonRow } from "../../lib/supabase";
@@ -77,7 +77,8 @@ export async function saveProduct(_: FormState, form: FormData): Promise<FormSta
   if (id && !existing) return { error: "This product no longer exists." };
 
   const name = text(form, "name", 120);
-  const slug = existing ? existing.slug : slugify(text(form, "slug", 80) || name);
+  // Editable at any time: the database remembers the old slug, so its links redirect here.
+  const slug = slugify(text(form, "slug", 80) || name);
   const category = text(form, "category", 60);
   const department = text(form, "department", 10);
   const status = text(form, "status", 10);
@@ -163,6 +164,7 @@ export async function saveProduct(_: FormState, form: FormData): Promise<FormSta
     return { error: saved.error.code === "23505" ? `Another product already uses the address /products/${slug}. Change the web address.` : `Could not save: ${saved.error.message}` };
   }
 
+  if (existing) await repointSlides(`/products/${existing.slug}`, `/products/${slug}`);
   // Photos taken off the product are deleted from storage (only ones this site uploaded).
   if (existing) await removePhotos(existing.images.map((photo) => photo.src).filter((src) => !images.some((photo) => photo.src === src)));
 

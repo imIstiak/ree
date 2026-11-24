@@ -127,7 +127,8 @@ export function CheckoutView() {
         city: text("city"),
         note: text("note"),
         payment,
-        lines: lines.map(({ slug, size, qty }) => ({ slug, size, qty })),
+        // The piece's current slug: a line saved before a rename in the backroom holds the old one.
+        lines: lines.map(({ product, size, qty }) => ({ slug: product.slug, size, qty })),
       });
     } catch {
       result = { ok: false, error: "We couldn't reach the shop. Please check your connection and try again." };
@@ -152,7 +153,7 @@ export function CheckoutView() {
       areaLabel,
       payment: chosen.label,
       paymentNote: chosen.phrase,
-      lines: sent ? lines.map((line) => ({ ...line, product: { ...line.product, price: sent.prices[line.slug] ?? line.product.price } })) : lines,
+      lines: sent ? lines.map((line) => ({ ...line, product: { ...line.product, price: sent.prices[line.product.slug] ?? line.product.price } })) : lines,
       subtotal: sent ? sent.subtotal : subtotal,
       delivery: sent ? sent.delivery : delivery,
     });

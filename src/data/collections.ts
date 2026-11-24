@@ -10,6 +10,7 @@ export type Banner = { src: string; alt: string; position?: string };
 
 export type Season = {
   slug: string;
+  previousSlugs?: string[];
   number: number;
   name: string;
   tagline: string;
@@ -21,6 +22,8 @@ export type Season = {
 
 export type Collection = {
   slug: string;
+  // Addresses it had before a rename in the backroom; the pages redirect them.
+  previousSlugs?: string[];
   name: string;
   tagline: string;
   blurb: string;

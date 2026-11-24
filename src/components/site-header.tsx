@@ -109,10 +109,11 @@ export function SiteHeader({
             <>
               <ul className={styles.lines}>
                 {cart.map((line) => {
-                  const name = catalog.find(line.slug)?.name ?? (catalog.ready ? "No longer available" : "…");
+                  const product = catalog.find(line.slug);
+                  const name = product?.name ?? (catalog.ready ? "No longer available" : "…");
                   return (
                     <li key={`${line.slug}-${line.size}`}>
-                      <Link href={`/products/${line.slug}`} className={styles.line}>
+                      <Link href={`/products/${product?.slug ?? line.slug}`} className={styles.line}>
                         {name}
                         <small>
                           Size {line.size} · × {line.qty}

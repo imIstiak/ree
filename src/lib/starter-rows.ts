@@ -7,7 +7,7 @@ import type { CollectionRow, HeroSlideRow, ProductRow } from "./supabase";
 // script (scripts/db.mts) both use it.
 // The starter catalogue as table rows, for the preview and for "Import the starter catalogue".
 // Collection and season links are set by the seed after the collections exist (by category).
-export function starterRows(): Omit<ProductRow, "id" | "created_at" | "updated_at" | "collection_id" | "season_id">[] {
+export function starterRows(): Omit<ProductRow, "id" | "created_at" | "updated_at" | "collection_id" | "season_id" | "previous_slugs">[] {
   return starterCatalogue.map((product: Product, index) => ({
     slug: product.slug,
     kind: product.kind,
@@ -30,7 +30,7 @@ export function starterRows(): Omit<ProductRow, "id" | "created_at" | "updated_a
   }));
 }
 
-export function starterCollectionRows(): Omit<CollectionRow, "id" | "created_at" | "updated_at">[] {
+export function starterCollectionRows(): Omit<CollectionRow, "id" | "created_at" | "updated_at" | "previous_slugs">[] {
   return starterCollections.map((collection, index) => ({
     slug: collection.slug,
     name: collection.name,

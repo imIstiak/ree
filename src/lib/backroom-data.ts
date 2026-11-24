@@ -18,7 +18,7 @@ import {
 // backroom is a read-only preview: products come from the starter file and there are no orders.
 
 const previewProducts = (): ProductRow[] =>
-  starterRows().map((row) => ({ ...row, id: row.slug, collection_id: null, season_id: null, created_at: "", updated_at: "" }));
+  starterRows().map((row) => ({ ...row, id: row.slug, previous_slugs: [], collection_id: null, season_id: null, created_at: "", updated_at: "" }));
 
 export async function listProducts(): Promise<ProductRow[]> {
   await requireAdmin();
@@ -85,7 +85,7 @@ export type CollectionSummary = CollectionRow & { seasons: (SeasonRow & { produc
 export async function listCollections(): Promise<CollectionSummary[]> {
   await requireAdmin();
   if (!supabaseConfigured()) {
-    return starterCollectionRows().map((row) => ({ ...row, id: row.slug, created_at: "", updated_at: "", seasons: [], products: 0 }));
+    return starterCollectionRows().map((row) => ({ ...row, id: row.slug, previous_slugs: [], created_at: "", updated_at: "", seasons: [], products: 0 }));
   }
   const db = supabase();
   const [collections, seasons, products] = await Promise.all([

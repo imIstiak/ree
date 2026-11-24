@@ -5,26 +5,17 @@ import { saveCollection } from "../../app/backroom/catalog-actions";
 import type { CollectionRow } from "../../lib/supabase";
 import { BannerField } from "./banner-field";
 import { CardPreview } from "./card-preview";
+import { SlugField } from "./slug-field";
 import { SwatchPicker } from "./swatch-picker";
 import { FormError, StatusSelect } from "./form-bits";
 import { fieldLabel, input, panel, primaryButton } from "./ui";
 import { useBackroomForm } from "./use-backroom-form";
-
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
 
 // A collection: its name, address, copy, banner, its card's colour on /collections (picked from the
 // banner, or from its first piece's photo) and whether it is on the shop.
 export function CollectionForm({ collection, pieceCover, readOnly = false }: { collection?: CollectionRow; pieceCover?: string; readOnly?: boolean }) {
   const { state, pending, onSubmit } = useBackroomForm(saveCollection, readOnly);
   const [name, setName] = useState(collection?.name ?? "");
-  const [slug, setSlug] = useState<string | null>(null);
-  const address = collection ? collection.slug : slugify(slug ?? name);
   const [cardColor, setCardColor] = useState<string | undefined>(collection?.card_color ?? undefined);
   const [bannerSrc, setBannerSrc] = useState<string | null>(collection?.banner?.src ?? null);
   const onBanner = useCallback((src: string | null) => setBannerSrc(src), []);
@@ -37,20 +28,7 @@ export function CollectionForm({ collection, pieceCover, readOnly = false }: { c
           <span className={fieldLabel}>Name</span>
           <input name="name" required value={name} onChange={(event) => setName(event.target.value)} placeholder="Nogor" className={input} />
         </label>
-        <label className="block">
-          <span className={fieldLabel}>Web address</span>
-          {collection ? (
-            <span className="mt-1.5 block text-[13px]">
-              /collections/<strong className="font-medium">{collection.slug}</strong>
-              <span className="ml-2 text-[11px] text-lp-muted">(fixed once created)</span>
-            </span>
-          ) : (
-            <>
-              <input name="slug" value={slug ?? address} onChange={(event) => setSlug(event.target.value)} placeholder="nogor" className={input} />
-              <span className="mt-1 block text-[11px] text-lp-muted">/collections/{address || "…"} · can&apos;t be changed later</span>
-            </>
-          )}
-        </label>
+        <SlugField prefix="/collections/" current={collection?.slug} suggested={name} placeholder="nogor" />
         <label className="block">
           <span className={fieldLabel}>Tagline</span>
           <input name="tagline" defaultValue={collection?.tagline} placeholder="The city, worn close." className={input} />

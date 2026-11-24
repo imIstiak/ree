@@ -70,10 +70,10 @@ function Postmark({ place, date, className = "" }: { place: string; date: string
       </defs>
       <circle cx="60" cy="60" r="53" fill="none" stroke="currentColor" strokeWidth="2.2" />
       <circle cx="60" cy="60" r="31" fill="none" stroke="currentColor" strokeWidth="1.4" />
-      <text fill="currentColor" fontSize="10.5" letterSpacing="2.6" fontFamily="var(--font-plex-mono), monospace">
+      <text fill="currentColor" fontSize="10.5" letterSpacing="2.6" fontFamily="var(--font-plex-mono), var(--font-bangla), monospace">
         <textPath href={`#${ring}`}>{place}</textPath>
       </text>
-      <text x="60" y="64" fill="currentColor" fontSize="10" textAnchor="middle" letterSpacing="1" fontFamily="var(--font-plex-mono), monospace">
+      <text x="60" y="64" fill="currentColor" fontSize="10" textAnchor="middle" letterSpacing="1" fontFamily="var(--font-plex-mono), var(--font-bangla), monospace">
         {date}
       </text>
       {[34, 50, 66, 82].map((y) => (
