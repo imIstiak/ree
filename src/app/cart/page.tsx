@@ -1,6 +1,6 @@
 import { createPageMetadata } from "../../lib/seo";
 import { CartView } from "../../components/cart-page";
-import { SitePage } from "../../components/site-page";
+import { SitePage } from "../../components/site-frame";
 
 export const metadata = createPageMetadata({
   path: "/cart",

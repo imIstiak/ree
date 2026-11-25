@@ -1,6 +1,6 @@
 import { createPageMetadata } from "../../lib/seo";
 import { CheckoutView } from "../../components/checkout-page";
-import { SitePage } from "../../components/site-page";
+import { SitePage } from "../../components/site-frame";
 
 export const metadata = createPageMetadata({
   path: "/checkout",

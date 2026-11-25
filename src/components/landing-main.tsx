@@ -2,6 +2,7 @@ import { MossWordmark } from "./moss-wordmark";
 import { getCollections } from "../lib/catalog";
 import Image from "next/image";
 import { BrandLogo } from "./brand-logo";
+import { CatalogScope } from "./catalog-scope";
 import { LandingHero } from "./landing-hero";
 import { BrandIcon, Icon, type IconName } from "./landing-icons";
 import { StoryTiles } from "./story-tiles";
@@ -348,432 +349,435 @@ export async function LandingMain() {
   // the third wears the accent patch.
   const collectionTabs = (await getCollections()).map((collection) => ({ label: collection.name, href: `/collections/${collection.slug}` }));
   return (
-    // globals.css locks body scrolling for the coming-soon page, so this wrapper is the scroll container.
-    // It also carries the landing theme (data-lp-theme); see landing-theme-toggle.tsx.
-    <div
-      id={LANDING_ROOT_ID}
-      data-lp-theme="dark"
-      suppressHydrationWarning
-      className={`${display.variable} ${mono.variable} group/theme h-svh overflow-x-hidden overflow-y-auto scroll-smooth bg-lp-bg font-lp-mono text-lp-text transition-colors duration-300 motion-reduce:scroll-auto motion-reduce:transition-none`}
-    >
-      <ThemeScript rootId={LANDING_ROOT_ID} />
-      {/* Floating dock on the right edge, same control as the coming-soon page. */}
-      <ThemeControls rootId={LANDING_ROOT_ID} />
-      <main className="@container w-full overflow-hidden bg-lp-bg [&_:is(a,summary):focus-visible]:outline [&_:is(a,summary):focus-visible]:outline-offset-2 [&_:is(a,summary):focus-visible]:outline-lp-accent">
-        <LandingHero />
+    // The catalogue for the header's bag comes with the page (no browser request).
+    <CatalogScope>
+      {/* globals.css locks body scrolling for the coming-soon page, so this wrapper is the scroll container.
+          It also carries the landing theme (data-lp-theme); see landing-theme-toggle.tsx. */}
+      <div
+        id={LANDING_ROOT_ID}
+        data-lp-theme="dark"
+        suppressHydrationWarning
+        className={`${display.variable} ${mono.variable} group/theme h-svh overflow-x-hidden overflow-y-auto scroll-smooth bg-lp-bg font-lp-mono text-lp-text transition-colors duration-300 motion-reduce:scroll-auto motion-reduce:transition-none`}
+      >
+        <ThemeScript rootId={LANDING_ROOT_ID} />
+        {/* Floating dock on the right edge, same control as the coming-soon page. */}
+        <ThemeControls rootId={LANDING_ROOT_ID} />
+        <main className="@container w-full overflow-hidden bg-lp-bg [&_:is(a,summary):focus-visible]:outline [&_:is(a,summary):focus-visible]:outline-offset-2 [&_:is(a,summary):focus-visible]:outline-lp-accent">
+          <LandingHero />
 
-        {/* Find your story */}
-        <section id="categories" aria-labelledby="categories-title" className="scroll-mt-4 bg-lp-surface pt-[8.6%]">
-          <div className="lp-reveal flex flex-col justify-between gap-6 px-[3%] pb-[3%] sm:flex-row sm:items-end">
-            <SectionTitle id="categories-title">Find<br />your story</SectionTitle>
-            <Patchwork />
-          </div>
-
-          <StoryTiles
-            tiles={storyTiles.map((tile) => ({
-              id: tile.id,
-              shape: tile.shape,
-              tilt: tile.tilt,
-              frame: tile.frame,
-              frameStyle: garmentCloth(tile.photo),
-              caption: tile.caption && (
-                <div className="flex items-center justify-between gap-2">
-                  <Label>{tile.caption.label}</Label>
-                  <Label tone="outline">{tile.caption.count}</Label>
-                </div>
-              ),
-              image: <Photo photo={tile.photo} sizes="(min-width: 1024px) 20vw, 50vw" />,
-            }))}
-          />
-
-          <div className="pb-[10%]">
-            <Rail href="/shop" first={`#${storyTiles[0].id}`} last={`#${storyTiles[storyTiles.length - 1].id}`} label="category">
-              Browse all
-            </Rail>
-          </div>
-        </section>
-
-        {/* Designed for every style */}
-        <section id="style" aria-labelledby="style-title" className="relative isolate min-h-[760px] scroll-mt-4 overflow-hidden bg-lp-bg lg:aspect-[254/198] lg:min-h-0">
-          <div className="absolute -inset-[10%] -z-20 scale-y-50 -rotate-12 opacity-40 blur-2xl saturate-150" aria-hidden="true">
-            <Photo photo={photos.redGown} sizes="100vw" />
-          </div>
-          <div className="absolute inset-0 -z-10 lp-noise opacity-25 mix-blend-overlay" aria-hidden="true" />
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,color-mix(in_oklab,var(--color-lp-bg)_92%,transparent)_20%,color-mix(in_oklab,var(--color-lp-bg)_45%,transparent)_65%,color-mix(in_oklab,var(--color-lp-bg)_10%,transparent))]" aria-hidden="true" />
-
-          <div className="lp-reveal absolute inset-x-[3%] top-[6%] z-10 grid justify-items-center gap-3 text-center lg:top-[13%]">
-            <SectionTitle id="style-title">Designed<br />for every style</SectionTitle>
-            <p className={`${bodyText} max-w-80`}>We create timeless pieces that shift across seasons and everyday moments.</p>
-          </div>
-
-          <Markers className="top-[54%]" />
-          {/* -mt lifts the box by the acute's height (14 of 200 units of a 94%-wide box), so the letters
-              sit where they did before the accent and stay inside the section. */}
-          <Wordmark className="lp-drift absolute inset-x-[3%] bottom-[18%] -z-10 opacity-60 lg:top-[60%] lg:bottom-auto lg:-mt-[6.6%]" />
-
-          <ul className="lp-drift-x absolute inset-x-0 bottom-[8%] flex justify-between gap-6 overflow-hidden border-y border-lp-border px-[3%] py-2 text-[10px] whitespace-nowrap text-lp-muted uppercase lg:top-[82%] lg:bottom-auto" aria-label="Styles">
-            {styleWords.map((word, index) => (
-              <li key={word} className={index > 2 && index < 6 ? "hidden lg:block" : ""}>{word}</li>
-            ))}
-          </ul>
-
-          <figure className="lp-fade lp-unveil lp-patch group absolute top-[24%] left-1/2 z-10 w-[62%] -translate-x-1/2 bg-lp-patch-terracotta p-2 text-lp-ink shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-2.5 sm:[--lp-stitch-inset:5px] lg:top-[30%] lg:w-[31%]">
-            <div className="relative aspect-[3/4] overflow-hidden bg-lp-brand lg:aspect-[315/450]">
-              <Photo photo={photos.camelCoat} sizes="(min-width: 1024px) 420px, 62vw" className={hoverImage} />
+          {/* Find your story */}
+          <section id="categories" aria-labelledby="categories-title" className="scroll-mt-4 bg-lp-surface pt-[8.6%]">
+            <div className="lp-reveal flex flex-col justify-between gap-6 px-[3%] pb-[3%] sm:flex-row sm:items-end">
+              <SectionTitle id="categories-title">Find<br />your story</SectionTitle>
+              <Patchwork />
             </div>
-            <Link href="/collections/outerwear" className={`${smallPatch} absolute inset-x-[10%] bottom-[7%] flex min-h-10 -rotate-1 items-center justify-between bg-lp-text px-3.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}>
-              Shop this look <Icon name="arrowRight" />
-            </Link>
-          </figure>
 
-          <article className={`lp-reveal-left ${cardPatch} absolute top-[62%] left-[3%] z-20 flex w-48 -rotate-2 gap-2.5 bg-lp-card p-3 text-lp-text lg:top-[33%] lg:left-[21%] lg:w-[19%]`}>
-            <div className="relative aspect-[4/5] w-16 flex-none overflow-hidden">
-              <Photo photo={photos.redBeanie} sizes="64px" />
+            <StoryTiles
+              tiles={storyTiles.map((tile) => ({
+                id: tile.id,
+                shape: tile.shape,
+                tilt: tile.tilt,
+                frame: tile.frame,
+                frameStyle: garmentCloth(tile.photo),
+                caption: tile.caption && (
+                  <div className="flex items-center justify-between gap-2">
+                    <Label>{tile.caption.label}</Label>
+                    <Label tone="outline">{tile.caption.count}</Label>
+                  </div>
+                ),
+                image: <Photo photo={tile.photo} sizes="(min-width: 1024px) 20vw, 50vw" />,
+              }))}
+            />
+
+            <div className="pb-[10%]">
+              <Rail href="/shop" first={`#${storyTiles[0].id}`} last={`#${storyTiles[storyTiles.length - 1].id}`} label="category">
+                Browse all
+              </Rail>
             </div>
-            <div className="text-[10px]">
-              <h3 className="font-lp-display text-[11px] uppercase">Red beanie</h3>
-              <p className="mt-0.5 text-lp-muted">৳ 1,850</p>
-              <Link href="/collections/casual-wear" aria-label="Shop Red beanie" className="lp-patch mt-2 grid size-7 place-items-center bg-lp-accent text-lp-ink transition-colors [--lp-stitch-inset:2px] hover:bg-lp-text hover:text-lp-bg motion-reduce:transition-none">
+          </section>
+
+          {/* Designed for every style */}
+          <section id="style" aria-labelledby="style-title" className="relative isolate min-h-[760px] scroll-mt-4 overflow-hidden bg-lp-bg lg:aspect-[254/198] lg:min-h-0">
+            <div className="absolute -inset-[10%] -z-20 scale-y-50 -rotate-12 opacity-40 blur-2xl saturate-150" aria-hidden="true">
+              <Photo photo={photos.redGown} sizes="100vw" />
+            </div>
+            <div className="absolute inset-0 -z-10 lp-noise opacity-25 mix-blend-overlay" aria-hidden="true" />
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,color-mix(in_oklab,var(--color-lp-bg)_92%,transparent)_20%,color-mix(in_oklab,var(--color-lp-bg)_45%,transparent)_65%,color-mix(in_oklab,var(--color-lp-bg)_10%,transparent))]" aria-hidden="true" />
+
+            <div className="lp-reveal absolute inset-x-[3%] top-[6%] z-10 grid justify-items-center gap-3 text-center lg:top-[13%]">
+              <SectionTitle id="style-title">Designed<br />for every style</SectionTitle>
+              <p className={`${bodyText} max-w-80`}>We create timeless pieces that shift across seasons and everyday moments.</p>
+            </div>
+
+            <Markers className="top-[54%]" />
+            {/* -mt lifts the box by the acute's height (14 of 200 units of a 94%-wide box), so the letters
+                sit where they did before the accent and stay inside the section. */}
+            <Wordmark className="lp-drift absolute inset-x-[3%] bottom-[18%] -z-10 opacity-60 lg:top-[60%] lg:bottom-auto lg:-mt-[6.6%]" />
+
+            <ul className="lp-drift-x absolute inset-x-0 bottom-[8%] flex justify-between gap-6 overflow-hidden border-y border-lp-border px-[3%] py-2 text-[10px] whitespace-nowrap text-lp-muted uppercase lg:top-[82%] lg:bottom-auto" aria-label="Styles">
+              {styleWords.map((word, index) => (
+                <li key={word} className={index > 2 && index < 6 ? "hidden lg:block" : ""}>{word}</li>
+              ))}
+            </ul>
+
+            <figure className="lp-fade lp-unveil lp-patch group absolute top-[24%] left-1/2 z-10 w-[62%] -translate-x-1/2 bg-lp-patch-terracotta p-2 text-lp-ink shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-2.5 sm:[--lp-stitch-inset:5px] lg:top-[30%] lg:w-[31%]">
+              <div className="relative aspect-[3/4] overflow-hidden bg-lp-brand lg:aspect-[315/450]">
+                <Photo photo={photos.camelCoat} sizes="(min-width: 1024px) 420px, 62vw" className={hoverImage} />
+              </div>
+              <Link href="/collections/outerwear" className={`${smallPatch} absolute inset-x-[10%] bottom-[7%] flex min-h-10 -rotate-1 items-center justify-between bg-lp-text px-3.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}>
+                Shop this look <Icon name="arrowRight" />
+              </Link>
+            </figure>
+
+            <article className={`lp-reveal-left ${cardPatch} absolute top-[62%] left-[3%] z-20 flex w-48 -rotate-2 gap-2.5 bg-lp-card p-3 text-lp-text lg:top-[33%] lg:left-[21%] lg:w-[19%]`}>
+              <div className="relative aspect-[4/5] w-16 flex-none overflow-hidden">
+                <Photo photo={photos.redBeanie} sizes="64px" />
+              </div>
+              <div className="text-[10px]">
+                <h3 className="font-lp-display text-[11px] uppercase">Red beanie</h3>
+                <p className="mt-0.5 text-lp-muted">৳ 1,850</p>
+                <Link href="/collections/casual-wear" aria-label="Shop Red beanie" className="lp-patch mt-2 grid size-7 place-items-center bg-lp-accent text-lp-ink transition-colors [--lp-stitch-inset:2px] hover:bg-lp-text hover:text-lp-bg motion-reduce:transition-none">
+                  <Icon name="plus" className="size-3" />
+                </Link>
+              </div>
+            </article>
+
+            <div className="lp-patch absolute top-[20%] right-[6%] z-20 grid aspect-square w-16 rotate-6 place-items-center bg-[#e6d21f] text-[#3a3000] shadow-xl shadow-black/50 group-data-[lp-theme=light]/theme:shadow-black/15 lg:top-[29%] lg:right-auto lg:left-[61%] lg:w-[9.4%]" aria-hidden="true">
+              <Icon name="bag" className="size-1/2" />
+            </div>
+
+            <article className={`lp-reveal-right ${cardPatch} absolute top-[56%] right-[3%] z-20 w-28 rotate-2 bg-lp-text p-2.5 text-lp-bg lg:top-[62%] lg:right-auto lg:left-[55.5%] lg:w-[10%]`}>
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <Photo photo={photos.pinkFur} sizes="120px" />
+              </div>
+              <h3 className="mt-2 font-lp-display text-[11px] uppercase">Fur coat</h3>
+              <p className="text-[10px] opacity-70">৳ 1,450</p>
+              <Link href="/collections/outerwear" aria-label="Shop Fur coat" className="lp-patch mt-1.5 grid size-7 place-items-center bg-lp-bg text-lp-text transition-colors [--lp-stitch-inset:2px] hover:bg-lp-accent hover:text-lp-ink motion-reduce:transition-none">
                 <Icon name="plus" className="size-3" />
               </Link>
-            </div>
-          </article>
+            </article>
+          </section>
 
-          <div className="lp-patch absolute top-[20%] right-[6%] z-20 grid aspect-square w-16 rotate-6 place-items-center bg-[#e6d21f] text-[#3a3000] shadow-xl shadow-black/50 group-data-[lp-theme=light]/theme:shadow-black/15 lg:top-[29%] lg:right-auto lg:left-[61%] lg:w-[9.4%]" aria-hidden="true">
-            <Icon name="bag" className="size-1/2" />
-          </div>
+          {/* The first piece, as a story. Held back for now (showFeaturedStory); the section stays
+              in place for when the DHAKA tee is announced. */}
+          {showFeaturedStory && (
+          <section id="featured" aria-labelledby="featured-title" className="relative isolate flex scroll-mt-4 flex-col overflow-hidden bg-lp-bg px-[3%] pt-14 pb-10 lg:grid lg:grid-cols-[35%_1fr] lg:gap-x-[5%] lg:pt-[7%] lg:pb-[5%]">
+            {/* Rows of running stitch in the text colour for a background, the print's maroon glowing behind the tee, and grain. */}
+            <div className="lp-kantha lp-drift absolute inset-x-0 -top-[8%] -bottom-[8%] -z-20 bg-lp-text opacity-[.07]" aria-hidden="true" />
+            <div
+              className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_46%_32%_at_50%_36%,color-mix(in_oklab,var(--color-lp-patch-madder)_45%,transparent),transparent_70%)] lg:bg-[radial-gradient(ellipse_28%_44%_at_62%_36%,color-mix(in_oklab,var(--color-lp-patch-madder)_45%,transparent),transparent_70%)]"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 -z-10 lp-noise opacity-25 mix-blend-overlay" aria-hidden="true" />
+            <span className="lp-drift pointer-events-none absolute right-[1%] bottom-[1%] -z-10 font-lp-display text-[24cqw] leading-none text-lp-text/5 uppercase select-none lg:bottom-[9%] lg:text-[14cqw]" aria-hidden="true">
+              Dhaka
+            </span>
 
-          <article className={`lp-reveal-right ${cardPatch} absolute top-[56%] right-[3%] z-20 w-28 rotate-2 bg-lp-text p-2.5 text-lp-bg lg:top-[62%] lg:right-auto lg:left-[55.5%] lg:w-[10%]`}>
-            <div className="relative aspect-[4/5] overflow-hidden">
-              <Photo photo={photos.pinkFur} sizes="120px" />
-            </div>
-            <h3 className="mt-2 font-lp-display text-[11px] uppercase">Fur coat</h3>
-            <p className="text-[10px] opacity-70">৳ 1,450</p>
-            <Link href="/collections/outerwear" aria-label="Shop Fur coat" className="lp-patch mt-1.5 grid size-7 place-items-center bg-lp-bg text-lp-text transition-colors [--lp-stitch-inset:2px] hover:bg-lp-accent hover:text-lp-ink motion-reduce:transition-none">
-              <Icon name="plus" className="size-3" />
-            </Link>
-          </article>
-        </section>
-
-        {/* The first piece, as a story. Held back for now (showFeaturedStory); the section stays
-            in place for when the DHAKA tee is announced. */}
-        {showFeaturedStory && (
-        <section id="featured" aria-labelledby="featured-title" className="relative isolate flex scroll-mt-4 flex-col overflow-hidden bg-lp-bg px-[3%] pt-14 pb-10 lg:grid lg:grid-cols-[35%_1fr] lg:gap-x-[5%] lg:pt-[7%] lg:pb-[5%]">
-          {/* Rows of running stitch in the text colour for a background, the print's maroon glowing behind the tee, and grain. */}
-          <div className="lp-kantha lp-drift absolute inset-x-0 -top-[8%] -bottom-[8%] -z-20 bg-lp-text opacity-[.07]" aria-hidden="true" />
-          <div
-            className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_46%_32%_at_50%_36%,color-mix(in_oklab,var(--color-lp-patch-madder)_45%,transparent),transparent_70%)] lg:bg-[radial-gradient(ellipse_28%_44%_at_62%_36%,color-mix(in_oklab,var(--color-lp-patch-madder)_45%,transparent),transparent_70%)]"
-            aria-hidden="true"
-          />
-          <div className="absolute inset-0 -z-10 lp-noise opacity-25 mix-blend-overlay" aria-hidden="true" />
-          <span className="lp-drift pointer-events-none absolute right-[1%] bottom-[1%] -z-10 font-lp-display text-[24cqw] leading-none text-lp-text/5 uppercase select-none lg:bottom-[9%] lg:text-[14cqw]" aria-hidden="true">
-            Dhaka
-          </span>
-
-          {/* The words: intro, then the story in three stitches. One column on desktop; on phones the tee sits between them. */}
-          <div className="contents lg:flex lg:flex-col lg:gap-9">
-            <div className="lp-reveal relative z-10 order-1 max-w-md lg:max-w-none">
-              <p className="flex flex-wrap gap-2">
-                <Label>Story No. 01</Label>
-                <Label tone="outline">Our first piece</Label>
-              </p>
-              <SectionTitle id="featured-title" size="feature" className="mt-4">
-                Old Dhaka
-                <br />
-                <span className="font-[900]">ঋ</span>-Vive
-              </SectionTitle>
-              <p className="mt-4 max-w-sm font-lp-serif text-lg leading-snug text-lp-text italic sm:text-xl">{featuredStory.tagline}</p>
-              <p className={`${bodyText} mt-4 max-w-sm`}>{featuredStory.lede}</p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button href="/contact">Follow the first drop</Button>
-                <Button href="/collections/street-style" tone="text">
-                  See the collection
-                </Button>
-              </div>
-            </div>
-            <ol className="relative z-10 order-4 mt-10 ml-3 grid gap-5 border-l border-dashed border-lp-border pl-6 lg:mt-0 lg:gap-4" aria-label="The story in three stitches">
-              {featuredStory.chapters.map((chapter, index) => (
-                <li key={chapter.title} className="lp-reveal relative" style={{ "--lp-stagger": index } as CSSProperties}>
-                  <span
-                    className={`lp-patch absolute top-0 -left-[37px] grid size-6 place-items-center text-[9px] [--lp-stitch-inset:2px] ${["bg-lp-patch-mustard text-lp-ink -rotate-3", "bg-lp-patch-madder text-lp-canvas rotate-2", "bg-lp-patch-indigo text-lp-canvas -rotate-2"][index]}`}
-                    aria-hidden="true"
-                  >
-                    0{index + 1}
-                  </span>
-                  <h3 className="font-lp-display text-[12px] uppercase">
-                    <span className="sr-only">Stitch {index + 1}: </span>
-                    {chapter.title}
-                  </h3>
-                  <p className={`${bodyText} mt-1 max-w-sm`}>{chapter.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {/* The stage: the front of the tee swaying in its frame, the back pinned beside it, the details called out around it and the facts floating as cards. */}
-          <div className="contents lg:relative lg:block lg:pt-[3%]">
-            <div className="lp-fade relative z-10 order-2 mx-auto mt-10 w-[86%] max-w-sm sm:w-[64%] lg:mx-0 lg:ml-[3%] lg:mt-0 lg:w-[63%] lg:max-w-none">
-              <div className="lp-float relative text-lp-text">
-                {/* The photograph in a cloth frame with a running stitch, like the page's other pictures; the leaders are drawn over the photograph itself. */}
-                <div className="lp-patch bg-lp-patch-madder p-2 text-lp-canvas shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/20 sm:p-2.5 sm:[--lp-stitch-inset:5px]">
-                  <div className="relative overflow-hidden bg-lp-surface text-lp-text">
-                    <Image src={dhakaTee.src} alt={dhakaTee.alt} width={dhakaTee.width} height={dhakaTee.height} sizes="(min-width: 1024px) 34vw, (min-width: 640px) 64vw, 86vw" className="block h-auto w-full" />
-                    <Leaders box={`0 0 ${dhakaTee.width} ${dhakaTee.height}`} leaders={featuredStory.callouts.flatMap((callout) => (callout.leader ? [{ id: callout.id, ...callout.leader }] : []))} className="pointer-events-none absolute inset-0 hidden size-full lg:block" />
-                  </div>
+            {/* The words: intro, then the story in three stitches. One column on desktop; on phones the tee sits between them. */}
+            <div className="contents lg:flex lg:flex-col lg:gap-9">
+              <div className="lp-reveal relative z-10 order-1 max-w-md lg:max-w-none">
+                <p className="flex flex-wrap gap-2">
+                  <Label>Story No. 01</Label>
+                  <Label tone="outline">Our first piece</Label>
+                </p>
+                <SectionTitle id="featured-title" size="feature" className="mt-4">
+                  Old Dhaka
+                  <br />
+                  <span className="font-[900]">ঋ</span>-Vive
+                </SectionTitle>
+                <p className="mt-4 max-w-sm font-lp-serif text-lg leading-snug text-lp-text italic sm:text-xl">{featuredStory.tagline}</p>
+                <p className={`${bodyText} mt-4 max-w-sm`}>{featuredStory.lede}</p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Button href="/contact">Follow the first drop</Button>
+                  <Button href="/collections/street-style" tone="text">
+                    See the collection
+                  </Button>
                 </div>
-                {/* The back of the tee, pinned beside the front like a print in a cream border. */}
-                <div className="absolute top-[2%] -left-[7%] w-[26%] -rotate-3 border-[5px] border-lp-brand-base bg-lp-brand-base shadow-xl shadow-black/45 group-data-[lp-theme=light]/theme:shadow-black/18">
-                  <div className="relative aspect-[3/4] overflow-hidden">
-                    <Photo photo={dhakaBack} sizes="(min-width: 1024px) 9vw, 22vw" />
-                  </div>
-                </div>
-                <ul className="hidden lg:contents" aria-label="The details">
-                  {featuredStory.callouts.map((callout) => (
-                    <li key={callout.id} style={callout.at} className="lp-patch absolute z-10 w-max max-w-44 bg-lp-patch-maroon text-lp-brand-base px-2.5 py-1.5 text-[10px] leading-snug shadow-md shadow-black/35 [--lp-stitch-inset:3px] group-data-[lp-theme=light]/theme:shadow-black/12">
-                      <strong className="block font-lp-display font-normal uppercase">{callout.title}</strong>
-                      <span className="opacity-80">{callout.detail}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
-            <ul className="relative z-20 order-5 mt-8 grid gap-3 sm:grid-cols-3 lg:contents" aria-label="The first piece in numbers">
-              {featuredStory.cards.map((card, index) => (
-                <li
-                  key={card.label}
-                  style={{ "--lp-stagger": index } as CSSProperties}
-                  className={`lp-reveal-right ${cardPatch} z-20 flex items-center gap-3 p-3 lg:absolute lg:w-[31%] lg:p-3.5 ${card.cloth} ${card.place}`}
-                >
-                  <span className="lp-patch relative aspect-[4/5] w-11 flex-none overflow-hidden bg-lp-surface [--lp-stitch-inset:2px]">
-                    <Photo photo={card.photo} sizes="44px" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-1.5 text-[9px] tracking-[.12em] uppercase opacity-70">
-                      <Icon name={card.icon} className="size-3" />
-                      {card.label}
+              <ol className="relative z-10 order-4 mt-10 ml-3 grid gap-5 border-l border-dashed border-lp-border pl-6 lg:mt-0 lg:gap-4" aria-label="The story in three stitches">
+                {featuredStory.chapters.map((chapter, index) => (
+                  <li key={chapter.title} className="lp-reveal relative" style={{ "--lp-stagger": index } as CSSProperties}>
+                    <span
+                      className={`lp-patch absolute top-0 -left-[37px] grid size-6 place-items-center text-[9px] [--lp-stitch-inset:2px] ${["bg-lp-patch-mustard text-lp-ink -rotate-3", "bg-lp-patch-madder text-lp-canvas rotate-2", "bg-lp-patch-indigo text-lp-canvas -rotate-2"][index]}`}
+                      aria-hidden="true"
+                    >
+                      0{index + 1}
                     </span>
-                    <span className="block font-lp-display text-[13px] leading-tight uppercase">{card.value}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <ul className="relative z-10 order-3 mt-6 grid grid-cols-2 gap-2 lg:hidden" aria-label="The details">
-            {featuredStory.callouts.map((callout) => (
-              <li key={callout.id} className="lp-patch bg-lp-patch-maroon text-lp-brand-base px-2.5 py-2 text-[10px] leading-snug [--lp-stitch-inset:3px]">
-                <strong className="block font-lp-display font-normal uppercase">{callout.title}</strong>
-                <span className="opacity-80">{callout.detail}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="relative order-6 hidden h-4 lg:col-span-2 lg:mt-[4%] lg:block" aria-hidden="true">
-            <Markers className="top-0" />
-          </div>
-          <ul className="lp-drift-x relative order-7 -mx-[3.2%] mt-10 flex justify-between gap-6 overflow-hidden border-y border-lp-border px-[3%] py-2 text-[10px] whitespace-nowrap text-lp-muted uppercase lg:col-span-2 lg:mt-5" aria-label="Motifs">
-            {featuredStory.motifs.map((word, index) => (
-              <li key={word} className={index > 2 && index < 7 ? "hidden lg:block" : ""}>{word}</li>
-            ))}
-          </ul>
-        </section>
-        )}
-
-        {/* Collection */}
-        <section id="collection" aria-labelledby="collection-title" className="scroll-mt-4 bg-lp-bg pt-[8%] pb-[10%]">
-          <div className="lp-reveal flex flex-col justify-between gap-5 px-[3%] sm:flex-row sm:items-end">
-            <div>
-              <SectionTitle id="collection-title">Exclusive collections made<br className="hidden sm:block" /> for every moment</SectionTitle>
-              <p className={`${bodyText} mt-3 max-w-md`}>Browse our curated collections of premium pieces designed for everyday style, comfort, and heritage.</p>
+                    <h3 className="font-lp-display text-[12px] uppercase">
+                      <span className="sr-only">Stitch {index + 1}: </span>
+                      {chapter.title}
+                    </h3>
+                    <p className={`${bodyText} mt-1 max-w-sm`}>{chapter.body}</p>
+                  </li>
+                ))}
+              </ol>
             </div>
-          </div>
 
-          <nav aria-label="Collection" className="mt-[4%] overflow-x-auto border-b border-lp-border px-[3%] [scrollbar-width:none]">
-            <ul className="flex min-w-max justify-between gap-3 py-4">
-              {collectionTabs.map((tab, index) => (
-                <li key={tab.label}>
-                  <Link
-                    href={tab.href}
-                    className={`${smallPatch} grid min-h-11 place-items-center px-5 text-[11px] uppercase hover:bg-lp-text hover:text-lp-bg sm:min-h-10 ${index === 2 ? "bg-lp-accent text-lp-ink" : "bg-lp-card text-lp-muted"} ${index % 2 ? "rotate-1" : "-rotate-1"}`}
-                  >
-                    {tab.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <ul className="mt-[2.5%] grid grid-cols-4 gap-2 px-[3%] sm:gap-3 lg:grid-cols-6">
-            {bricks.map((brick, index) =>
-              brick.kind === "product" ? (
-                <li
-                  key={brick.id}
-                  id={brick.id}
-                  style={{ "--lp-stagger": index % 3, ...garmentCloth(brick.photo) } as CSSProperties}
-                  className={`lp-reveal lp-unveil lp-patch group relative scroll-mt-4 [--lp-stitch-inset:3px] sm:[--lp-stitch-inset:4px] ${brick.featured ? "aspect-[2/1] lg:aspect-auto" : "aspect-[5/4]"} ${brick.cloth} ${brick.place}`}
-                >
-                  {/* The photograph sits inside the cloth frame, clear of the stitch. */}
-                  <div className="absolute inset-1.5 overflow-hidden bg-lp-surface sm:inset-2">
-                    <Photo photo={brick.photo} sizes={brick.featured ? "(min-width: 1024px) 33vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className={hoverImage} />
+            {/* The stage: the front of the tee swaying in its frame, the back pinned beside it, the details called out around it and the facts floating as cards. */}
+            <div className="contents lg:relative lg:block lg:pt-[3%]">
+              <div className="lp-fade relative z-10 order-2 mx-auto mt-10 w-[86%] max-w-sm sm:w-[64%] lg:mx-0 lg:ml-[3%] lg:mt-0 lg:w-[63%] lg:max-w-none">
+                <div className="lp-float relative text-lp-text">
+                  {/* The photograph in a cloth frame with a running stitch, like the page's other pictures; the leaders are drawn over the photograph itself. */}
+                  <div className="lp-patch bg-lp-patch-madder p-2 text-lp-canvas shadow-2xl shadow-black/60 group-data-[lp-theme=light]/theme:shadow-black/20 sm:p-2.5 sm:[--lp-stitch-inset:5px]">
+                    <div className="relative overflow-hidden bg-lp-surface text-lp-text">
+                      <Image src={dhakaTee.src} alt={dhakaTee.alt} width={dhakaTee.width} height={dhakaTee.height} sizes="(min-width: 1024px) 34vw, (min-width: 640px) 64vw, 86vw" className="block h-auto w-full" />
+                      <Leaders box={`0 0 ${dhakaTee.width} ${dhakaTee.height}`} leaders={featuredStory.callouts.flatMap((callout) => (callout.leader ? [{ id: callout.id, ...callout.leader }] : []))} className="pointer-events-none absolute inset-0 hidden size-full lg:block" />
+                    </div>
                   </div>
-                  <div className="absolute inset-x-2.5 bottom-2.5 flex items-end justify-between gap-1 sm:inset-x-4 sm:bottom-4 sm:gap-2">
-                    <Label>{brick.label}</Label>
-                    <Label tone="text">{brick.price}</Label>
+                  {/* The back of the tee, pinned beside the front like a print in a cream border. */}
+                  <div className="absolute top-[2%] -left-[7%] w-[26%] -rotate-3 border-[5px] border-lp-brand-base bg-lp-brand-base shadow-xl shadow-black/45 group-data-[lp-theme=light]/theme:shadow-black/18">
+                    <div className="relative aspect-[3/4] overflow-hidden">
+                      <Photo photo={dhakaBack} sizes="(min-width: 1024px) 9vw, 22vw" />
+                    </div>
                   </div>
-                  <Link href={brick.href} aria-label={`${brick.label}, ${brick.price}`} className="absolute inset-0 z-10" />
-                </li>
-              ) : brick.kind === "cta" ? (
-                <li key={brick.id} className={`lp-reveal relative flex aspect-[5/4] flex-col justify-between p-3 text-lp-ink sm:p-4 ${clothBrick} ${brick.cloth} ${brick.place}`}>
-                  <p className="relative text-[11px] leading-snug uppercase">
-                    New pieces
-                    <br />
-                    every month
-                  </p>
-                  <Link
-                    href="/shop"
-                    className={`${smallPatch} relative inline-flex min-h-10 -rotate-1 items-center justify-between gap-4 bg-lp-text px-3.5 text-[11px] font-medium tracking-wide text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}
-                  >
-                    Browse more <Icon name="arrowRight" />
-                  </Link>
-                </li>
-              ) : (
-                <li key={brick.id} aria-hidden="true" className={`lp-fade relative ${clothBrick} ${brick.cloth} ${brick.place}`} />
-              ),
-            )}
-          </ul>
-        </section>
-
-        <Divider />
-
-        {/* About */}
-        <section id="about" aria-labelledby="about-title" className="relative isolate scroll-mt-4 overflow-hidden bg-lp-surface px-[3%] py-12 sm:py-16 lg:grid lg:grid-cols-[1fr_.9fr] lg:items-start lg:gap-x-[6%] lg:py-20">
-          <div className="absolute -top-[20%] -right-[10%] -z-10 h-[70%] w-[75%] scale-y-50 rotate-12 opacity-45 blur-2xl saturate-150" aria-hidden="true">
-            <Photo photo={photos.redGown} sizes="60vw" />
-          </div>
-
-          <div>
-            <SectionTitle id="about-title">The perfect blend<br />of style and comfort</SectionTitle>
-            <p className={`${bodyText} mt-3 max-w-md`}>Our collections bring together modern cuts and Bengali craft for fashion that feels as good as it looks.</p>
-
-            <div className="lp-reveal-left lp-unveil relative mx-6 mt-12 max-w-[440px] lg:ml-[10%]">
-              <Icon name="arrowDownRight" className="absolute -top-6 -left-6 size-3.5 text-lp-muted" />
-              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={3} strokeDasharray="3 3" className="absolute -top-10 -right-8 z-10 size-12 text-lp-signal" aria-hidden="true">
-                <path d="M44 4 8 40M8 18v22h22" />
-              </svg>
-              <div className="relative aspect-square overflow-hidden bg-black">
-                <Photo photo={photos.sunglasses} sizes="(min-width: 1024px) 440px, 90vw" />
-              </div>
-              <Icon name="arrowUpRight" className="absolute -left-6 size-3.5 text-lp-muted" />
-              <Icon name="arrowUpLeft" className="absolute -right-6 size-3.5 text-lp-muted" />
-              <div className="mt-6 grid place-items-center border-y border-lp-border py-4">
-                <Button href="/about" tone="text">Learn more</Button>
-              </div>
-            </div>
-          </div>
-
-          <ul className="mt-14 lg:mt-0">
-            {values.map((value, index) => (
-              <li key={value.title} style={{ "--lp-stagger": index } as CSSProperties} className="lp-reveal-right grid grid-cols-[40px_1fr] items-center gap-5 border-b border-lp-border py-8 first:pt-0 last:border-b-0 last:pb-0 sm:grid-cols-[56px_1fr] lg:py-10">
-                <Icon name={value.icon} flow={value.flow} className={`size-10 drop-shadow-[0_0_6px_var(--color-lp-bg)] sm:size-12 ${value.tone}`} />
-                <div>
-                  <h3 className={`font-lp-display text-[clamp(1rem,1.6cqw,1.4rem)] leading-[1.15] uppercase [text-shadow:0_0_14px_var(--color-lp-bg)] ${value.tone}`}>{value.title}</h3>
-                  <p className={`${bodyText} mt-2 max-w-72`}>{value.body}</p>
+                  <ul className="hidden lg:contents" aria-label="The details">
+                    {featuredStory.callouts.map((callout) => (
+                      <li key={callout.id} style={callout.at} className="lp-patch absolute z-10 w-max max-w-44 bg-lp-patch-maroon text-lp-brand-base px-2.5 py-1.5 text-[10px] leading-snug shadow-md shadow-black/35 [--lp-stitch-inset:3px] group-data-[lp-theme=light]/theme:shadow-black/12">
+                        <strong className="block font-lp-display font-normal uppercase">{callout.title}</strong>
+                        <span className="opacity-80">{callout.detail}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Journal */}
-        <section id="journal" aria-labelledby="journal-title" className="scroll-mt-4 bg-lp-bg pt-[7%]">
-          <div className="lp-reveal grid justify-items-center gap-3 px-[3%] pb-[3%] text-center">
-            <SectionTitle id="journal-title">Follow our style journey</SectionTitle>
-            <p className={`${bodyText} max-w-md`}>Explore our latest looks, behind-the-scenes moments, and stay connected with every new collection.</p>
-          </div>
-
-          <Rail href="/journal" first="#journal-post-0" last={`#journal-post-${journalPosts.length - 1}`} label="post">
-            Follow us
-          </Rail>
-
-          <ul className="grid grid-cols-2 items-start gap-5 px-[3%] pt-[4%] pb-[10%] lg:grid-cols-4 lg:gap-x-[1.6%]">
-            {journalPosts.map((post, index) => (
-              <li key={post.slug} id={`journal-post-${index}`} style={{ "--lp-stagger": index } as CSSProperties}
-                className={`lp-reveal lp-unveil scroll-mt-4 ${post.offset}`}>
-                {/* The tilt lives on the patch, not the li, so it does not fight the reveal's transform. */}
-                <Link href={`/journal#${post.slug}`} aria-label={`${post.title}, ${post.date}`} className={`${cardPatch} group relative block p-2.5 [--lp-stitch-inset:5px] sm:p-3.5 sm:[--lp-stitch-inset:7px] ${post.cloth}`}>
-                  <span className={`absolute -top-3 -left-1 z-10 sm:-left-2 ${patchShadow} ${post.tag}`}>
-                    <Label tone="text">{post.date}</Label>
-                  </span>
-                  <div className="relative aspect-[3/4] overflow-hidden">
-                    <Photo photo={post.photo} sizes="(min-width: 1024px) 320px, 50vw" className={hoverImage} />
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <Divider />
-
-        {/* Footer */}
-        <footer id="footer" className="relative isolate overflow-hidden bg-lp-bg pt-[7%] text-center">
-          <div className="absolute -inset-x-[10%] -top-[10%] bottom-[30%] -z-20 scale-y-50 -rotate-12 opacity-50 blur-2xl saturate-150" aria-hidden="true">
-            <Photo photo={photos.fur} sizes="100vw" />
-          </div>
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_35%,color-mix(in_oklab,var(--color-lp-bg)_90%,transparent)_20%,color-mix(in_oklab,var(--color-lp-bg)_40%,transparent)_70%)]" aria-hidden="true" />
-
-          <div className="lp-reveal grid justify-items-center gap-3 px-[3%]">
-            <Link href="/landing" aria-label="Reé home"><BrandLogo className="w-20 sm:w-24" decorative /></Link>
-            <p className={`${bodyText} max-w-sm`}>ঋ - Reé brings stories, symbols, and heritage forward into clothing made for now.</p>
-            <ul className="mt-1 flex gap-2">
-              {socials.map((social, index) => (
-                <li key={social.icon}>
-                  <a
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${social.label} (opens in a new tab)`}
-                    className={`${smallPatch} grid size-11 place-items-center sm:size-10 ${social.cloth} ${index % 2 ? "rotate-3" : "-rotate-3"}`}
+              </div>
+              <ul className="relative z-20 order-5 mt-8 grid gap-3 sm:grid-cols-3 lg:contents" aria-label="The first piece in numbers">
+                {featuredStory.cards.map((card, index) => (
+                  <li
+                    key={card.label}
+                    style={{ "--lp-stagger": index } as CSSProperties}
+                    className={`lp-reveal-right ${cardPatch} z-20 flex items-center gap-3 p-3 lg:absolute lg:w-[31%] lg:p-3.5 ${card.cloth} ${card.place}`}
                   >
-                    <BrandIcon name={social.icon} className="size-[18px] sm:size-4" />
-                  </a>
+                    <span className="lp-patch relative aspect-[4/5] w-11 flex-none overflow-hidden bg-lp-surface [--lp-stitch-inset:2px]">
+                      <Photo photo={card.photo} sizes="44px" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="flex items-center gap-1.5 text-[9px] tracking-[.12em] uppercase opacity-70">
+                        <Icon name={card.icon} className="size-3" />
+                        {card.label}
+                      </span>
+                      <span className="block font-lp-display text-[13px] leading-tight uppercase">{card.value}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <ul className="relative z-10 order-3 mt-6 grid grid-cols-2 gap-2 lg:hidden" aria-label="The details">
+              {featuredStory.callouts.map((callout) => (
+                <li key={callout.id} className="lp-patch bg-lp-patch-maroon text-lp-brand-base px-2.5 py-2 text-[10px] leading-snug [--lp-stitch-inset:3px]">
+                  <strong className="block font-lp-display font-normal uppercase">{callout.title}</strong>
+                  <span className="opacity-80">{callout.detail}</span>
                 </li>
               ))}
             </ul>
-          </div>
 
-          {/* The photo in an emerald cloth patch, framed and stitched like the other cards. */}
-          <div className="lp-reveal mx-auto mt-[4%] w-[94%] sm:w-[61%]">
-            <div className="lp-patch -rotate-[.6deg] bg-lp-brand p-1.5 text-lp-brand-base shadow-2xl shadow-black/50 [--lp-stitch-inset:3px] group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-2 sm:[--lp-stitch-inset:4px]">
-              <div className="relative aspect-[154/42] overflow-hidden bg-lp-surface">
-                <Photo photo={photos.redLips} sizes="(min-width: 640px) 61vw, 94vw" />
+            <div className="relative order-6 hidden h-4 lg:col-span-2 lg:mt-[4%] lg:block" aria-hidden="true">
+              <Markers className="top-0" />
+            </div>
+            <ul className="lp-drift-x relative order-7 -mx-[3.2%] mt-10 flex justify-between gap-6 overflow-hidden border-y border-lp-border px-[3%] py-2 text-[10px] whitespace-nowrap text-lp-muted uppercase lg:col-span-2 lg:mt-5" aria-label="Motifs">
+              {featuredStory.motifs.map((word, index) => (
+                <li key={word} className={index > 2 && index < 7 ? "hidden lg:block" : ""}>{word}</li>
+              ))}
+            </ul>
+          </section>
+          )}
+
+          {/* Collection */}
+          <section id="collection" aria-labelledby="collection-title" className="scroll-mt-4 bg-lp-bg pt-[8%] pb-[10%]">
+            <div className="lp-reveal flex flex-col justify-between gap-5 px-[3%] sm:flex-row sm:items-end">
+              <div>
+                <SectionTitle id="collection-title">Exclusive collections made<br className="hidden sm:block" /> for every moment</SectionTitle>
+                <p className={`${bodyText} mt-3 max-w-md`}>Browse our curated collections of premium pieces designed for everyday style, comfort, and heritage.</p>
               </div>
             </div>
-          </div>
 
-          <ul className="mx-[3%] mt-6 mb-8 flex flex-wrap justify-center gap-3">
-            {legalLinks.map((link, index) => (
-              <li key={link.href}>
-                <Link href={link.href} className={`${smallPatch} block min-w-40 bg-lp-text px-4 py-2.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink ${index % 2 ? "rotate-1" : "-rotate-1"}`}>{link.label}</Link>
-              </li>
-            ))}
-          </ul>
+            <nav aria-label="Collection" className="mt-[4%] overflow-x-auto border-b border-lp-border px-[3%] [scrollbar-width:none]">
+              <ul className="flex min-w-max justify-between gap-3 py-4">
+                {collectionTabs.map((tab, index) => (
+                  <li key={tab.label}>
+                    <Link
+                      href={tab.href}
+                      className={`${smallPatch} grid min-h-11 place-items-center px-5 text-[11px] uppercase hover:bg-lp-text hover:text-lp-bg sm:min-h-10 ${index === 2 ? "bg-lp-accent text-lp-ink" : "bg-lp-card text-lp-muted"} ${index % 2 ? "rotate-1" : "-rotate-1"}`}
+                    >
+                      {tab.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
-          <nav aria-label="Footer" className="overflow-x-auto bg-lp-brand text-lp-ink">
-            <ul className="flex min-w-max justify-between gap-3 px-[8%] py-3 text-[11px] uppercase">
-              {footerLinks.map((link, index) => (
-                <li key={link.label}>
-                  {/* Dark patches on the green band: ink and accent read the same in both themes. */}
-                  <Link href={link.href} className={`${smallPatch} block bg-lp-ink px-4 py-2.5 text-lp-accent hover:bg-lp-card hover:text-lp-text ${index % 2 ? "-rotate-1" : "rotate-1"}`}>{link.label}</Link>
+            <ul className="mt-[2.5%] grid grid-cols-4 gap-2 px-[3%] sm:gap-3 lg:grid-cols-6">
+              {bricks.map((brick, index) =>
+                brick.kind === "product" ? (
+                  <li
+                    key={brick.id}
+                    id={brick.id}
+                    style={{ "--lp-stagger": index % 3, ...garmentCloth(brick.photo) } as CSSProperties}
+                    className={`lp-reveal lp-unveil lp-patch group relative scroll-mt-4 [--lp-stitch-inset:3px] sm:[--lp-stitch-inset:4px] ${brick.featured ? "aspect-[2/1] lg:aspect-auto" : "aspect-[5/4]"} ${brick.cloth} ${brick.place}`}
+                  >
+                    {/* The photograph sits inside the cloth frame, clear of the stitch. */}
+                    <div className="absolute inset-1.5 overflow-hidden bg-lp-surface sm:inset-2">
+                      <Photo photo={brick.photo} sizes={brick.featured ? "(min-width: 1024px) 33vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className={hoverImage} />
+                    </div>
+                    <div className="absolute inset-x-2.5 bottom-2.5 flex items-end justify-between gap-1 sm:inset-x-4 sm:bottom-4 sm:gap-2">
+                      <Label>{brick.label}</Label>
+                      <Label tone="text">{brick.price}</Label>
+                    </div>
+                    <Link href={brick.href} aria-label={`${brick.label}, ${brick.price}`} className="absolute inset-0 z-10" />
+                  </li>
+                ) : brick.kind === "cta" ? (
+                  <li key={brick.id} className={`lp-reveal relative flex aspect-[5/4] flex-col justify-between p-3 text-lp-ink sm:p-4 ${clothBrick} ${brick.cloth} ${brick.place}`}>
+                    <p className="relative text-[11px] leading-snug uppercase">
+                      New pieces
+                      <br />
+                      every month
+                    </p>
+                    <Link
+                      href="/shop"
+                      className={`${smallPatch} relative inline-flex min-h-10 -rotate-1 items-center justify-between gap-4 bg-lp-text px-3.5 text-[11px] font-medium tracking-wide text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink`}
+                    >
+                      Browse more <Icon name="arrowRight" />
+                    </Link>
+                  </li>
+                ) : (
+                  <li key={brick.id} aria-hidden="true" className={`lp-fade relative ${clothBrick} ${brick.cloth} ${brick.place}`} />
+                ),
+              )}
+            </ul>
+          </section>
+
+          <Divider />
+
+          {/* About */}
+          <section id="about" aria-labelledby="about-title" className="relative isolate scroll-mt-4 overflow-hidden bg-lp-surface px-[3%] py-12 sm:py-16 lg:grid lg:grid-cols-[1fr_.9fr] lg:items-start lg:gap-x-[6%] lg:py-20">
+            <div className="absolute -top-[20%] -right-[10%] -z-10 h-[70%] w-[75%] scale-y-50 rotate-12 opacity-45 blur-2xl saturate-150" aria-hidden="true">
+              <Photo photo={photos.redGown} sizes="60vw" />
+            </div>
+
+            <div>
+              <SectionTitle id="about-title">The perfect blend<br />of style and comfort</SectionTitle>
+              <p className={`${bodyText} mt-3 max-w-md`}>Our collections bring together modern cuts and Bengali craft for fashion that feels as good as it looks.</p>
+
+              <div className="lp-reveal-left lp-unveil relative mx-6 mt-12 max-w-[440px] lg:ml-[10%]">
+                <Icon name="arrowDownRight" className="absolute -top-6 -left-6 size-3.5 text-lp-muted" />
+                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={3} strokeDasharray="3 3" className="absolute -top-10 -right-8 z-10 size-12 text-lp-signal" aria-hidden="true">
+                  <path d="M44 4 8 40M8 18v22h22" />
+                </svg>
+                <div className="relative aspect-square overflow-hidden bg-black">
+                  <Photo photo={photos.sunglasses} sizes="(min-width: 1024px) 440px, 90vw" />
+                </div>
+                <Icon name="arrowUpRight" className="absolute -left-6 size-3.5 text-lp-muted" />
+                <Icon name="arrowUpLeft" className="absolute -right-6 size-3.5 text-lp-muted" />
+                <div className="mt-6 grid place-items-center border-y border-lp-border py-4">
+                  <Button href="/about" tone="text">Learn more</Button>
+                </div>
+              </div>
+            </div>
+
+            <ul className="mt-14 lg:mt-0">
+              {values.map((value, index) => (
+                <li key={value.title} style={{ "--lp-stagger": index } as CSSProperties} className="lp-reveal-right grid grid-cols-[40px_1fr] items-center gap-5 border-b border-lp-border py-8 first:pt-0 last:border-b-0 last:pb-0 sm:grid-cols-[56px_1fr] lg:py-10">
+                  <Icon name={value.icon} flow={value.flow} className={`size-10 drop-shadow-[0_0_6px_var(--color-lp-bg)] sm:size-12 ${value.tone}`} />
+                  <div>
+                    <h3 className={`font-lp-display text-[clamp(1rem,1.6cqw,1.4rem)] leading-[1.15] uppercase [text-shadow:0_0_14px_var(--color-lp-bg)] ${value.tone}`}>{value.title}</h3>
+                    <p className={`${bodyText} mt-2 max-w-72`}>{value.body}</p>
+                  </div>
                 </li>
               ))}
             </ul>
-          </nav>
+          </section>
 
-          <MossWordmark>
-            <p className="relative border-t border-white/15 bg-transparent px-[3%] py-2.5 text-[10px] text-lp-brand-base backdrop-blur-md">© 2026 ঋ - Reé. All rights reserved.</p>
-          </MossWordmark>
-        </footer>
-      </main>
-    </div>
+          {/* Journal */}
+          <section id="journal" aria-labelledby="journal-title" className="scroll-mt-4 bg-lp-bg pt-[7%]">
+            <div className="lp-reveal grid justify-items-center gap-3 px-[3%] pb-[3%] text-center">
+              <SectionTitle id="journal-title">Follow our style journey</SectionTitle>
+              <p className={`${bodyText} max-w-md`}>Explore our latest looks, behind-the-scenes moments, and stay connected with every new collection.</p>
+            </div>
+
+            <Rail href="/journal" first="#journal-post-0" last={`#journal-post-${journalPosts.length - 1}`} label="post">
+              Follow us
+            </Rail>
+
+            <ul className="grid grid-cols-2 items-start gap-5 px-[3%] pt-[4%] pb-[10%] lg:grid-cols-4 lg:gap-x-[1.6%]">
+              {journalPosts.map((post, index) => (
+                <li key={post.slug} id={`journal-post-${index}`} style={{ "--lp-stagger": index } as CSSProperties}
+                  className={`lp-reveal lp-unveil scroll-mt-4 ${post.offset}`}>
+                  {/* The tilt lives on the patch, not the li, so it does not fight the reveal's transform. */}
+                  <Link href={`/journal#${post.slug}`} aria-label={`${post.title}, ${post.date}`} className={`${cardPatch} group relative block p-2.5 [--lp-stitch-inset:5px] sm:p-3.5 sm:[--lp-stitch-inset:7px] ${post.cloth}`}>
+                    <span className={`absolute -top-3 -left-1 z-10 sm:-left-2 ${patchShadow} ${post.tag}`}>
+                      <Label tone="text">{post.date}</Label>
+                    </span>
+                    <div className="relative aspect-[3/4] overflow-hidden">
+                      <Photo photo={post.photo} sizes="(min-width: 1024px) 320px, 50vw" className={hoverImage} />
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <Divider />
+
+          {/* Footer */}
+          <footer id="footer" className="relative isolate overflow-hidden bg-lp-bg pt-[7%] text-center">
+            <div className="absolute -inset-x-[10%] -top-[10%] bottom-[30%] -z-20 scale-y-50 -rotate-12 opacity-50 blur-2xl saturate-150" aria-hidden="true">
+              <Photo photo={photos.fur} sizes="100vw" />
+            </div>
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_35%,color-mix(in_oklab,var(--color-lp-bg)_90%,transparent)_20%,color-mix(in_oklab,var(--color-lp-bg)_40%,transparent)_70%)]" aria-hidden="true" />
+
+            <div className="lp-reveal grid justify-items-center gap-3 px-[3%]">
+              <Link href="/landing" aria-label="Reé home"><BrandLogo className="w-20 sm:w-24" decorative /></Link>
+              <p className={`${bodyText} max-w-sm`}>ঋ - Reé brings stories, symbols, and heritage forward into clothing made for now.</p>
+              <ul className="mt-1 flex gap-2">
+                {socials.map((social, index) => (
+                  <li key={social.icon}>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${social.label} (opens in a new tab)`}
+                      className={`${smallPatch} grid size-11 place-items-center sm:size-10 ${social.cloth} ${index % 2 ? "rotate-3" : "-rotate-3"}`}
+                    >
+                      <BrandIcon name={social.icon} className="size-[18px] sm:size-4" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* The photo in an emerald cloth patch, framed and stitched like the other cards. */}
+            <div className="lp-reveal mx-auto mt-[4%] w-[94%] sm:w-[61%]">
+              <div className="lp-patch -rotate-[.6deg] bg-lp-brand p-1.5 text-lp-brand-base shadow-2xl shadow-black/50 [--lp-stitch-inset:3px] group-data-[lp-theme=light]/theme:shadow-black/15 sm:p-2 sm:[--lp-stitch-inset:4px]">
+                <div className="relative aspect-[154/42] overflow-hidden bg-lp-surface">
+                  <Photo photo={photos.redLips} sizes="(min-width: 640px) 61vw, 94vw" />
+                </div>
+              </div>
+            </div>
+
+            <ul className="mx-[3%] mt-6 mb-8 flex flex-wrap justify-center gap-3">
+              {legalLinks.map((link, index) => (
+                <li key={link.href}>
+                  <Link href={link.href} className={`${smallPatch} block min-w-40 bg-lp-text px-4 py-2.5 text-[10px] text-lp-bg uppercase hover:bg-lp-accent hover:text-lp-ink ${index % 2 ? "rotate-1" : "-rotate-1"}`}>{link.label}</Link>
+                </li>
+              ))}
+            </ul>
+
+            <nav aria-label="Footer" className="overflow-x-auto bg-lp-brand text-lp-ink">
+              <ul className="flex min-w-max justify-between gap-3 px-[8%] py-3 text-[11px] uppercase">
+                {footerLinks.map((link, index) => (
+                  <li key={link.label}>
+                    {/* Dark patches on the green band: ink and accent read the same in both themes. */}
+                    <Link href={link.href} className={`${smallPatch} block bg-lp-ink px-4 py-2.5 text-lp-accent hover:bg-lp-card hover:text-lp-text ${index % 2 ? "-rotate-1" : "rotate-1"}`}>{link.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <MossWordmark>
+              <p className="relative border-t border-white/15 bg-transparent px-[3%] py-2.5 text-[10px] text-lp-brand-base backdrop-blur-md">© 2026 ঋ - Reé. All rights reserved.</p>
+            </MossWordmark>
+          </footer>
+        </main>
+      </div>
+    </CatalogScope>
   );
 }

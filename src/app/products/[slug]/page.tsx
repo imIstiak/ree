@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "../../../lib/seo";
 import { notFound, redirect } from "next/navigation";
+import { CatalogScope } from "../../../components/catalog-scope";
 import { ProductClassic } from "../../../components/product-classic";
 import { ProductStory } from "../../../components/product-story";
 import { relatedTo } from "../../../data/products";
@@ -38,5 +39,5 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
 export default async function ProductPage({ params }: PageProps<"/products/[slug]">) {
   const product = await find((await params).slug);
   const related = relatedTo(await getCatalog(), product);
-  return product.kind === "story" ? <ProductStory product={product} related={related} /> : <ProductClassic product={product} related={related} />;
+  return <CatalogScope>{product.kind === "story" ? <ProductStory product={product} related={related} /> : <ProductClassic product={product} related={related} />}</CatalogScope>;
 }

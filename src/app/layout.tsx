@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anek_Bangla, Noto_Serif_Bengali, Plus_Jakarta_Sans, Spectral } from "next/font/google";
+import { SplashScreen } from "../components/splash-screen";
 import { site } from "../data/site";
 import "./globals.css";
 
@@ -51,11 +52,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // suppressHydrationWarning: the splash's script sets data-splash-* on <html> before hydration.
     <html
       lang="en"
       className={`${sans.variable} ${serif.variable} ${bangla.variable} ${banglaSerif.variable}`}
+      suppressHydrationWarning
     >
-      <body>{children}</body>
+      <body>
+        <SplashScreen />
+        {children}
+      </body>
     </html>
   );
 }

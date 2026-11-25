@@ -1,32 +1,21 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import type { Product } from "../data/products";
+import type { CatalogEntry } from "../data/products";
 import { Icon } from "./landing-icons";
-import { ProductShell } from "./product-shell";
-import { ShopCard, ShopFooter, kicker, pageHeader, patchShadow, smallPatch } from "./shop-ui";
+import { ShopCard, kicker, patchShadow, smallPatch } from "./shop-ui";
 
 // The patch classes and the product patch live in shop-ui.tsx (the product pages use them too).
 export { ShopCard, cardPatch, cloths, hoverImage, patchShadow, smallPatch, tilts } from "./shop-ui";
-import { SiteHeader } from "./site-header";
 
-// The frame and the small pieces for the shop's own pages (shop, men / women / kids, collections,
-// about, journal, contact, legal, cart, checkout): the product pages' shell, the shared header and
-// the shop footer, with the landing page's patchwork for every card, chip and button (each one a
-// cloth patch with a running stitch, resting at a tilt that straightens on hover). No hooks, so
-// server pages can use it.
+// The small pieces for the shop's own pages (shop, men / women / kids, collections, about, journal,
+// contact, legal, cart, checkout), with the landing page's patchwork for every card, chip and button
+// (each one a cloth patch with a running stitch, resting at a tilt that straightens on hover). No
+// hooks, so server pages can use it, and nothing server-only, so the cart and checkout (client
+// components) can too. The pages' frame is SitePage in site-frame.tsx.
 
 export const bodyText = "text-[13px] leading-[1.75] text-lp-muted";
 export const sectionTitle = "lp-newsprint font-lp-display text-[clamp(1.4rem,2.6cqw,2.4rem)] leading-[1.05] tracking-[-.02em] uppercase";
 
-export function SitePage({ children }: { children: ReactNode }) {
-  return (
-    <ProductShell>
-      <SiteHeader base="/landing" className={pageHeader} />
-      <main className="pb-16 lg:pb-[5%]">{children}</main>
-      <ShopFooter />
-    </ProductShell>
-  );
-}
 
 export function PageIntro({ eyebrow, title, children }: { eyebrow: string; title: ReactNode; children?: ReactNode }) {
   return (
@@ -79,7 +68,7 @@ export function PageButton({ href, children, tone = "accent" }: { href: string; 
 }
 
 // The tilt lives on the patch, not the li, so it does not fight the reveal's transform.
-export function ShopGrid({ products, label }: { products: Product[]; label: string }) {
+export function ShopGrid({ products, label }: { products: CatalogEntry[]; label: string }) {
   return (
     <ul aria-label={label} className="grid grid-cols-2 gap-x-3 gap-y-6 px-[3%] py-8 sm:gap-x-5 sm:gap-y-9 lg:grid-cols-4 lg:py-[3%]">
       {products.map((product, index) => (

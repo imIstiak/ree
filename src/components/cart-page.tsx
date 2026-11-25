@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FREE_DELIVERY_FROM, deliveryAreas } from "../data/checkout";
-import { formatPrice, type Product } from "../data/products";
+import { formatPrice, type CatalogEntry } from "../data/products";
 import { useCatalog } from "./catalog-client";
 import { Icon } from "./landing-icons";
 import { useHydrated, useShop, type CartLine } from "./shop-store";
@@ -11,15 +11,14 @@ import { garmentCloth } from "./shop-ui";
 import { EmptyNote, PageButton, PageIntro, ShopGrid, bodyText, cloths, patchShadow, sectionTitle } from "./site-page";
 
 // The bag (/cart): every line as a cloth patch with a quantity stepper, a summary with the delivery
-// promise, and the saved pieces underneath. The bag lives in the localStorage store and the pieces
-// come from the catalogue (useCatalog), so it renders once both are in.
+// promise, and the saved pieces underneath. The bag lives in the localStorage store, so it renders
+// once the page has hydrated; the pieces come with the page (useCatalog).
 
 const MAX_QTY = 10;
 
-export type BagLine = CartLine & { product: Product };
+export type BagLine = CartLine & { product: CatalogEntry };
 
-// `ready` is false until the catalogue has arrived; a line whose piece is no longer published is
-// left out (and so never reaches checkout).
+// A line whose piece is no longer published is left out (and so never reaches checkout).
 export function useBag() {
   const shop = useShop();
   const catalog = useCatalog();
@@ -29,13 +28,13 @@ export function useBag() {
   });
   const count = lines.reduce((sum, line) => sum + line.qty, 0);
   const subtotal = lines.reduce((sum, line) => sum + line.qty * line.product.price, 0);
-  return { ...shop, lines, count, subtotal, ready: catalog.ready, find: catalog.find };
+  return { ...shop, lines, count, subtotal, find: catalog.find };
 }
 
 export function CartView() {
   const hydrated = useHydrated();
-  const { lines, count, subtotal, wishlist, setQty, removeLine, ready: catalogReady, find } = useBag();
-  const ready = hydrated && catalogReady;
+  const { lines, count, subtotal, wishlist, setQty, removeLine, find } = useBag();
+  const ready = hydrated;
   const saved = wishlist.flatMap((slug) => find(slug) ?? []);
   const toFree = Math.max(0, FREE_DELIVERY_FROM - subtotal);
   const cheapest = Math.min(...deliveryAreas.map((area) => area.fee));

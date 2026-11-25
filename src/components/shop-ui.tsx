@@ -2,7 +2,7 @@ import Image from "next/image";
 import { BrandLogo } from "./brand-logo";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import { formatPrice, type Product } from "../data/products";
+import { formatPrice, type CatalogEntry, type Product } from "../data/products";
 
 // Small pieces shared by both product page templates. No hooks here, so server and client
 // components can both import it.
@@ -83,7 +83,8 @@ export function garmentCloth(photo?: { swatch?: string }): CSSProperties | undef
 // A product as a cloth patch: the photograph in the frame, name and price sewn underneath. The story
 // piece shows "Story" instead of a price, as it does on the landing page's wall; without prices (the
 // story page) the category is sewn on instead.
-export function ShopCard({ product, index, showPrice = true }: { product: Product; index: number; showPrice?: boolean }) {
+// Takes a whole Product or the bag's trimmed CatalogEntry (the saved pieces on /cart).
+export function ShopCard({ product, index, showPrice = true }: { product: CatalogEntry; index: number; showPrice?: boolean }) {
   const photo = product.images[0];
   const garment = garmentCloth(photo);
   return (

@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { starterCollections, type Collection, type Season } from "../data/collections";
 import { starterHeroSlides, type HeroSlide } from "../data/hero-slides";
-import { starterCatalogue, type Product, type ProductImage } from "../data/products";
+import { starterCatalogue, type CatalogEntry, type Product, type ProductImage } from "../data/products";
 import { supabase, supabaseConfigured, type CollectionRow, type HeroSlideRow, type ProductRow, type SeasonRow } from "./supabase";
 
 // What the storefront shows, all from Supabase: published products, collections and their
@@ -132,6 +132,21 @@ export const getCatalog = cache(async (): Promise<Product[]> => {
 export async function getCatalogProduct(slug: string) {
   return (await getCatalog()).find((product) => product.slug === slug);
 }
+
+// The catalogue as the browser gets it with a page (CatalogScope): only what the bag, /cart,
+// /checkout and the saved pieces show, and at most two photos a piece.
+export const getCatalogEntries = cache(async (): Promise<CatalogEntry[]> =>
+  (await getCatalog()).map(({ slug, previousSlugs, kind, name, category, price, colour, images }) => ({
+    slug,
+    ...(previousSlugs?.length ? { previousSlugs } : {}),
+    kind,
+    name,
+    category,
+    price,
+    colour,
+    images: images.slice(0, 2),
+  })),
+);
 
 // The published product that had this address before a rename (its page redirects there).
 export async function getMovedProduct(slug: string) {

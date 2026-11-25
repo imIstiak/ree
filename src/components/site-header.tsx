@@ -57,7 +57,7 @@ export function SiteHeader({
   settings?: ReactNode;
 }) {
   const { cart, wishlist, removeLine } = useShop();
-  const catalog = useCatalog(cart.length > 0 || wishlist.length > 0);
+  const catalog = useCatalog();
   const count = cart.reduce((sum, line) => sum + line.qty, 0);
   const subtotal = cart.reduce((sum, line) => sum + line.qty * (catalog.find(line.slug)?.price ?? 0), 0);
   const saved = wishlist.flatMap((slug) => catalog.find(slug) ?? []);
@@ -110,7 +110,7 @@ export function SiteHeader({
               <ul className={styles.lines}>
                 {cart.map((line) => {
                   const product = catalog.find(line.slug);
-                  const name = product?.name ?? (catalog.ready ? "No longer available" : "…");
+                  const name = product?.name ?? "No longer available";
                   return (
                     <li key={`${line.slug}-${line.size}`}>
                       <Link href={`/products/${product?.slug ?? line.slug}`} className={styles.line}>
@@ -128,7 +128,7 @@ export function SiteHeader({
               </ul>
               <p className={styles.total}>
                 <span>Subtotal</span>
-                <span>{catalog.ready ? formatPrice(subtotal) : "…"}</span>
+                <span>{formatPrice(subtotal)}</span>
               </p>
               <div className={styles.panelActions}>
                 <Link href="/cart" className={styles.panelLink}>

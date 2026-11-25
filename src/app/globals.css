@@ -914,3 +914,80 @@ html[data-silk-transition="fallback"] [data-lp-theme] * {
 
 /* Washi tape with torn, zigzag ends. */
 .ree-tape { clip-path: polygon(3% 0, 97% 0, 100% 18%, 96% 36%, 100% 54%, 96% 72%, 100% 90%, 97% 100%, 3% 100%, 0 82%, 4% 64%, 0 46%, 4% 28%, 0 10%); }
+
+/* The splash screen (splash-screen.tsx; the user asked for one with the logo only, after
+   cookspace.co's): on a screen of the logo's own colours the mark's outline draws itself (each
+   shape after the last, `--draw-delay`), fills while the outline fades, the REÉ wordmark rises in
+   under it, the two settle together, and the screen fades to the page at 3.8 s. Emerald with the
+   cream logo for the dark theme (the default), cream with the emerald logo for light
+   (`data-splash-tone`, from the saved theme). Its script marks <html> `data-splash-done` at 4.4 s,
+   or at once on a later page of the same visit and in the backroom, which removes it. Keep the
+   script's timeout in step with the exit here. */
+.ree-splash {
+  --splash-ground: #004d3b;
+  --splash-ink: #ffe7cc;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  background: var(--splash-ground);
+  color: var(--splash-ink);
+  animation: ree-splash-exit .6s cubic-bezier(.65, 0, .35, 1) 3.8s forwards;
+}
+html[data-splash-tone="light"] .ree-splash { --splash-ground: #ffe7cc; --splash-ink: #00664f; }
+html[data-splash-done] .ree-splash { display: none; }
+
+.ree-splash-logo { position: relative; display: grid; justify-items: center; }
+.ree-splash-mark {
+  height: 112px;
+  width: auto;
+  overflow: visible;
+  animation: ree-splash-settle .7s cubic-bezier(.65, 0, .35, 1) 2.95s forwards;
+}
+.ree-splash-mark path {
+  fill: currentColor;
+  fill-opacity: 0;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation:
+    ree-splash-draw 1.25s cubic-bezier(.65, 0, .35, 1) var(--draw-delay, 0s) forwards,
+    ree-splash-fill .6s ease-out 1.5s forwards,
+    ree-splash-stroke-out .5s ease 2s forwards;
+}
+.ree-splash-word {
+  position: absolute;
+  top: 100%;
+  width: 150px;
+  height: auto;
+  margin-top: 26px;
+  fill: currentColor;
+  opacity: 0;
+  animation:
+    ree-splash-word-in .7s cubic-bezier(.22, 1, .36, 1) 2.2s forwards,
+    ree-splash-word-settle .7s cubic-bezier(.65, 0, .35, 1) 2.95s forwards;
+}
+
+@keyframes ree-splash-draw { to { stroke-dashoffset: 0; } }
+@keyframes ree-splash-fill { to { fill-opacity: 1; } }
+@keyframes ree-splash-stroke-out { to { stroke-opacity: 0; } }
+@keyframes ree-splash-settle { to { transform: translateY(14px) scale(.78); } }
+@keyframes ree-splash-word-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes ree-splash-word-settle { from { opacity: 1; } to { opacity: 1; transform: translateY(-14px); } }
+@keyframes ree-splash-exit { to { opacity: 0; visibility: hidden; } }
+
+/* Reduced motion: the finished logo for a moment, then a short fade (the script's timeout is 1.4 s). */
+@media (prefers-reduced-motion: reduce) {
+  .ree-splash { animation: ree-splash-exit .4s ease .9s forwards; }
+  .ree-splash-mark, .ree-splash-mark path, .ree-splash-word { animation: none; }
+  .ree-splash-mark path { stroke-opacity: 0; fill-opacity: 1; }
+  .ree-splash-word { opacity: 1; }
+}
+
+/* While the splash plays, the page under it holds its own CSS entrance (the landing's lp-enter, the
+   hero's slideshow, the coming-soon gate) so it starts as the splash lifts. Only once the splash's
+   script has run, so a page without JavaScript is never held. */
+html[data-splash-run]:not([data-splash-done]) body *:not(.ree-splash, .ree-splash *) { animation-play-state: paused !important; }

@@ -5,7 +5,8 @@ import { collectionProducts, seasonLabel, seasonProducts, type Banner, type Coll
 import { productsFor, type Department, type Product } from "../data/products";
 import { getCatalog, getCollections } from "../lib/catalog";
 import { garmentCloth } from "./shop-ui";
-import { ChipNav, EmptyNote, PageButton, PageIntro, ShopGrid, SitePage, bodyText, cardPatch, cloths, hoverImage, sectionTitle, tilts, type Chip } from "./site-page";
+import { ChipNav, EmptyNote, PageButton, PageIntro, ShopGrid, bodyText, cardPatch, cloths, hoverImage, sectionTitle, tilts, type Chip } from "./site-page";
+import { SitePage } from "./site-frame";
 
 // The shop's listing pages: everything (/shop), one department (/men, /women, /kids), the
 // collections (/collections), one collection (/collections/[slug], its seasons in turn) and one

@@ -333,8 +333,12 @@ export const starterCatalogue: Product[] = [
 
 export type Department = "men" | "women" | "kids";
 
-// The helpers take the catalogue as an argument: on the server it comes from src/lib/catalog.ts,
-// in the browser from useCatalog() (catalog-client.ts).
+// What the browser needs of a piece for the bag, /cart, /checkout and the saved pieces: handed down
+// with the page (CatalogScope), trimmed so every page does not carry the whole catalogue's copy.
+export type CatalogEntry = Pick<Product, "slug" | "previousSlugs" | "kind" | "name" | "category" | "price" | "colour" | "images">;
+
+// The helpers take the catalogue as an argument: it comes from src/lib/catalog.ts on the server
+// (the browser gets a trimmed copy with the page: useCatalog() in catalog-client.tsx).
 export function productsFor(products: Product[], department: Department) {
   return products.filter((product) => product.department === department || (department !== "kids" && product.department === "unisex"));
 }

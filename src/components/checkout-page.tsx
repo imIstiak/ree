@@ -96,8 +96,8 @@ function Paperclip({ className = "" }: { className?: string }) {
 
 export function CheckoutView() {
   const hydrated = useHydrated();
-  const { lines, subtotal, clearCart, ready: catalogReady } = useBag();
-  const ready = hydrated && catalogReady;
+  const { lines, subtotal, clearCart } = useBag();
+  const ready = hydrated;
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [area, setArea] = useState<DeliveryArea>("dhaka");

@@ -5,7 +5,8 @@ import { socialProfiles } from "../data/site";
 import { campaignPhotos } from "../data/campaign-images";
 import { journalPosts } from "../data/journal";
 import { Icon } from "./landing-icons";
-import { PageButton, PageIntro, SitePage, bodyText, cardPatch, cloths, patchShadow, sectionTitle, smallPatch, tilts } from "./site-page";
+import { PageButton, PageIntro, bodyText, cardPatch, cloths, patchShadow, sectionTitle, smallPatch, tilts } from "./site-page";
+import { SitePage } from "./site-frame";
 import { kicker } from "./shop-ui";
 
 // The brand's own pages: /about, /journal, /contact and the legal pages (/legal/[slug]). Server
